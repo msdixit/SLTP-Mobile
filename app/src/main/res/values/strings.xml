@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">FRJVC</string>
+    <string name="booki">FRJVC</string>
+    <string name="welcome_back">Welcome to FRJVC</string>
+    <string name="forgot">Forgot Password?</string>
+    <string name="login">Login</string>
+    <string name="email">User ID</string>
+    <string name="password">Password</string>
+    <color name="transparent">#00000000</color>
+    <string name="iplink">http://111.93.174.107/</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+</resources>

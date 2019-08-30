@@ -1,0 +1,157 @@
+package com.sparc.frjvcapp;
+
+import android.content.Context;
+import android.graphics.Canvas;
+import android.support.annotation.ColorInt;
+import android.util.AttributeSet;
+import android.view.View;
+
+public class MapScaleView extends View {
+
+    private final MapScaleModel mapScaleModel;
+    private final Drawer drawer;
+
+    private final int desiredWidth;
+
+    private Scales scales;
+
+    private ScaleType scaleType = ScaleType.BOTH;
+
+    public MapScaleView(Context context) {
+        this(context, null);
+    }
+
+    public MapScaleView(Context context, AttributeSet attrs) {
+        this(context, attrs, 0);
+    }
+
+    public MapScaleView(Context context, AttributeSet attrs, int defStyleAttr) {
+        super(context, attrs, defStyleAttr);
+
+        float density = getResources().getDisplayMetrics().density;
+        mapScaleModel = new MapScaleModel(density);
+
+        ViewConfig viewConfig = new ViewConfig(context, attrs);
+        drawer = new Drawer(viewConfig.color, viewConfig.textSize, viewConfig.strokeWidth, density, viewConfig.outline, viewConfig.expandRtl);
+
+        desiredWidth = viewConfig.desiredWidth;
+
+        if (viewConfig.isMiles) {
+            scaleType = ScaleType.MILES_ONLY;
+        }
+    }
+
+    public void setColor(@ColorInt int color) {
+        drawer.setColor(color);
+        invalidate();
+    }
+
+    public void setTextSize(float textSize) {
+        drawer.setTextSize(textSize);
+        invalidate();
+        requestLayout();
+    }
+
+    public void setStrokeWidth(float strokeWidth) {
+        drawer.setStrokeWidth(strokeWidth);
+        invalidate();
+        requestLayout();
+    }
+
+    public void setOutlineEnabled(boolean enabled) {
+        drawer.setOutlineEnabled(enabled);
+        invalidate();
+    }
+
+    public void setExpandRtlEnabled(boolean enabled) {
+        drawer.setExpandRtlEnabled(enabled);
+        invalidate();
+    }
+
+    /**
+     * @deprecated Use milesOnly()
+     */
+    @Deprecated
+    public void setIsMiles(boolean miles) {
+        if (miles) milesOnly();
+        else metersAndMiles();
+    }
+
+    public void metersOnly() {
+        scaleType = ScaleType.METERS_ONLY;
+        updateScales();
+    }
+
+    public void milesOnly() {
+        scaleType = ScaleType.MILES_ONLY;
+        updateScales();
+    }
+
+    public void metersAndMiles() {
+        scaleType = ScaleType.BOTH;
+        updateScales();
+    }
+
+    public void update(float zoom, double latitude) {
+        mapScaleModel.setPosition(zoom, latitude);
+        updateScales();
+    }
+
+    private void updateScales() {
+        Scale top, bottom = null;
+
+        if (scaleType == ScaleType.MILES_ONLY) {
+            top = mapScaleModel.update(false);
+        } else {
+            top = mapScaleModel.update(true);
+            if (scaleType == ScaleType.BOTH) {
+                bottom = mapScaleModel.update(false);
+            }
+        }
+
+        scales = new Scales(top, bottom);
+        invalidate();
+    }
+
+    @Override
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        int width = measureDimension(desiredWidth(), widthMeasureSpec);
+        int height = measureDimension(desiredHeight(), heightMeasureSpec);
+
+        mapScaleModel.setMaxWidth(width);
+        drawer.setViewWidth(width);
+        updateScales();
+
+        setMeasuredDimension(width, height);
+    }
+
+    private int desiredWidth() {
+        return desiredWidth;
+    }
+
+    private int desiredHeight() {
+        return drawer.getHeight();
+    }
+
+    private int measureDimension(int desiredSize, int measureSpec) {
+        int mode = View.MeasureSpec.getMode(measureSpec);
+        int size = View.MeasureSpec.getSize(measureSpec);
+
+        if (mode == View.MeasureSpec.EXACTLY) {
+            return size;
+        } else if (mode == View.MeasureSpec.AT_MOST) {
+            return Math.min(desiredSize, size);
+        } else {
+            return desiredSize;
+        }
+    }
+
+    @Override
+    public void onDraw(Canvas canvas) {
+        drawer.draw(canvas, scales);
+    }
+
+    private enum ScaleType {
+        METERS_ONLY, MILES_ONLY, BOTH
+    }
+}

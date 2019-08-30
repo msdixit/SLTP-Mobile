@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg"
+    tools:context=".SearchMapFile">
+
+    <LinearLayout
+        android:id="@+id/ll"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="50sp"
+        android:orientation="vertical">
+
+        <fr.ganfra.materialspinner.MaterialSpinner
+            android:id="@+id/division"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="15sp"
+            android:layout_marginRight="15sp"
+            android:layout_marginBottom="10sp"
+            app:ms_alignLabels="false"
+            app:ms_arrowColor="@color/colorBackground"
+            app:ms_arrowSize="14dp"
+            app:ms_baseColor="@color/colorBackground"
+            app:ms_dropDownHintView="@layout/dropdown_hint_item_layout"
+            app:ms_enableErrorLabel="false"
+            app:ms_enableFloatingLabel="true"
+            app:ms_errorColor="@color/red"
+            app:ms_floatingLabelColor="@color/colorBackground"
+            app:ms_floatingLabelText="Division"
+            app:ms_highlightColor="@color/colorBackground"
+            app:ms_hint="Select Division"
+            app:ms_hintColor="@color/colorBackground"
+            app:ms_hintView="@layout/hint_item_layout"
+            app:ms_multiline="false"
+            app:ms_thickness="0.5dp" />
+
+
+        <fr.ganfra.materialspinner.MaterialSpinner
+            android:id="@+id/range"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/division"
+            android:layout_marginLeft="15sp"
+            android:layout_marginRight="15sp"
+            android:layout_marginBottom="10sp"
+            app:ms_alignLabels="false"
+            app:ms_arrowColor="@color/colorBackground"
+            app:ms_arrowSize="14dp"
+            app:ms_baseColor="@color/colorBackground"
+            app:ms_dropDownHintView="@layout/dropdown_hint_item_layout"
+            app:ms_enableErrorLabel="false"
+            app:ms_enableFloatingLabel="true"
+            app:ms_errorColor="@color/red"
+            app:ms_floatingLabelColor="@color/colorBackground"
+            app:ms_floatingLabelText="Range"
+            app:ms_highlightColor="@color/colorBackground"
+            app:ms_hint="Select Range"
+            app:ms_hintColor="@color/colorBackground"
+            app:ms_hintView="@layout/hint_item_layout"
+            app:ms_multiline="false"
+            app:ms_thickness="0.5dp" />
+
+        <fr.ganfra.materialspinner.MaterialSpinner
+            android:id="@+id/fb"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/range"
+            android:layout_marginLeft="15sp"
+            android:layout_marginRight="15sp"
+            android:layout_marginBottom="10sp"
+            app:ms_alignLabels="false"
+            app:ms_arrowColor="@color/colorBackground"
+            app:ms_arrowSize="14dp"
+            app:ms_baseColor="@color/colorBackground"
+            app:ms_dropDownHintView="@layout/dropdown_hint_item_layout"
+            app:ms_enableErrorLabel="false"
+            app:ms_enableFloatingLabel="true"
+            app:ms_errorColor="@color/red"
+            app:ms_floatingLabelColor="@color/colorBackground"
+            app:ms_floatingLabelText="Forest Block"
+            app:ms_highlightColor="@color/colorBackground"
+            app:ms_hint="Select Forest Block"
+            app:ms_hintColor="@color/colorBackground"
+            app:ms_hintView="@layout/hint_item_layout"
+            app:ms_multiline="false"
+            app:ms_thickness="0.5dp" />
+    </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/ll"
+        android:layout_marginTop="15sp"
+        android:layout_weight="3">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/download"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_below="@+id/fb"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginLeft="15sp"
+                android:layout_weight="1"
+                android:background="@drawable/button_drawable"
+                android:text="Download"
+                android:textColor="#FFFFFF"
+                android:textSize="14dp" />
+
+            <Button
+                android:id="@+id/submit"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_below="@+id/fb"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginLeft="10sp"
+                android:layout_marginRight="10sp"
+                android:layout_weight="1"
+                android:background="@drawable/button_drawable"
+                android:text="Next"
+                android:textColor="#FFFFFF"
+                android:textSize="14dp" />
+
+            <Button
+                android:id="@+id/reset"
+
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_below="@+id/fb"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginRight="15sp"
+                android:layout_weight="1"
+                android:background="@drawable/button_drawable"
+                android:text="Reset"
+                android:textColor="#FFFFFF"
+                android:textSize="14dp" />
+
+
+
+        </LinearLayout>
+    </RelativeLayout>
+</RelativeLayout>

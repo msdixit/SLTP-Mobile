@@ -1,6 +1,10 @@
 package com.sparc.frjvcapp.Adapter;
 
 import android.content.Context;
+import android.content.Intent;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -13,6 +17,8 @@ import com.sparc.frjvcapp.R;
 import com.sparc.frjvcapp.pojo.DataViewDetails;
 import com.sparc.frjvcapp.setViewHolder;
 
+import java.io.FileInputStream;
+import java.io.InputStream;
 import java.util.List;
 
 public class DataViewAdapter extends RecyclerView.Adapter<setViewHolder> {
@@ -41,6 +47,15 @@ public class DataViewAdapter extends RecyclerView.Adapter<setViewHolder> {
         holder.txtPillarLon.setText("Lon:" + dataitems.get(holder.getAdapterPosition()).getLon());
         if (dataitems.get(holder.getAdapterPosition()).getSyncStatus().equals("0")) {
             holder.DeleteImg.setVisibility(View.VISIBLE);
+            String ab = dataitems.get(holder.getAdapterPosition()).getImage();
+            try {
+                InputStream is = new FileInputStream(ab);
+                Drawable icon = new BitmapDrawable(is);
+                holder.PillarImg.setImageDrawable(icon);
+            }catch (Exception ee)
+            {
+                ee.printStackTrace();
+            }
         } else {
             holder.DeleteImg.setVisibility(View.INVISIBLE);
             String ab = dataitems.get(holder.getAdapterPosition()).getImage();

@@ -55,7 +55,7 @@ public class SearchMapFile extends AppCompatActivity {
     boolean cmvsta1, mmvsta1, cmvavls1, mmvavls1;
     ProgressDialog progressDialog1;
     ArrayAdapter<String> divadapter;
-    private String url = "http://203.129.207.130:5060/kml/";
+    private String url = "http://odishaforestlandsurvey.in/kml/";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

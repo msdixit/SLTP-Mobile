@@ -102,7 +102,7 @@ public class ListDataViewActivity extends AppCompatActivity implements View.OnCl
                     dataViewDetails.setPillarNo(c.getString(c.getColumnIndex("p_no")));
                     dataViewDetails.setLat(c.getString(c.getColumnIndex("p_lat")));
                     dataViewDetails.setLon(c.getString(c.getColumnIndex("p_long")));
-                    dataViewDetails.setImage(c.getString(c.getColumnIndex("p_pic")).substring(c.getString(c.getColumnIndex("p_pic")).lastIndexOf('/')+1));
+                    dataViewDetails.setImage(c.getString(c.getColumnIndex("p_pic")));
                     dataViewDetails.setSyncStatus("0");
                     arrayList.add(dataViewDetails);
                 }

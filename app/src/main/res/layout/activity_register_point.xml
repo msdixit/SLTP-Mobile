@@ -63,8 +63,7 @@
         android:scrollbars="none"
         android:scrollingCache="true">
 
-        <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-            xmlns:app="http://schemas.android.com/apk/res-auto"
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@color/white"
@@ -277,6 +276,30 @@
                     app:ms_hintView="@layout/hint_item_layout"
                     app:ms_multiline="false"
                     app:ms_thickness="0.5dp" />
+
+               <!-- <fr.ganfra.materialspinner.MaterialSpinner
+                    android:id="@+id/shiftingstatus"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="15sp"
+                    android:layout_marginRight="15sp"
+                    android:layout_marginBottom="10sp"
+                    app:ms_alignLabels="false"
+                    app:ms_arrowColor="@color/colorBackground"
+                    app:ms_arrowSize="14dp"
+                    app:ms_baseColor="@color/colorBackground"
+                    app:ms_dropDownHintView="@layout/dropdown_hint_item_layout"
+                    app:ms_enableErrorLabel="false"
+                    app:ms_enableFloatingLabel="true"
+                    app:ms_errorColor="@color/red"
+                    app:ms_floatingLabelColor="@color/colorBackground"
+                    app:ms_floatingLabelText="Select Shifting Status"
+                    app:ms_highlightColor="@color/colorBackground"
+                    app:ms_hint="Select Shifting Status"
+                    app:ms_hintColor="@color/colorBackground"
+                    app:ms_hintView="@layout/hint_item_layout"
+                    app:ms_multiline="false"
+                    app:ms_thickness="0.5dp" />-->
 
                 <EditText
                     android:id="@+id/txtPillno"

@@ -69,8 +69,9 @@ public class RegisterPointActivity extends AppCompatActivity implements GoogleAp
     String[] pillar_type = {"Concrete", "Stone Cairn", "Brick"};
     String[] pillar_paint_status = {"Required", "Not Required"};
     String[] pillar_cond = {"Good", "Repair", "Replace"};
-    MaterialSpinner loctype, pill_type, pill_cond, paint_status;
-    String locationtype, pillartype, pillacond, pillarpaintstatus, sharediv, sharerange, sharefb, sharefbtype, sharefbname, userid;
+/*    String[] pillar_shift_status = {"Required", "Not Required"};*/
+    MaterialSpinner loctype, pill_type, pill_cond, paint_status,pillshiftsts;
+    String locationtype, pillartype, pillacond, pillarpaintstatus, sharediv, sharerange, sharefb, sharefbtype, sharefbname, userid,pilshiftsts;
     String b_type, p_value, pt_value, status_value, cnd_value;
     ImageView takepic, setpic;
     Integer REQUEST_CAMERA = 1, SELECT_FILE = 0;
@@ -115,6 +116,7 @@ public class RegisterPointActivity extends AppCompatActivity implements GoogleAp
         pill_type = findViewById(R.id.ptype);
         pill_cond = findViewById(R.id.pcond);
         paint_status = findViewById(R.id.paintstatus);
+        //pillshiftsts=findViewById(R.id.shiftingstatus);
 
         fbname = findViewById(R.id.fbname);
         takepic = findViewById(R.id.takepic);
@@ -241,6 +243,7 @@ public class RegisterPointActivity extends AppCompatActivity implements GoogleAp
             }
         });
 
+
         final ArrayAdapter<String> psadapter = new ArrayAdapter<String>(getApplicationContext(), R.layout.spinner_row, pillar_paint_status);
         paint_status.setAdapter(psadapter);
         paint_status.setPaddingSafe(0, 0, 0, 0);
@@ -260,7 +263,25 @@ public class RegisterPointActivity extends AppCompatActivity implements GoogleAp
 
             }
         });
+        /*final ArrayAdapter<String> pststsadapter = new ArrayAdapter<String>(getApplicationContext(), R.layout.spinner_row, pillar_shift_status);
+        pillshiftsts.setAdapter(pststsadapter);
+        pillshiftsts.setPaddingSafe(0, 0, 0, 0);
+        pillshiftsts.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                pilshiftsts = (String) parent.getItemAtPosition(position);
+                if (!pilshiftsts.equals("Select Shifting Status")) {
+                    //componentMaster();
 
+                    //status_value=statusValue;
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });*/
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO) {
             mAlbumStorageDirFactory = new FroyoAlbumDirFactory();
         } else {
@@ -288,6 +309,7 @@ public class RegisterPointActivity extends AppCompatActivity implements GoogleAp
             pillartype = "NA";
             pillacond = "NA";
             pillarpaintstatus = "NA";
+            pilshiftsts="NA";
         }
     }
 
@@ -305,9 +327,9 @@ public class RegisterPointActivity extends AppCompatActivity implements GoogleAp
             Toast.makeText(this, "Please Select the Pilar Type", Toast.LENGTH_LONG).show();
         } else if (locationtype.equals("Existing") && pillacond.equals("Select Pillar Condition")) {
             Toast.makeText(this, "Please Select the Pilar condition", Toast.LENGTH_LONG).show();
-        } else if (locationtype.equals("Existing") && pillarpaintstatus.equals("Select Paint Status")) {
+        }/* else if (locationtype.equals("Existing") && pillarpaintstatus.equals("Select Paint Status")) {
             Toast.makeText(this, "Please Select Paint Status", Toast.LENGTH_LONG).show();
-        } else {
+        } */ else {
             db = openOrCreateDatabase("sltp.db", MODE_PRIVATE, null);
             Cursor cursor = db.rawQuery("select * from m_pillar_reg where uid='" + userid + "' and d_id='" + sharediv + "' and r_id='" + sharerange + "' and fb_id='" + sharefb + "' and p_lat='" + lat.getText().toString() + "' and p_long='" + lon.getText().toString() + "' order by p_no", null);
             if (cursor.getCount() > 0) {
@@ -330,7 +352,7 @@ public class RegisterPointActivity extends AppCompatActivity implements GoogleAp
                                 M_pillar_reg mpr = new M_pillar_reg(sharediv, sharerange, sharefb, pillarsno.getText().toString(),
                                         latitude, longitude, pillartype, pillacond, rem, imagepath1, "0",
                                         txtpatchno.getText().toString(), txtringno.getText().toString(), locationtype, sl,
-                                        pillarpaintstatus, fbname.getText().toString(), userid, point_no, "0", "0");
+                                        pillarpaintstatus, fbname.getText().toString(), userid, point_no, "0", "0");//+"_"+pilshiftsts
                                 dbHelper.open();
                                 dbHelper.insertPillarData(mpr);
                                 dbHelper.close();

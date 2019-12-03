@@ -35,6 +35,7 @@ public class DataViewAdapter extends RecyclerView.Adapter<setViewHolder> {
     @NonNull
     @Override
     public setViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
+
         View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.cardview_dataview, viewGroup, false);
         return new setViewHolder(view);
 

@@ -21,13 +21,25 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SwitchCompat;
+import android.util.Log;
+import android.view.Gravity;
+import android.view.LayoutInflater;
+import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.PopupMenu;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.akexorcist.googledirection.DirectionCallback;
@@ -36,6 +48,7 @@ import com.akexorcist.googledirection.constant.TransportMode;
 import com.akexorcist.googledirection.model.Direction;
 import com.akexorcist.googledirection.model.Route;
 import com.akexorcist.googledirection.util.DirectionConverter;
+import com.bumptech.glide.load.engine.Resource;
 import com.github.pengrad.mapscaleview.MapScaleView;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -55,6 +68,8 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Tile;
 import com.google.android.gms.maps.model.TileOverlayOptions;
 import com.google.android.gms.maps.model.TileProvider;
+import com.google.maps.android.data.Feature;
+import com.google.maps.android.data.kml.KmlContainer;
 import com.google.maps.android.data.kml.KmlLayer;
 
 import org.xmlpull.v1.XmlPullParserException;
@@ -72,7 +87,7 @@ import java.util.HashMap;
 public class ListMapActivity extends AppCompatActivity implements OnMapReadyCallback,
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
-        LocationListener, DirectionCallback, GoogleMap.OnMarkerClickListener,GoogleMap.OnCameraIdleListener,GoogleMap.OnCameraMoveListener,GoogleMap.OnCameraChangeListener {
+        LocationListener, DirectionCallback, GoogleMap.OnMarkerClickListener, GoogleMap.OnCameraIdleListener, GoogleMap.OnCameraMoveListener, GoogleMap.OnCameraChangeListener, BottomNavigationView.OnNavigationItemSelectedListener {
     public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
     public static final String data = "data";
     public static final String userlogin = "userlogin";
@@ -96,17 +111,29 @@ public class ListMapActivity extends AppCompatActivity implements OnMapReadyCall
     private LatLng latLng, destination;
     private String divid, rangeid, fbid, userid;
     private String serverKey = "AIzaSyB-VJ5Dc0Wf-AzmvNlwd48GuzwBN25s8JQ";
+    public static int baseMapMenuPos = 0;
+    public static LayoutInflater inflater1, inflater2;
+    public static View alertLayout, alertLayout2;
+    public static AlertDialog.Builder alert, alert2;
+    public static TextView headerText;
+    AlertDialog dialog, dialog2;
+    TextView message;
+    CheckBox c1, c2, c3, c4, c5, c6;
+    int i, j, k, l, m, n = 0;
+    String master[] = {"State_Boundary.kml", "Circle_Boundary.kml", "Range_Boundary.kml", "Division_Boundary.kml"};
+    boolean cmvsta,mmvsta;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list_map);
 
+        BottomNavigationView bottomView = findViewById(R.id.navigationView);
 
-
-        switchCompat = findViewById(R.id.chk);
+        //switchCompat = findViewById(R.id.chk);
         scaleView = (MapScaleView) findViewById(R.id.scaleView);
-
+        bottomView.setOnNavigationItemSelectedListener((BottomNavigationView.OnNavigationItemSelectedListener) this);
 
         dbHelper = new DbHelper(this);
         SharedPreferences shared = getApplicationContext().getSharedPreferences(data, MODE_PRIVATE);
@@ -118,23 +145,71 @@ public class ListMapActivity extends AppCompatActivity implements OnMapReadyCall
         SharedPreferences login = getApplicationContext().getSharedPreferences(userlogin, MODE_PRIVATE);
         userid = login.getString("uemail", "0");
         ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map)).getMapAsync(this);
-        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             checkLocationPermission();
         }
-        fbtn = findViewById(R.id.fab);
+
+
+       /* if (alertLayout2 != null)
+        {
+            ViewGroup parent = (ViewGroup)alertLayout2.getParent();
+            parent.removeAllViews();
+
+            inflater2 = getLayoutInflater();
+            alertLayout2 = inflater2.inflate(R.layout.map_layer_layout, null, false);
+
+            c1 = alertLayout2.findViewById(R.id.chkstate);
+            c2 = alertLayout2.findViewById(R.id.chkdivision);
+            c3 = alertLayout2.findViewById(R.id.chkrange);
+            c4 = alertLayout2.findViewById(R.id.chkcmv);
+            c5 = alertLayout2.findViewById(R.id.chkmmv);
+        } else {
+            inflater2 = getLayoutInflater();
+            alertLayout2 = inflater2.inflate(R.layout.map_layer_layout, null, false);
+
+            c1 = alertLayout2.findViewById(R.id.chkstate);
+            c2 = alertLayout2.findViewById(R.id.chkdivision);
+            c3 = alertLayout2.findViewById(R.id.chkrange);
+            c4 = alertLayout2.findViewById(R.id.chkcmv);
+            c5 = alertLayout2.findViewById(R.id.chkmmv);
+        }
+
+            if (c4.isChecked()) {
+                if (kmlstatus.equals("1")) {
+                    getCMVMMVData(0);
+                } else if (kmlstatus.equals("0")) {
+                    getCMVMMVData(3);
+                }
+            }*/
+
+
+
+
+
+       /* if (kmlstatus.equals("1")) {
+            getCMVMMVData(0);
+            c4.setChecked(true);
+            c5.setChecked(true);
+        } else if (kmlstatus.equals("0")) {
+            getCMVMMVData(3);
+            c4.setChecked(false);
+            c5.setChecked(false);
+        }*/
+
+        /*fbtn = findViewById(R.id.fab);
         fbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent i = new Intent(getApplicationContext(), RegisterPointActivity.class);
                 i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 i.putExtra("id", "ListMap");
-                i.putExtra("kml_status",kmlstatus);
+                i.putExtra("kml_status", kmlstatus);
                 finishAffinity();
                 startActivity(i);
             }
-        });
+        });*/
 
-        if (kmlstatus.equals("1")) {
+        /*if (kmlstatus.equals("1")) {
             getCMVMMVData(0);
             switchCompat.setChecked(true);
         } else if (kmlstatus.equals("0")) {
@@ -156,7 +231,7 @@ public class ListMapActivity extends AppCompatActivity implements OnMapReadyCall
                             getAllSureypoints(userid, divid, rangeid, fbid);
                         }
                     }
-                });
+                });*/
     }
 
     /* Map part for both offline and online*/
@@ -168,6 +243,7 @@ public class ListMapActivity extends AppCompatActivity implements OnMapReadyCall
                 .build();
         mGoogleApiClient.connect();
     }
+
     @Override
     public void onCameraMove() {
         CameraPosition cameraPosition = googleMap.getCameraPosition();
@@ -184,6 +260,7 @@ public class ListMapActivity extends AppCompatActivity implements OnMapReadyCall
     public void onCameraChange(CameraPosition cameraPosition) {
         scaleView.update(cameraPosition.zoom, cameraPosition.target.latitude);
     }
+
     /* Direction for both online*/
     @Override
     public void onDirectionSuccess(Direction direction, String rawBody) {
@@ -214,6 +291,7 @@ public class ListMapActivity extends AppCompatActivity implements OnMapReadyCall
     @Override
     public void onDirectionFailure(Throwable t) {
     }
+
     /* Map part for both offline and online*/
     @Override
     public void onConnected(@Nullable Bundle bundle) {
@@ -300,27 +378,37 @@ public class ListMapActivity extends AppCompatActivity implements OnMapReadyCall
         ArrayList<String> lon = new ArrayList<String>();
 
         rangeKey = new HashMap<>();
-        db = openOrCreateDatabase("sltp.db", MODE_PRIVATE, null);
-        Cursor cursor = db.rawQuery("select p_lat,p_long,p_no from m_pillar_reg where uid='" + userid + "' and d_id='" + divid + "' and r_id='" + rangeid + "' and fb_id='" + fbid + "' order by point_no", null);
-        cursor.moveToFirst();
-        if (cursor.moveToFirst()) {
-            do {
-                pillarno.add(cursor.getString(cursor.getColumnIndex("p_no")));
-                lat.add(cursor.getString(cursor.getColumnIndex("p_lat")));
-                lon.add(cursor.getString(cursor.getColumnIndex("p_long")));
-            } while (cursor.moveToNext());
+        try {
+            db = openOrCreateDatabase("sltp.db", MODE_PRIVATE, null);
+            Cursor cursor = db.rawQuery("select p_lat,p_long,p_no from m_pillar_reg where uid='" + userid + "' and d_id='" + divid + "' and r_id='" + rangeid + "' and fb_id='" + fbid + "' order by point_no", null);
+            //cursor.moveToFirst();
+            if(cursor.getCount()>0) {
+                if (cursor.moveToFirst()) {
+                    do {
+                        pillarno.add(cursor.getString(cursor.getColumnIndex("p_no")));
+                        lat.add(cursor.getString(cursor.getColumnIndex("p_lat")));
+                        lon.add(cursor.getString(cursor.getColumnIndex("p_long")));
+                    } while (cursor.moveToNext());
+                }
+                cursor.close();
+                db.close();
+                for (int j = 0; j < pillarno.size(); j++) {
+                    addPointtoMap(Double.parseDouble(lat.get(j)), Double.parseDouble(lon.get(j)), pillarno.get(j));
+                }
+            }
+        } catch (Exception ee) {
+            ee.printStackTrace();
         }
-        cursor.close();
-        db.close();
-        for (int j = 0; j < pillarno.size(); j++) {
-            addPointtoMap(Double.parseDouble(lat.get(j)), Double.parseDouble(lon.get(j)), pillarno.get(j));
-        }
+
+
 
     }
-
     private void addPointtoMap(double key, double value, String pillno) {
+        BitmapDrawable bitmapdraw = (BitmapDrawable) getResources().getDrawable(R.drawable.blue);
+        Bitmap b = bitmapdraw.getBitmap();
+        Bitmap smallMarker = Bitmap.createScaledBitmap(b, 80, 80, false);
         googleMap.addMarker(new MarkerOptions().position(
-                new LatLng(key, value)).title("Pillar No: " + pillno).snippet("Lat:" + key + ",Long:" + value).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE)).zIndex(1.0f));
+                new LatLng(key, value)).title("Pillar No:" + pillno).snippet("Lat:" + key + ",Long:" + value + ",Status:" + "New").icon(BitmapDescriptorFactory.fromBitmap(smallMarker)));
     }
 
     private void moveCamera(LatLng latLng, float zoom) {
@@ -337,7 +425,7 @@ public class ListMapActivity extends AppCompatActivity implements OnMapReadyCall
         googleMap.setOnCameraChangeListener(this);
         CameraPosition cameraPosition = googleMap.getCameraPosition();
         scaleView.update(cameraPosition.zoom, cameraPosition.target.latitude);
-       // googleMap.setOnCameraMoveListener(this);
+        // googleMap.setOnCameraMoveListener(this);
         //googleMap.setOnCameraIdleListener(this);
         //googleMap.setOnCameraChangeListener(this);
         //=googleMap1;
@@ -384,16 +472,36 @@ public class ListMapActivity extends AppCompatActivity implements OnMapReadyCall
         googleMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
             @Override
             public void onInfoWindowClick(Marker marker) {
-                Intent intent1 = new Intent(getApplicationContext(), UpdatePillarPointDataActivity.class);
-                String[] a = marker.getSnippet().split(":");
-                String[] aa;
-                aa = a[1].split(",");
-                String lat = aa[0];
-                String lon = a[2];
-                intent1.putExtra("lat", lat);
-                intent1.putExtra("lon", lon);
-                intent1.putExtra("kml_status",kmlstatus);
-                startActivity(intent1);
+
+                String[] a = marker.getSnippet().split(",");
+                String[] p=marker.getTitle().split(":");
+                String[] array_lat= a[0].split(":");
+                String[] array_long= a[1].split(":");
+                String[] array_status= a[2].split(":");
+                String pillar_no=p[1];
+                String lat = array_lat[1];
+                String lon = array_long[1];
+                String status = array_status[1];
+
+                if(status.equals("New"))
+                {
+                    Intent intent1 = new Intent(getApplicationContext(), UpdatePillarPointDataActivity.class);
+                    intent1.putExtra("lat", lat);
+                    intent1.putExtra("lon", lon);
+                    intent1.putExtra("id", "ListMap");
+                    intent1.putExtra("kml_status", kmlstatus);
+                    startActivity(intent1);
+                }else if(status.equals("Proposed"))
+                {
+                    Intent intent1 = new Intent(getApplicationContext(), UpdateSurveyPillarPointDataActivity.class);
+                    intent1.putExtra("lat", lat);
+                    intent1.putExtra("lon", lon);
+                    intent1.putExtra("id", "ListMap");
+                    intent1.putExtra("pillar_no", pillar_no);
+                    intent1.putExtra("kml_status", kmlstatus);
+                    startActivity(intent1);
+                }
+
             }
         });
 
@@ -503,6 +611,88 @@ public class ListMapActivity extends AppCompatActivity implements OnMapReadyCall
         }
     }
 
+    private void getCMVData(int z) {
+
+        try {
+            dbHelper.open();
+            ArrayList<String> mfb = dbHelper.getCMVFiles(divid, rangeid, fbid);
+            String path = GetFilePath();
+            int a = z;
+            if (a < mfb.size()) {
+                for (int i = 0; i < mfb.size(); i++) {
+                    new DownloadKmlFile(path + "/" + mfb.get(i)).execute();
+                }
+            } else {
+                c4.setChecked(false);
+                //Toast.makeText(this, "You dont have CMV KML files for this FB", Toast.LENGTH_SHORT).show();
+            }
+            dbHelper.close();
+        } catch (Exception ee) {
+            ee.printStackTrace();
+        }
+    }
+
+    private void getMMVData(int z) {
+
+        try {
+            dbHelper.open();
+            ArrayList<String> mfb = dbHelper.getMMVFiles(divid, rangeid, fbid);
+            String path = GetFilePath();
+            int a = z;
+            if (a < mfb.size()) {
+                for (int i = 0; i < mfb.size(); i++) {
+                    new DownloadKmlFile(path + "/" + mfb.get(i)).execute();
+                }
+            } else {
+                c5.setChecked(false);
+                //Toast.makeText(this, "You dont have MMV KML files for this FB", Toast.LENGTH_SHORT).show();
+            }
+            dbHelper.close();
+        } catch (Exception ee) {
+            ee.printStackTrace();
+        }
+    }
+
+    private void getCircleData() {
+
+        try {
+            String path = GetFilePath();
+            new DownloadKmlFile(path + "/" + "Circle_Boundary.kml").execute();
+        } catch (Exception ee) {
+            ee.printStackTrace();
+        }
+    }
+
+    private void getStateData() {
+
+        try {
+            String path = GetFilePath();
+            new DownloadKmlFile(path + "/" + "State_Boundary.kml").execute();
+        } catch (Exception ee) {
+            ee.printStackTrace();
+        }
+    }
+
+    private void getDivisionData() {
+
+        try {
+            String path = GetFilePath();
+            new DownloadKmlFile(path + "/" + "Division_Boundary.kml").execute();
+        } catch (Exception ee) {
+            ee.printStackTrace();
+        }
+    }
+
+    private void getRangeData() {
+
+        try {
+            String path = GetFilePath();
+            new DownloadKmlFile(path + "/" + "Range_Boundary.kml").execute();
+        } catch (Exception ee) {
+            ee.printStackTrace();
+        }
+    }
+
     private String GetFilePath() {
         File directory = getExternalFilesDir(null);
         String folder = directory.getAbsolutePath();
@@ -513,7 +703,7 @@ public class ListMapActivity extends AppCompatActivity implements OnMapReadyCall
     public void onBackPressed() {
         Intent i = new Intent(getApplicationContext(), MiddleMapListActivity.class);
         i.setFlags(i.FLAG_ACTIVITY_NEW_TASK | i.FLAG_ACTIVITY_CLEAR_TASK);
-        i.putExtra("kml_status",kmlstatus);
+        i.putExtra("kml_status", kmlstatus);
         startActivity(i);
 
     }
@@ -526,6 +716,7 @@ public class ListMapActivity extends AppCompatActivity implements OnMapReadyCall
         private final float mScaleFactor;
 
         private final Bitmap mBorderTile;
+
 
         public CoordTileProvider(Context context) {
             /* Scale factor based on density, with a 0.6 multiplier to increase tile generation
@@ -562,6 +753,8 @@ public class ListMapActivity extends AppCompatActivity implements OnMapReadyCall
 
     private class DownloadKmlFile extends AsyncTask<String, Void, byte[]> {
         private final String mUrl;
+        //testing
+        public String title=null;
 
         public DownloadKmlFile(String url) {
             mUrl = url;
@@ -589,11 +782,581 @@ public class ListMapActivity extends AppCompatActivity implements OnMapReadyCall
                 final KmlLayer kmlLayer = new KmlLayer(googleMap, new ByteArrayInputStream(byteArr),
                         getApplicationContext());
                 kmlLayer.addLayerToMap();
+                //testing
+
+                for (KmlContainer container : kmlLayer.getContainers()) {
+                    System.out.println(container);
+                    if (container.hasProperty("name")) {
+                        title=container.getProperty("name");
+                    }
+                }
+                // Set a listener for geometry clicked events.
+                kmlLayer.setOnFeatureClickListener(new KmlLayer.OnFeatureClickListener() {
+                    @Override
+                    public void onFeatureClick(Feature feature) {
+                         Log.i("KmlClick", "Feature clicked: " + title);
+                        Toast.makeText(ListMapActivity.this,
+                                "Feature clicked: " + title,
+                                Toast.LENGTH_SHORT).show();
+                    }
+                });
+                //testing
+               /* kmlLayer.setOnFeatureClickListener(new KmlLayer.OnFeatureClickListener() {
+                    @Override
+                    public void onFeatureClick(Feature feature) {
+                        Toast.makeText(ListMapActivity.this,
+                                "Feature clicked: " + feature.getId(),
+                                Toast.LENGTH_SHORT).show();
+                    }
+                });*/
             } catch (XmlPullParserException e) {
                 e.printStackTrace();
             } catch (IOException e) {
                 e.printStackTrace();
             }
+        }
+    }
+
+    private class RemoveKmlFile extends AsyncTask<String, Void, byte[]> {
+        private final String Url;
+
+        public RemoveKmlFile(String url) {
+            Url = url;
+        }
+
+        protected byte[] doInBackground(String... params) {
+            try {
+                InputStream is = new FileInputStream(Url);
+                ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+                int nRead;
+                byte[] data = new byte[16384];
+                while ((nRead = is.read(data, 0, data.length)) != -1) {
+                    buffer.write(data, 0, nRead);
+                }
+                buffer.flush();
+                return buffer.toByteArray();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        protected void onPostExecute(byte[] byteArr) {
+            try {
+                final KmlLayer kmlLayer = new KmlLayer(googleMap, new ByteArrayInputStream(byteArr),
+                        getApplicationContext());
+                kmlLayer.removeLayerFromMap();
+
+               /* kmlLayer.setOnFeatureClickListener(new KmlLayer.OnFeatureClickListener() {
+                    @Override
+                    public void onFeatureClick(Feature feature) {
+                        Toast.makeText(ListMapActivity.this,
+                                "Feature clicked: " + feature.getId(),
+                                Toast.LENGTH_SHORT).show();
+                    }
+                });*/
+            } catch (XmlPullParserException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
+        int id = menuItem.getItemId();
+        if (id == R.id.navigation_basemap) {
+            PopupMenu popupMenu = new PopupMenu(ListMapActivity.this, this.findViewById(R.id.navigation_basemap));
+            popupMenu.getMenuInflater().inflate(R.menu.basemap_menu, popupMenu.getMenu());
+            if (baseMapMenuPos == 0) {
+                popupMenu.getMenu().getItem(0).setChecked(true);
+            } else {
+                popupMenu.getMenu().getItem(baseMapMenuPos).setChecked(true);
+            }
+            popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                @Override
+                public boolean onMenuItemClick(MenuItem item) {
+                    switch (item.getItemId()) {
+                        case R.id.normal:
+                            googleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+                            item.setChecked(true);
+                            baseMapMenuPos = 0;
+                            return true;
+                        case R.id.World_Topo:
+                            googleMap.setMapType(GoogleMap.MAP_TYPE_TERRAIN);
+                            item.setChecked(true);
+                            baseMapMenuPos = 1;
+                            return true;
+                        case R.id.Imagery_Basemap:
+                            googleMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
+                            item.setChecked(true);
+                            baseMapMenuPos = 2;
+                            return true;
+                        default:
+                            return ListMapActivity.super.onOptionsItemSelected(item);
+                    }
+                }
+            });
+            popupMenu.show();
+        }
+        else if (id == R.id.navigation_legend) {
+            inflater1 = getLayoutInflater();
+            alertLayout = inflater1.inflate(R.layout.map_legend_layout, null);
+            alert = new AlertDialog.Builder(alertLayout.getContext());
+            alert.setView(alertLayout);
+            headerText = (TextView) alertLayout.findViewById(R.id.name_textView);
+            dialog = alert.create();
+            dialog.getWindow().setGravity(Gravity.CENTER_VERTICAL);
+            dialog.getWindow().setLayout(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
+            dialog.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
+            dialog.getWindow().setLayout(600, 400);
+            headerText.setOnTouchListener(new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+                    final int DRAWABLE_LEFT = 0;
+                    final int DRAWABLE_TOP = 1;
+                    final int DRAWABLE_RIGHT = 2;
+                    final int DRAWABLE_BOTTOM = 3;
+
+                    if (event.getAction() == MotionEvent.ACTION_UP) {
+                        if (event.getRawX() >= (headerText.getRight() - headerText.getCompoundDrawables()[DRAWABLE_RIGHT].getBounds().width())) {
+                            dialog.dismiss();
+
+                            return true;
+                        }
+                    }
+
+                    return true;
+                }
+            });
+            dialog.show();
+        } else if (id == R.id.navigation_layer) {
+
+
+            inflater2 = getLayoutInflater();
+            alertLayout2 = inflater2.inflate(R.layout.map_layer_layout, null, false);
+
+           /* c1 = alertLayout2.findViewById(R.id.chkstate);
+            c2 = alertLayout2.findViewById(R.id.chkdivision);*/
+            c3 = alertLayout2.findViewById(R.id.chkSurveyPillar);
+            c4 = alertLayout2.findViewById(R.id.chkcmv);
+            c5 = alertLayout2.findViewById(R.id.chkmmv);
+            message=alertLayout2.findViewById(R.id.message);
+            /* c6 = alertLayout2.findViewById(R.id.chkcircle);*/
+
+            if(checkCMVData()==false)
+            {
+                c4.setVisibility(View.GONE);
+                message.setText("CMV KML File not available for this FB.Please contact your lab co-ordinator");
+            }
+            if(checkMMVData()==false)
+            {
+                c5.setVisibility(View.GONE);
+                message.setText("MMV KML File not available for this FB.Please contact your lab co-ordinator");
+            }
+            if(checkCMVData()==false && checkMMVData()==false)
+            {
+                c5.setVisibility(View.GONE);
+                c4.setVisibility(View.GONE);
+                message.setText("CMV and MMV KML File not available for this FB.Please contact your lab co-ordinator");
+            }
+            if(checkSurveyData(fbid))
+            {
+                //c5.setVisibility(View.GONE);
+            }
+            else
+            {
+                c3.setVisibility(View.GONE);
+               // message.setText("This Fb is yet to be verified by FRJVC Committee.This data will be available after FRJVC Verification.");
+            }
+
+            if (i == 1) {
+                c4.setChecked(true);
+            } else {
+                c4.setChecked(false);
+            }
+            if (j == 1) {
+                c5.setChecked(true);
+            } else {
+                c5.setChecked(false);
+            }
+            if (k == 1) {
+                c3.setChecked(true);
+            } else {
+                c3.setChecked(false);
+            }
+          /*  if (k == 1) {
+                c6.setChecked(true);
+            } else {
+                c6.setChecked(false);
+            }
+            if (l == 1) {
+                c1.setChecked(true);
+            } else {
+                c1.setChecked(false);
+            }
+            if (m == 1) {
+                c2.setChecked(true);
+            } else {
+                c2.setChecked(false);
+            }
+            if (n == 1) {
+                c3.setChecked(true);
+            } else {
+                c3.setChecked(false);
+            }*/
+
+            /*c1.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+
+                    if (((CheckBox) view).isChecked()) {
+                        getStateData();
+                        l = 1;
+                    } else {
+                     googleMap.clear();
+
+                        getAllSureypoints(userid, divid, rangeid, fbid);
+                        l = 0;
+                    }
+                }
+            });
+            c2.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+
+                    if (((CheckBox) view).isChecked()) {
+                        getDivisionData();
+                        m = 1;
+                    } else {
+                       googleMap.clear();
+                        getAllSureypoints(userid, divid, rangeid, fbid);
+                        m = 0;
+                    }
+                }
+            });*/
+            c3.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+
+                    if (((CheckBox) view).isChecked()) {
+                        try {
+                            k = 1;
+                            getSurveyPointData(fbid);
+
+                        }catch (Exception ee)
+                        {
+                            ee.printStackTrace();
+                        }finally {
+                            getAllSureypoints(userid, divid, rangeid, fbid);
+                        }
+                    } else {
+                        try{
+                            googleMap.clear();
+                        }catch (Exception ee)
+                        {
+                            ee.printStackTrace();
+                        }finally {
+                            k = 0;
+                            if (c5.isChecked()) {
+                                getMMVData(0);
+                            }
+                            if (c4.isChecked()) {
+                                getCMVData(0);
+                            }
+                            getAllSureypoints(userid, divid, rangeid, fbid);
+                        }
+
+
+                       // n = 0;
+                    }
+                }
+            });
+            c4.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+
+                    if (((CheckBox) view).isChecked()) {
+                        if (kmlstatus.equals("1")) {
+                            try {
+                                getCMVData(0);
+                                i = 1;
+                            }catch (Exception ee)
+                            {
+                                ee.printStackTrace();
+                            }finally {
+                                getAllSureypoints(userid, divid, rangeid, fbid);
+                            }
+
+
+                        } else if (kmlstatus.equals("0")) {
+                            //Toast.makeText(ListMapActivity.this, "You don't have CMV and MMV for this FB ", Toast.LENGTH_SHORT).show();
+                        }
+                    } else {
+                        if (c4.isChecked()) {
+                            try {
+                                getCMVData(0);
+                                i = 0;
+                                googleMap.clear();
+                            }catch (Exception ee)
+                            {
+                                ee.printStackTrace();
+                            }finally {
+
+                                getAllSureypoints(userid, divid, rangeid, fbid);
+                            }
+                        } else {
+                            try {
+                                getCMVData(3);
+                                i = 0;
+                                googleMap.clear();
+                            }catch (Exception ee)
+                            {
+                                ee.printStackTrace();
+                            }
+                            finally {
+                                if (c5.isChecked()) {
+                                    getMMVData(0);
+                                }
+                            }
+
+                        }
+
+                    }
+
+                }
+            });
+            c5.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+
+                    if (((CheckBox) view).isChecked()) {
+                        if (kmlstatus.equals("1")) {
+                            try {
+                                getMMVData(0);
+                                j = 1;
+                            }catch (Exception ee)
+                            {
+                                ee.printStackTrace();
+                            }finally {
+                                getAllSureypoints(userid, divid, rangeid, fbid);
+                            }
+
+                        } else if (kmlstatus.equals("0")) {
+                            //Toast.makeText(ListMapActivity.this, "You don't have CMV and MMV for this FB ", Toast.LENGTH_SHORT).show();
+                        }
+                    } else {
+                        if (c5.isChecked()) {
+
+                            getMMVData(3);
+                            j = 0;
+                            try {
+                                googleMap.clear();
+                            }catch (Exception ee)
+                            {
+                                ee.printStackTrace();
+                            }finally {
+                                getAllSureypoints(userid, divid, rangeid, fbid);
+                            }
+
+                            //getAllSureypoints(userid, divid, rangeid, fbid);
+
+                        } else {
+                            try {
+                                getMMVData(3);
+                                j = 0;
+                                googleMap.clear();
+                                // getMMVData(0);
+                            }catch (Exception ee)
+                            {
+                                ee.printStackTrace();
+                            }finally {
+                                if(c4.isChecked()) {
+                                    getCMVData(0);
+                                }
+                            }
+
+                            //getAllSureypoints(userid, divid, rangeid, fbid);
+
+                        }
+
+                    }
+                }
+            });
+
+            alert2 = new AlertDialog.Builder(alertLayout2.getContext());
+            alert2.setView(alertLayout2);
+            dialog2 = alert2.create();
+            dialog2.getWindow().setGravity(Gravity.CENTER_VERTICAL);
+            headerText = alertLayout2.findViewById(R.id.name_textView);
+            dialog2.getWindow().setLayout(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
+            dialog2.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
+            headerText.setOnTouchListener(new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+                    final int DRAWABLE_LEFT = 0;
+                    final int DRAWABLE_TOP = 1;
+                    final int DRAWABLE_RIGHT = 2;
+                    final int DRAWABLE_BOTTOM = 3;
+
+                    if (event.getAction() == MotionEvent.ACTION_UP) {
+                        if (event.getRawX() >= (headerText.getRight() - headerText.getCompoundDrawables()[DRAWABLE_RIGHT].getBounds().width())) {
+                            dialog2.dismiss();
+
+                            return true;
+                        }
+                    }
+
+                    return true;
+                }
+            });
+            dialog2.show();
+        } else {
+            Intent i = new Intent(getApplicationContext(), RegisterPointActivity.class);
+            i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            i.putExtra("id", "ListMap");
+            i.putExtra("kml_status", kmlstatus);
+            finishAffinity();
+            startActivity(i);
+        }
+        return false;
+    }
+    private boolean checkCMVData() {
+        try {
+            dbHelper.open();
+            ArrayList<String> mfb = dbHelper.getCMVFiles(divid, rangeid, fbid);
+            String path = GetFilePath();
+            for (int i = 0; i < mfb.size(); i++) {
+                if (!mfb.get(i).equals("null")) {
+
+                    File f = new File(path + "/" + mfb.get(i));
+                    if (i == 0) {
+                        if (f.exists()) {
+                            cmvsta = true;
+                        } else {
+                            cmvsta = false;
+                        }
+                    }
+                }
+            }
+            dbHelper.close();
+        } catch (Exception ee) {
+            ee.printStackTrace();
+        }
+        return cmvsta;
+    }
+    private boolean checkMMVData() {
+        try {
+            dbHelper.open();
+            ArrayList<String> mfb = dbHelper.getMMVFiles(divid, rangeid, fbid);
+            String path = GetFilePath();
+            for (int i = 0; i < mfb.size(); i++) {
+                if (!mfb.get(i).equals("null")) {
+
+                    File f = new File(path + "/" + mfb.get(i));
+                    if (i == 0) {
+                        if (f.exists()) {
+                            mmvsta = true;
+                        } else {
+                            mmvsta = false;
+                        }
+                    }
+                }
+            }
+            dbHelper.close();
+        } catch (Exception ee) {
+            ee.printStackTrace();
+        }
+        return mmvsta;
+    }
+    private boolean checkSurveyData(String fbid) {
+        try {
+            dbHelper.open();
+            ArrayList<String> pillarno = new ArrayList<String>();
+            ArrayList<String> lat = new ArrayList<String>();
+            ArrayList<String> lon = new ArrayList<String>();
+
+            rangeKey = new HashMap<>();
+            db = openOrCreateDatabase("sltp.db", MODE_PRIVATE, null);
+            Cursor cursor = db.rawQuery("select m_p_lat,m_p_long,m_fb_pillar_no from m_fb_Survey_pill_data where m_fb_id='" + fbid + "' order by m_fb_pillar_no", null);
+            if(cursor.getCount()>0)
+            {
+                cmvsta=true;
+            }
+            else {
+                cmvsta=false;
+            }
+            cursor.close();
+            db.close();
+            dbHelper.close();
+            //dbHelper.close();
+        } catch (Exception ee) {
+            ee.printStackTrace();
+        }
+        return cmvsta;
+    }
+    private void addSurveyPointtoMap(double key, double value, String pillno,int Status) {
+        if(Status==0)
+        {
+            BitmapDrawable bitmapdraw = (BitmapDrawable) getResources().getDrawable(R.drawable.green);
+            Bitmap b = bitmapdraw.getBitmap();
+            Bitmap smallMarker = Bitmap.createScaledBitmap(b, 80, 80, false);
+            googleMap.addMarker(new MarkerOptions().position(
+                    new LatLng(key, value)).title("Pillar No:" + pillno).snippet("Lat:" + key +",Long:" + value+ ",Status:" + "Existing").icon(BitmapDescriptorFactory.fromBitmap(smallMarker)));
+        }else if(Status==1)
+        {
+            BitmapDrawable bitmapdraw = (BitmapDrawable) getResources().getDrawable(R.drawable.red);
+            Bitmap b = bitmapdraw.getBitmap();
+            Bitmap smallMarker = Bitmap.createScaledBitmap(b, 80, 80, false);
+            googleMap.addMarker(new MarkerOptions().position(
+                    new LatLng(key, value)).title("Pillar No:" + pillno).snippet("Lat:" + key + ",Long:" + value+ ",Status:" + "Rejected").icon(BitmapDescriptorFactory.fromBitmap(smallMarker)));
+        }else if(Status==2)
+        {
+            BitmapDrawable bitmapdraw = (BitmapDrawable) getResources().getDrawable(R.drawable.blue);
+            Bitmap b = bitmapdraw.getBitmap();
+            Bitmap smallMarker = Bitmap.createScaledBitmap(b, 80, 80, false);
+            googleMap.addMarker(new MarkerOptions().position(
+                    new LatLng(key, value)).title("Pillar No:" + pillno).snippet("Lat:" + key + ",Long:" + value+ ",Status:" + "Proposed").icon(BitmapDescriptorFactory.fromBitmap(smallMarker)));
+        }else
+        {
+
+        }
+
+    }
+    private void getSurveyPointData(String fbid)
+    {
+        try {
+            dbHelper.open();
+            ArrayList<String> pillarno = new ArrayList<String>();
+            ArrayList<String> lat = new ArrayList<String>();
+            ArrayList<String> lon = new ArrayList<String>();
+            ArrayList<String> status = new ArrayList<String>();
+
+            rangeKey = new HashMap<>();
+            db = openOrCreateDatabase("sltp.db", MODE_PRIVATE, null);
+            Cursor cursor = db.rawQuery("select m_p_lat,m_p_long,m_fb_pillar_no,m_pillar_avl_sts from m_fb_Survey_pill_data where m_fb_id='" + fbid + "' order by m_fb_pillar_no", null);
+            if(cursor.getCount()>0) {
+                if (cursor.moveToFirst()) {
+                    do {
+                        pillarno.add(cursor.getString(cursor.getColumnIndex("m_fb_pillar_no")));
+                        lat.add(cursor.getString(cursor.getColumnIndex("m_p_lat")));
+                        lon.add(cursor.getString(cursor.getColumnIndex("m_p_long")));
+                        status.add(cursor.getString(cursor.getColumnIndex("m_pillar_avl_sts")));
+                    } while (cursor.moveToNext());
+                }
+                cmvsta=true;
+                cursor.close();
+                db.close();
+                for (int j = 0; j < pillarno.size(); j++) {
+                    addSurveyPointtoMap(Double.parseDouble(lat.get(j)), Double.parseDouble(lon.get(j)), pillarno.get(j),Integer.parseInt(status.get(j)));
+                }
+            }else{
+                cmvsta=false;
+            }
+            //dbHelper.close();
+        } catch (Exception ee) {
+            ee.printStackTrace();
         }
     }
 

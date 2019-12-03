@@ -1,13 +1,22 @@
 <resources>
-    <string name="app_name">FRJVC</string>
-    <string name="booki">FRJVC</string>
-    <string name="welcome_back">Welcome to FRJVC</string>
+    <color name="transparent">#00000000</color>
+    <string name="app_name">GFLO</string>
+    <string name="booki">GFLO</string>
+    <string name="welcome_back">Geo-referencing of Forest Land,Odisha</string>
     <string name="forgot">Forgot Password?</string>
     <string name="login">Login</string>
     <string name="email">User ID</string>
     <string name="password">Password</string>
-    <color name="transparent">#00000000</color>
     <string name="iplink">http://odishaforestlandsurvey.in</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="client_id">3V7GEmsSwNCJMrQQ</string>
+    <string name="redirect_uri">https://sparcindia.com</string>
+
+    <string name="StreetMapMenu">Streets</string>
+    <string name="TopoMenu">Topographic</string>
+    <string name="Imagery">Imagery</string>
+    <string name="Default">Default</string>
+    <string name="Download">Your file is already available.If you still want to download please click OK button.</string>
+    <string name="Save">If you want to continue press OK.</string>
 </resources>

@@ -15,9 +15,11 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
-
     <style name="ProgressBarStyle">
         <item name="colorAccent">@color/colorProgressBar</item>
+    </style>
+    <style name="MyAlertDialogStyle" parent="Theme.AppCompat.Light.Dialog.Alert">
+        <item name="colorAccent">@color/colorBackground</item>
     </style>
     <style name="MyMaterialTheme" parent="MyMaterialTheme.Base">
         <item name="android:windowContentTransitions">true</item>
@@ -27,8 +29,8 @@
         <item name="android:windowSharedElementExitTransition">@android:transition/move</item>
     </style>
     <style name="CustomTilStyle" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
-        <item name="android:textColorHint">@color/colorPrimaryDark</item>
-        <item name="boxStrokeColor">@color/colorPrimaryDark</item>
+        <item name="android:textColorHint">@color/color1</item>
+        <item name="boxStrokeColor">@color/color1</item>
         <item name="colorControlNormal">@color/white</item>
         <item name="colorControlActivated">@color/white</item>
         <item name="colorControlHighlight">@color/white</item>
@@ -59,6 +61,8 @@
         <item name="android:topBright">@color/transparent</item>
         <item name="android:topDark">@color/transparent</item>
     </style>
-
+    <style name="DialogAnimation">
+        <item name="android:windowEnterAnimation">@anim/slide_up</item>
+    </style>
 
 </resources>

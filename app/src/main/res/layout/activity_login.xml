@@ -4,7 +4,7 @@
     android:id="@+id/rootView"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorBackground"
+    android:background="@drawable/loginbackground"
     tools:context=".LoginActivity">
 
     <ImageView
@@ -23,8 +23,8 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="50dp"
         android:text="@string/booki"
-        android:textColor="@color/colorSplashText"
-        android:textSize="16dp" />
+        android:textColor="@color/color1"
+        android:textSize="30dp" />
 
     <ProgressBar
         android:id="@+id/loadingProgressBar"
@@ -53,6 +53,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/welcome_back"
+            android:textAlignment="center"
             android:textColor="@color/cast_expanded_controller_background_color"
             android:textSize="25sp"
             android:textStyle="bold" />
@@ -78,8 +79,8 @@
                     android:layout_height="wrap_content"
                     android:background="@color/white"
                     android:hint="@string/email"
-                    android:textColor="@color/colorBackground"
-                    android:textColorHint="@color/colorBackground"
+                    android:textColor="@color/color1"
+                    android:textColorHint="@color/color1"
                     android:textSize="20sp"
                     android:maxLines="1"
                     android:singleLine="true"/>
@@ -99,8 +100,8 @@
                     android:background="@color/white"
                     android:hint="@string/password"
                     android:inputType="textPassword"
-                    android:textColor="@color/colorBackground"
-                    android:textColorHint="@color/colorBackground"
+                    android:textColor="@color/color1"
+                    android:textColorHint="@color/color1"
                     android:textSize="20sp"
                     android:maxLines="1"
                     android:singleLine="true"/>
@@ -115,10 +116,9 @@
             android:layout_above="@+id/skipTextView"
             android:layout_marginBottom="5dp"
             android:background="@drawable/button_drawable"
-            android:fontFamily="@font/abeezee"
             android:text="@string/login"
             android:textAllCaps="false"
-            android:textColor="@color/colorAccent"
+            android:textColor="@color/white"
             android:textSize="16sp" />
 
         <TextView

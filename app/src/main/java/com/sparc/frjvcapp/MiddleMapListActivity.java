@@ -10,6 +10,15 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+import com.sparc.frjvcapp.pojo.M_fb;
+import com.sparc.frjvcapp.pojo.M_survey_pillar_data;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -30,10 +39,10 @@ public class MiddleMapListActivity extends AppCompatActivity {
 
     public static final String data = "data";
     public static final String userlogin = "userlogin";
-    ImageView data_view, map_view, sync;
+    ImageView data_view, map_view, sync, download;
     SQLiteDatabase db;
     DbHelper dbHelper;
-    String divid, rangeid, fbid, userid,kmlstatus;
+    String divid, rangeid, fbid, userid, kmlstatus;
     JSONArray jsonArray = new JSONArray();
     JSONObject fp_data = new JSONObject();
 
@@ -56,14 +65,15 @@ public class MiddleMapListActivity extends AppCompatActivity {
         data_view = findViewById(R.id.dataview);
         map_view = findViewById(R.id.mapview);
         sync = findViewById(R.id.sync);
-        Intent i= getIntent();
-        kmlstatus=i.getStringExtra("kml_status");
+        download = findViewById(R.id.download);
+        Intent i = getIntent();
+        kmlstatus = i.getStringExtra("kml_status");
 
         map_view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent i = new Intent(getApplicationContext(), ListMapActivity.class);
-                i.putExtra("kml_status",kmlstatus);
+                i.putExtra("kml_status", kmlstatus);
                 startActivity(i);
 
             }
@@ -72,7 +82,7 @@ public class MiddleMapListActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent i = new Intent(getApplicationContext(), ListDataViewActivity.class);
-                i.putExtra("kml_status",kmlstatus);
+                i.putExtra("kml_status", kmlstatus);
                 startActivity(i);
             }
         });
@@ -84,7 +94,79 @@ public class MiddleMapListActivity extends AppCompatActivity {
 
             }
         });
+        download.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(CheckDataAvalability()) {
+                getDataForSurveyPoints(fbid);
+                }else{
+
+                }
+            }
+        });
     }
+
+    private void getDataForSurveyPoints(String fbid) {
+        try {
+            RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
+            String URL = "http://111.93.174.107/sltp/api/values/getPillarPointDetails/" + fbid;
+            StringRequest stringRequest = new StringRequest(Request.Method.GET, URL, new Response.Listener<String>() {
+                @Override
+                public void onResponse(String response) {
+                    try {
+                        JSONArray jsonArray = new JSONArray(response);
+                        for (int i = 0; i < jsonArray.length(); i++) {
+                            JSONObject object = jsonArray.getJSONObject(i);
+                            M_survey_pillar_data m_fb = new M_survey_pillar_data(object.getString("latitude"), object.getString("longitude"), object.getString("pillar_no"), "", fbid, object.getString("status"));//object.getString("point_path")
+                                dbHelper.open();
+                                dbHelper.insertSurveyedPointDataData(m_fb);
+                                dbHelper.close();
+                                Toast.makeText(getApplicationContext(), "The Survey Point Data is downloaded.", Toast.LENGTH_SHORT).show();
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        Toast.makeText(getApplicationContext(), "you have no points.", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Toast.makeText(getApplicationContext(), "Server Error Try Again", Toast.LENGTH_SHORT).show();
+                }
+            }) {
+                @Override
+                public String getBodyContentType() {
+                    return "application/json; charset=utf-8";
+                }
+            };
+
+            requestQueue.add(stringRequest);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private boolean CheckDataAvalability() {
+        db = openOrCreateDatabase("sltp.db", MODE_PRIVATE, null);
+        boolean b=false;
+        Cursor cursor = db.rawQuery("select * from m_fb_Survey_pill_data", null);
+        try {
+            if (cursor.getCount() > 0) {
+                db.execSQL("delete from m_fb_Survey_pill_data");
+                b = true;
+            } else {
+                b = true;
+            }
+        }catch (Exception ee)
+        {
+            ee.printStackTrace();
+        }finally {
+            cursor.close();
+            db.close();
+        }
+        return b;
+    }
+
 
     private void getDataforExcel(String divid, String rangeid, String fbid, String userid) {
         db = openOrCreateDatabase("sltp.db", MODE_PRIVATE, null);

@@ -49,6 +49,8 @@ import java.io.FileOutputStream;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import retrofit2.http.HTTP;
 
@@ -80,7 +82,11 @@ public class LoginActivity extends AppCompatActivity {
             "uid TEXT," +
             "point_no INTEGER," +
             "img_status TEXT," +
-            "delete_status TEXT)";
+            "delete_status TEXT," +
+            "shifting_status TEXT," +
+            "surv_direction TEXT," +
+            "p_accuracy TEXT)";
+
     ProgressDialog progressDialog;
     ProgressDialog progress;
     DbHelper dbHelper;
@@ -96,6 +102,10 @@ public class LoginActivity extends AppCompatActivity {
     private String password;
     private DbHelper.DatabaseHelper mDbHelper;
     private SQLiteDatabase mDb;
+    ArrayList<Integer> headlist = new ArrayList<>();
+    ArrayList<Integer> subheadlist = new ArrayList<>();
+    int[] head=new int[]{1, 2, 3,12};
+    int[] subhead=new int[]{4,5,6,7,10,11};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -104,11 +114,10 @@ public class LoginActivity extends AppCompatActivity {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_login);
-        Log.d("login", "service");
+        //Log.d("login", "service");
         dbHelper = new DbHelper(this);
         mDb = openOrCreateDatabase("sltp.db", MODE_PRIVATE, null);
         mDb.execSQL(CREATE_m_pillar_reg_Table);
-
 
         initViews();
         new CountDownTimer(3000, 1000) {
@@ -136,13 +145,18 @@ public class LoginActivity extends AppCompatActivity {
         login = findViewById(R.id.loginButton);
         // txtemail.setText("ROU202");
         //txtpassword.setText("jpzr5943EQ");
-
+        for (int id: head) {
+            headlist.add(id);
+        }
+        for (int id: subhead) {
+            subheadlist.add(id);
+        }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (hasPermissions()) {
                 SharedPreferences sharedPreferences = getSharedPreferences(userlogin, 0);
                 if (!sharedPreferences.getString("uemail", "0").equals("0")) {
-                    Intent intent = new Intent(getApplicationContext(), UserProfileActivity.class);
+                    Intent intent = new Intent(getApplicationContext(), MainContainerActivity.class);
                     startActivity(intent);
                     finish();
                 }
@@ -245,7 +259,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private void startAnimation() {
         ViewPropertyAnimator viewPropertyAnimator = bookIconImageView.animate();
-        viewPropertyAnimator.x(50f);
+        //viewPropertyAnimator.x(50f);
         viewPropertyAnimator.y(100f);
         viewPropertyAnimator.setDuration(1000);
         viewPropertyAnimator.setListener(new Animator.AnimatorListener() {
@@ -275,45 +289,76 @@ public class LoginActivity extends AppCompatActivity {
         try {
             RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
             String URL = "http://odishaforestlandsurvey.in/api/values/auth/" + txtemail.getText().toString() + "/" + pass;
-            progressDialog = ProgressDialog.show(LoginActivity.this, "", "Please wait...You are logging in to FRJVC", false);
-            StringRequest stringRequest = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
-                @Override
-                public void onResponse(String response) {
-                    try {
-                        JSONArray arr = new JSONArray(response);
-                        if (arr.length() > 0) {
-                            for (int i = 0; i < arr.length(); i++) {
-                                progressDialog.dismiss();
-                                JSONObject jsonobject = arr.getJSONObject(i);
-                                Intent intent = new Intent(getApplicationContext(), UserProfileActivity.class);
-                                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                                SharedPreferences sharedPreferences = getSharedPreferences(userlogin, 0);
-                                SharedPreferences.Editor editor = sharedPreferences.edit();
-                                editor.clear();
-                                editor.putString("uemail", txtemail.getText().toString());
-                                editor.putString("upass", txtpassword.getText().toString());
-                                editor.putString("uname", jsonobject.getString("chrv_name"));
-                                editor.putString("upos", jsonobject.getString("chrv_designation_nm"));
+            //http://odishaforestlandsurvey.in/api/values/auth/
+            progressDialog = new ProgressDialog(this , R.style.MyAlertDialogStyle);
+            progressDialog.setMessage("Please wait...You are logging in to GFLO");
+            progressDialog.show();
+            //progressDialog = ProgressDialog.show(LoginActivity.this, "", "Please wait...You are logging in to GFLO", false);
+            StringRequest stringRequest = new StringRequest(Request.Method.POST, URL, response -> {
+                try {
+                    JSONArray arr = new JSONArray(response);
+                    if (arr.length() > 0) {
+                        for (int i = 0; i < arr.length(); i++) {
+                            progressDialog.dismiss();
+                            JSONObject jsonobject = arr.getJSONObject(i);
+                            Intent intent = new Intent(getApplicationContext(), MainContainerActivity.class);
+                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                            SharedPreferences sharedPreferences = getSharedPreferences(userlogin, 0);
+                            SharedPreferences.Editor editor = sharedPreferences.edit();
+                            editor.clear();
+                            editor.putString("uemail", txtemail.getText().toString());
+                            editor.putString("upass", txtpassword.getText().toString());
+                            editor.putString("uname", jsonobject.getString("chrv_name"));
+                            editor.putString("upos", jsonobject.getString("chrv_designation_nm"));
+                            if(Integer.parseInt(jsonobject.getString("circle_id"))==0)
+                            {
+                                editor.putString("ucir", "");
+                                editor.putString("udivid","");
+                                editor.putString("udivname", "");
+                            }else{
                                 editor.putString("ucir", jsonobject.getString("chrv_circle_nm"));
-                                editor.putString("uid", jsonobject.getString("chrv_email"));
                                 editor.putString("udivid", jsonobject.getString("div_id"));
                                 editor.putString("udivname", jsonobject.getString("chrv_division_nm"));
-                                //editor.putString("userid", jsonobject.getString("div_id"));
-
-                                editor.commit();
-                                insertrangeData(jsonobject.getString("div_id"));
-                                startActivity(intent);
                             }
-                        } else {
-                            progressDialog.dismiss();
-                            Toast.makeText(LoginActivity.this, "Invalid Login", Toast.LENGTH_SHORT).show();
-                        }
 
-                    } catch (JSONException e) {
-                        e.printStackTrace();
+                            editor.putString("uid", jsonobject.getString("chrv_email"));
+                            editor.putString("userdivid", jsonobject.getString("desig_id"));
+                            editor.apply();
+                            if(subheadlist.contains(Integer.parseInt(jsonobject.getString("desig_id"))))
+                            {
+                                //editor.putString("userdivid", jsonobject.getString("chrv_division_nm"));
+                                insertrangeData(jsonobject.getString("div_id"));
+                            }
+                            startActivity(intent);
+
+                            /*Intent intent = new Intent(getApplicationContext(), UserProfileActivity.class);
+                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                            SharedPreferences sharedPreferences = getSharedPreferences(userlogin, 0);
+                            SharedPreferences.Editor editor = sharedPreferences.edit();
+                            editor.clear();
+                            editor.putString("uemail", txtemail.getText().toString());
+                            editor.putString("upass", txtpassword.getText().toString());
+                            editor.putString("uname", jsonobject.getString("chrv_name"));
+                            editor.putString("upos", jsonobject.getString("chrv_designation_nm"));
+                            editor.putString("ucir", jsonobject.getString("chrv_circle_nm"));
+                            editor.putString("uid", jsonobject.getString("chrv_email"));
+                            editor.putString("udivid", jsonobject.getString("div_id"));
+                            editor.putString("udivname", jsonobject.getString("chrv_division_nm"));
+                            //editor.putString("userid", jsonobject.getString("div_id"));
+
+                            editor.commit();
+                            insertrangeData(jsonobject.getString("div_id"));
+                            startActivity(intent);*/
+                        }
+                    } else {
                         progressDialog.dismiss();
                         Toast.makeText(LoginActivity.this, "Invalid Login", Toast.LENGTH_SHORT).show();
                     }
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    progressDialog.dismiss();
+                    Toast.makeText(LoginActivity.this, "Invalid Login", Toast.LENGTH_SHORT).show();
                 }
             }, new Response.ErrorListener() {
                 @Override
@@ -395,7 +440,7 @@ public class LoginActivity extends AppCompatActivity {
                         for (int i = 0; i < jsonArray.length(); i++) {
                             JSONObject object = jsonArray.getJSONObject(i);
 
-                            M_fb m_fb = new M_fb(object.getString("fb"), object.getString("fid"), object.getString("rid"), div_id, object.getString("fb_type"), object.getString("cmv_path"), object.getString("mmv_path"));
+                            M_fb m_fb = new M_fb(object.getString("fb"), object.getString("fid"), object.getString("rid"), div_id, object.getString("fb_type"), object.getString("cmv_path"), object.getString("mmv_path"),"");//object.getString("point_path")
                             dbHelper.open();
                             dbHelper.inserFBData(m_fb);
                             dbHelper.close();

@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+    <TextView
+        android:id="@+id/name_textView"
+        android:layout_width="match_parent"
+        android:layout_height="43dp"
+        android:layout_weight="1"
+        android:background="@color/colorBackground"
+        android:drawableLeft="@drawable/ic_view_list_black_24dp"
+        android:drawablePadding="5dp"
+        android:drawableTint="#fff"
+
+        android:drawableRight="@drawable/ic_close_black_24dp"
+        android:paddingRight="10dp"
+        android:gravity="left|center"
+        android:paddingLeft="10dp"
+        android:text="Legend"
+        android:textColor="#fff"
+        android:textSize="18dp" />
+    <ScrollView
+        android:layout_width="fill_parent"
+        android:layout_height="400dp"
+        android:layout_below="@+id/name_textView">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+          <!--  <TextView
+                android:id="@+id/textStateBoundary"
+                android:layout_marginTop="20dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="left|center"
+                android:text="State Boundary"
+                android:textColor="#000000"
+
+                android:layout_marginLeft="10dip"
+                />
+
+            <ImageView
+                android:id="@+id/stateLegend"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/textStateBoundary"
+                android:layout_marginLeft="10dip"
+                android:layout_marginTop="15dip"
+                android:scaleType="fitXY"
+
+                />
+            &lt;!&ndash;android:src="@drawable/state"&ndash;&gt;
+            <TextView
+                android:id="@+id/textDistrictBoundary"
+                android:layout_marginTop="20dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="left|center"
+                android:text="Division Boundary"
+                android:textColor="#000000"
+
+                android:layout_marginLeft="10dip"
+                />
+            <ImageView
+                android:id="@+id/distLegend"
+                android:layout_below="@+id/textDistrictBoundary"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dip"
+                android:scaleType="fitXY"
+
+                android:layout_marginLeft="10dip"/>
+
+           &lt;!&ndash; android:src="@drawable/dist"&ndash;&gt;
+            <TextView
+                android:id="@+id/textUlbBoundary"
+                android:layout_marginTop="20dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="left|center"
+                android:text="Range Boundary"
+                android:textColor="#000000"
+
+                android:layout_marginLeft="10dip"
+                />
+
+            <ImageView
+                android:id="@+id/ulbLegend"
+                android:layout_width="12dp"
+                android:layout_height="10dp"
+                android:layout_below="@+id/textUlbBoundary"
+                android:layout_marginLeft="10dip"
+                android:layout_marginTop="15dip"
+                android:scaleType="fitXY"
+               />-->
+            <!--  android:src="@drawable/range"-->
+            <TextView
+                android:id="@+id/textSlumBoundary"
+                android:layout_marginTop="20dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="left|center"
+                android:text="CMV Boundry"
+                android:textColor="#000000"
+
+                android:layout_marginLeft="10dip"
+                />
+            <ImageView
+                android:id="@+id/mmv"
+                android:layout_below="@+id/textUlbBoundary"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dip"
+                android:scaleType="fitXY"
+                android:src="@drawable/mmv_legend"
+                android:layout_marginLeft="10dip"/>
+           <!--  android:src="@drawable/cmv"-->
+            <TextView
+                android:id="@+id/textHHBoundary"
+                android:layout_marginTop="20dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="left|center"
+                android:text="MMV Boundary"
+                android:textColor="#000000"
+
+                android:layout_marginLeft="10dip"
+                />
+            <ImageView
+                android:id="@+id/slumLegend"
+                android:layout_below="@+id/textUlbBoundary"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dip"
+                android:scaleType="fitXY"
+                android:src="@drawable/cmv_legend"
+                android:layout_marginLeft="10dip"/>
+
+            <!--android:src="@drawable/mmv"-->
+        </LinearLayout>
+    </ScrollView>
+</RelativeLayout>

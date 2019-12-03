@@ -62,13 +62,11 @@
             android:id="@+id/toggle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="bottom|end"
-            android:layout_marginLeft="10dp"
-            android:layout_marginBottom="10dp"
+            android:layout_gravity="bottom|center"
             android:orientation="horizontal"
             android:weightSum="4">
 
-            <LinearLayout
+<!--            <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="3"
@@ -109,8 +107,25 @@
                     android:layout_weight="1"
                     android:src="@drawable/add_point"
                     app:backgroundTint="@color/colorBackground" />
-            </LinearLayout>
+            </LinearLayout>-->
+            <android.support.design.widget.BottomNavigationView
+                android:id="@+id/navigationView"
+                android:layout_alignParentBottom="true"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="0dp"
+                android:layout_marginStart="0dp"
+                app:labelVisibilityMode="labeled"
+                android:background="?android:attr/windowBackground"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:itemBackground="@color/cardview_light_background"
+                app:itemIconTint="@color/colorBackground"
+                app:itemTextColor="@color/colorBackground"
+                app:menu="@menu/map_navigation"
 
+                />
 
         </LinearLayout>
     </LinearLayout>

@@ -16,6 +16,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.ContextThemeWrapper;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -47,15 +48,16 @@ public class SearchMapFile extends AppCompatActivity {
     MaterialSpinner division, range, fb;
     String divValue, rangeValue, fbValue, divid, forbname, fbid, userid, divCode, locationRange, rangeCode, vanName, vanValue, foresttype;
     //private TextInputEditText txtdivision;
-    Button submit, download;
+    Button submit, download,pillarpoint;
     DbHelper dbHelper;
     SQLiteDatabase db;
     ArrayList<String> array_list;
-    boolean cmvsta, mmvsta, cmvavls, mmvavls;
-    boolean cmvsta1, mmvsta1, cmvavls1, mmvavls1;
+    boolean cmvsta, mmvsta, cmvavls, mmvavls,pointkml;
+    boolean cmvsta1, mmvsta1, cmvavls1, mmvavls1, state, circle, ran, div;
     ProgressDialog progressDialog1;
     ArrayAdapter<String> divadapter;
     private String url = "http://odishaforestlandsurvey.in/kml/";
+    String master[] = {"State_Boundary.kml", "Circle_Boundary.kml", "Range_Boundary.kml", "Division_Boundary.kml"};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,6 +70,7 @@ public class SearchMapFile extends AppCompatActivity {
         fb = findViewById(R.id.fb);
         submit = findViewById(R.id.submit);
         download = findViewById(R.id.download);
+        pillarpoint=findViewById(R.id.dwnUpdatedPillar);
 
 
         SharedPreferences shared = getSharedPreferences(userlogin, MODE_PRIVATE);
@@ -123,7 +126,7 @@ public class SearchMapFile extends AppCompatActivity {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 fbValue = (String) parent.getItemAtPosition(position);
-                fbid = fbKey.get(fbValue);
+                fbid = fbKey.get(fbValue.substring(0,fbValue.lastIndexOf(" ")));
                 if (!fbValue.equals("Select Forest Block")) {
                     //componentMaster();
                     getForestType(rangeCode, divid, fbid);
@@ -135,6 +138,7 @@ public class SearchMapFile extends AppCompatActivity {
 
             }
         });
+
         download.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -145,27 +149,32 @@ public class SearchMapFile extends AppCompatActivity {
                     View sbView = snackbar.getView();
                     sbView.setBackgroundColor(ContextCompat.getColor(getApplicationContext(), R.color.colorPrimary));
                     snackbar.show();
-                } else if (rangeValue.equalsIgnoreCase("Select Range")) {
+                }
+                else if (rangeValue.equalsIgnoreCase("Select Range")) {
                     //Snackbar.make(view,"Select Component",Snackbar.LENGTH_LONG).show();
                     Snackbar snackbar = Snackbar.make(view, "Select Range", Snackbar.LENGTH_LONG);
                     View sbView = snackbar.getView();
                     sbView.setBackgroundColor(ContextCompat.getColor(getApplicationContext(), R.color.colorPrimary));
                     snackbar.show();
-                } else if (fbValue.equalsIgnoreCase("Select Forest Block")) {
+                }
+                else if (fbValue.equalsIgnoreCase("Select Forest Block")) {
                     Snackbar.make(view, "", Snackbar.LENGTH_LONG).show();
                     Snackbar snackbar = Snackbar.make(view, "Select Forest Block", Snackbar.LENGTH_LONG);
                     View sbView = snackbar.getView();
                     sbView.setBackgroundColor(ContextCompat.getColor(getApplicationContext(), R.color.colorPrimary));
                     snackbar.show();
-                } else {
+                }
+                else {
                     checkCMVData();
+                    //checkOtherData(); && state == true && circle == true && ran == true && div == true
                     if (cmvsta1 == true && mmvsta1 == true) {
                         DeleteRestoreData();
                     } else if (cmvsta1 == false && mmvsta1 == true) {
-                        DownloadCMVMMVFiles();
+                        Toast.makeText(SearchMapFile.this, "This FB doesn't have CMV file.You can proceed with MMV", Toast.LENGTH_SHORT).show();
+
 
                     } else if (cmvsta1 == true && mmvsta1 == false) {
-                        DownloadCMVMMVFiles();
+                        Toast.makeText(SearchMapFile.this, "This FB doesn't have MMV file.You can proceed with CMV", Toast.LENGTH_SHORT).show();
 
                     } else if (cmvsta1 == false && mmvsta1 == false) {
                         DownloadCMVMMVFiles();
@@ -173,7 +182,6 @@ public class SearchMapFile extends AppCompatActivity {
                 }
             }
         });
-
         submit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -195,10 +203,12 @@ public class SearchMapFile extends AppCompatActivity {
                     View sbView = snackbar.getView();
                     sbView.setBackgroundColor(ContextCompat.getColor(getApplicationContext(), R.color.colorPrimary));
                     snackbar.show();
-                } else {
+                }
+                else {
                     int a = checkData();
+                   // int b = checkOtherKMLData();//&& state == true && circle == true && ran == true && div == true
                     if (a == 1) {
-                        if (cmvsta == true && mmvsta == true) {
+                        if (cmvsta == true && mmvsta == true ) {
                             Intent i = new Intent(getApplicationContext(), MiddleMapListActivity.class);
                             i.putExtra("kml_status", "1");
                             SharedPreferences sharedPreferences = getSharedPreferences(data, 0);
@@ -213,14 +223,46 @@ public class SearchMapFile extends AppCompatActivity {
                             editor.apply();
                             startActivity(i);
                         } else if (cmvsta == false && mmvsta == true) {
-                            DownloadCMVMMVFiles();
-                            //Toast.makeText(getApplicationContext(), "CMV kml file for this fb is not available....Please contact to your admin", Toast.LENGTH_LONG).show();
+                            Intent i = new Intent(getApplicationContext(), MiddleMapListActivity.class);
+                            i.putExtra("kml_status", "1");
+                            SharedPreferences sharedPreferences = getSharedPreferences(data, 0);
+                            SharedPreferences.Editor editor = sharedPreferences.edit();
+                            editor.clear();
+                            editor.putString("fbrangecode", rangeCode);
+                            editor.putString("fbdivcode", divid);
+                            editor.putString("fbcode", fbid);
+                            editor.putString("fbtype", foresttype);
+                            editor.putString("fbname", forbname);
+                            editor.putString("userid", userid);
+                            editor.apply();
+                            startActivity(i);
+                            //state, circle, ran, divToast.makeText(getApplicationContext(), "CMV kml file for this fb is not available....Please contact to your admin", Toast.LENGTH_LONG).show();
                         } else if (cmvsta == true && mmvsta == false) {
-                            DownloadCMVMMVFiles();
-                            //Toast.makeText(getApplicationContext(), "MMV kml file for this fb is not available....Please contact to your admin", Toast.LENGTH_LONG).show();
-                        } else if (cmvsta == false && mmvsta == false) {
+                            Intent i = new Intent(getApplicationContext(), MiddleMapListActivity.class);
+                            i.putExtra("kml_status", "1");
+                            SharedPreferences sharedPreferences = getSharedPreferences(data, 0);
+                            SharedPreferences.Editor editor = sharedPreferences.edit();
+                            editor.clear();
+                            editor.putString("fbrangecode", rangeCode);
+                            editor.putString("fbdivcode", divid);
+                            editor.putString("fbcode", fbid);
+                            editor.putString("fbtype", foresttype);
+                            editor.putString("fbname", forbname);
+                            editor.putString("userid", userid);
+                            editor.apply();
+                            startActivity(i);
+                            //state, circle, ran, divToast.makeText(getApplicationContext(), "MMV kml file for this fb is not available....Please contact to your admin", Toast.LENGTH_LONG).show();
+                        } else{
                             Toast.makeText(getApplicationContext(), "CMV and MMV kml file for this fb is available....Please click the download button", Toast.LENGTH_LONG).show();
-                        }
+                        } /*else if (state == false) {
+                            Toast.makeText(getApplicationContext(), "State kml file is available....Please click the download button", Toast.LENGTH_LONG).show();
+                        } else if (circle == false) {
+                            Toast.makeText(getApplicationContext(), "Circle file is available....Please click the download button", Toast.LENGTH_LONG).show();
+                        } else if (div == false) {
+                            Toast.makeText(getApplicationContext(), "Division file is available....Please click the download button", Toast.LENGTH_LONG).show();
+                        } else if (ran == false) {
+                            Toast.makeText(getApplicationContext(), "Range kml file is available....Please click the download button", Toast.LENGTH_LONG).show();
+                        }*/
                     } else if (a == 2) {
                         if (cmvavls == false && mmvavls == false) {
                             Intent i = new Intent(getApplicationContext(), MiddleMapListActivity.class);
@@ -243,10 +285,48 @@ public class SearchMapFile extends AppCompatActivity {
                 }
             }
         });
+        pillarpoint.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                /*if (divValue.equalsIgnoreCase("Select Division")) {
+                    //Snackbar.make(view,"Select Project",Snackbar.LENGTH_LONG).show();
+                    Snackbar snackbar = Snackbar.make(view, "Select Division", Snackbar.LENGTH_LONG);
+                    View sbView = snackbar.getView();
+                    sbView.setBackgroundColor(ContextCompat.getColor(getApplicationContext(), R.color.colorPrimary));
+                    snackbar.show();
+                }
+                else if (rangeValue.equalsIgnoreCase("Select Range")) {
+                    //Snackbar.make(view,"Select Component",Snackbar.LENGTH_LONG).show();
+                    Snackbar snackbar = Snackbar.make(view, "Select Range", Snackbar.LENGTH_LONG);
+                    View sbView = snackbar.getView();
+                    sbView.setBackgroundColor(ContextCompat.getColor(getApplicationContext(), R.color.colorPrimary));
+                    snackbar.show();
+                }
+                else if (fbValue.equalsIgnoreCase("Select Forest Block")) {
+                    Snackbar.make(view, "", Snackbar.LENGTH_LONG).show();
+                    Snackbar snackbar = Snackbar.make(view, "Select Forest Block", Snackbar.LENGTH_LONG);
+                    View sbView = snackbar.getView();
+                    sbView.setBackgroundColor(ContextCompat.getColor(getApplicationContext(), R.color.colorPrimary));
+                    snackbar.show();
+                }
+                else {
+                    String name=checkPointKML();
+                    //checkOtherData(); && state == true && circle == true && ran == true && div == true
+                    if (pointkml == true && name!="null") {
+                        DeleteRestoreDataPointKML(name);
+                    }
+                    else if (pointkml == false && name!="null") {
+                        DownloadPointKMLFiles();
+                    }
+                }*/
+            }
+        });
+
 
     }
 
-    private void DownloadCMVMMVFiles() {
+    private void DownloadCMVMMVFiles() {//boolean state, boolean circle, boolean div, boolean ran
         ConnectivityManager cm = (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo nInfo = cm.getActiveNetworkInfo();
         if (nInfo != null && nInfo.isAvailable() && nInfo.isConnected()) {
@@ -258,7 +338,83 @@ public class SearchMapFile extends AppCompatActivity {
                     getCMVData(mfb.get(i));
                 }
             }
-        }else{
+           /* if (state == true && circle == true && ran == true && div == true) {
+
+            } else {
+                for (int i = 0; i < master.length; i++) {
+                    getCMVData(master[i]);
+                }
+            }*/
+        } else {
+            Toast.makeText(this, "Please check your Internet Connection.", Toast.LENGTH_SHORT).show();
+        }
+    }
+    private void DownloadPointKMLFiles() {//boolean state, boolean circle, boolean div, boolean ran
+        ConnectivityManager cm = (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo nInfo = cm.getActiveNetworkInfo();
+        if (nInfo != null && nInfo.isAvailable() && nInfo.isConnected()) {
+            dbHelper.open();
+            ArrayList<String> mfb = dbHelper.getUpdatedPillarPointFiles(divid, rangeCode, fbid);
+            String path = GetFilePath();
+            for (int i = 0; i < mfb.size(); i++) {
+                if (!mfb.get(i).equals("null")) {
+                    getKMLPointData(mfb.get(i));
+                }
+            }
+           /* if (state == true && circle == true && ran == true && div == true) {
+
+            } else {
+                for (int i = 0; i < master.length; i++) {
+                    getCMVData(master[i]);
+                }
+            }*/
+        } else {
+            Toast.makeText(this, "Please check your Internet Connection.", Toast.LENGTH_SHORT).show();
+        }
+    }
+    private void DownloadCMVFiles() {//boolean state, boolean circle, boolean div, boolean ran
+        ConnectivityManager cm = (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo nInfo = cm.getActiveNetworkInfo();
+        if (nInfo != null && nInfo.isAvailable() && nInfo.isConnected()) {
+            dbHelper.open();
+            ArrayList<String> mfb = dbHelper.getCMVFilesForDownload(divid, rangeCode, fbid);
+            String path = GetFilePath();
+            for (int i = 0; i < mfb.size(); i++) {
+                if (!mfb.get(i).equals("null")) {
+                    getCMVData(mfb.get(i));
+                }
+            }
+           /* if (state == true && circle == true && ran == true && div == true) {
+
+            } else {
+                for (int i = 0; i < master.length; i++) {
+                    getCMVData(master[i]);
+                }
+            }*/
+        } else {
+            Toast.makeText(this, "Please check your Internet Connection.", Toast.LENGTH_SHORT).show();
+        }
+    }
+    private void DownloadMMVFiles() {//boolean state, boolean circle, boolean div, boolean ran
+        ConnectivityManager cm = (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo nInfo = cm.getActiveNetworkInfo();
+        if (nInfo != null && nInfo.isAvailable() && nInfo.isConnected()) {
+            dbHelper.open();
+            ArrayList<String> mfb = dbHelper.getMMVFilesForDownload(divid, rangeCode, fbid);
+            String path = GetFilePath();
+            for (int i = 0; i < mfb.size(); i++) {
+                if (!mfb.get(i).equals("null")) {
+                    getCMVData(mfb.get(i));
+                }
+            }
+           /* if (state == true && circle == true && ran == true && div == true) {
+
+            } else {
+                for (int i = 0; i < master.length; i++) {
+                    getCMVData(master[i]);
+                }
+            }*/
+        } else {
             Toast.makeText(this, "Please check your Internet Connection.", Toast.LENGTH_SHORT).show();
         }
     }
@@ -301,22 +457,108 @@ public class SearchMapFile extends AppCompatActivity {
             }
 
             dbHelper.close();
-        }
-        catch (Exception ee) {
+        } catch (Exception ee) {
             ee.printStackTrace();
         }
         return status;
     }
 
+    /*private int checkOtherKMLData() {
+        int status = 0;
+        try {
+            dbHelper.open();
+            String path = GetFilePath();
+
+            for (int i = 0; i < master.length; i++) {
+                if (!master[i].equals("null")) {
+
+                    File f = new File(path + "/" + master[i]);
+                    if (i == 0) {
+                        if (f.exists()) {
+                            state = true;
+                        } else {
+                            state = false;
+                        }
+                    } else if (i == 1) {
+                        if (f.exists()) {
+                            circle = true;
+                        } else {
+                            circle = false;
+                        }
+                    } else if (i == 2) {
+                        if (f.exists()) {
+                            ran = true;
+                        } else {
+                            ran = false;
+                        }
+                    } else {
+                        if (f.exists()) {
+                            div = true;
+                        } else {
+                            div = false;
+                        }
+                    }
+                    status = 1;
+                } else {
+                    if (i == 0) {
+                        state = false;
+                    } else if (i == 1) {
+                        circle = false;
+                    } else if (i == 2) {
+                        div = false;
+                    } else {
+                        ran = false;
+                    }
+                    status = 2;
+                }
+                //progressDialog1.dismiss();
+
+            }
+
+            dbHelper.close();
+        } catch (Exception ee) {
+            ee.printStackTrace();
+        }
+        return status;
+    }*/
+
     private void DeleteRestoreData() {
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
-        alertDialogBuilder.setMessage("You already have CMV and MMV files for " + forbname + " .If you still want to download press Ok otherwise press Cancel.");
+        final View customLayout = getLayoutInflater().inflate(R.layout.download_custom_layout, null);
+        alertDialogBuilder.setView(customLayout);
+        //alertDialogBuilder.setMessage("You already have CMV and MMV files for " + forbname + " .If you still want to download press Ok otherwise press Cancel.");
         alertDialogBuilder.setPositiveButton("Ok",
                 new DialogInterface.OnClickListener() {
 
                     @Override
                     public void onClick(DialogInterface arg0, int arg1) {
                         DeleteCMVMMVData();
+                    }
+                });
+
+        alertDialogBuilder.setNegativeButton("Cancel",
+                new DialogInterface.OnClickListener() {
+
+                    @Override
+                    public void onClick(DialogInterface arg0, int arg1) {
+
+                    }
+                });
+
+        AlertDialog alertDialog = alertDialogBuilder.create();
+        alertDialog.show();
+    }
+    private void DeleteRestoreDataPointKML(String name) {
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+        final View customLayout = getLayoutInflater().inflate(R.layout.download_custom_layout, null);
+        alertDialogBuilder.setView(customLayout);
+        //alertDialogBuilder.setMessage("You already have CMV and MMV files for " + forbname + " .If you still want to download press Ok otherwise press Cancel.");
+        alertDialogBuilder.setPositiveButton("Ok",
+                new DialogInterface.OnClickListener() {
+
+                    @Override
+                    public void onClick(DialogInterface arg0, int arg1) {
+                        DeletePointKMLData(name);
                     }
                 });
 
@@ -340,9 +582,17 @@ public class SearchMapFile extends AppCompatActivity {
         for (File file : dir.listFiles())
             if (!file.isDirectory())
                 file.delete();
-        DownloadCMVMMVFiles();
+        DownloadCMVMMVFiles();//state, circle, ran, div
     }
-
+    private void DeletePointKMLData(String name) {
+        //ArrayList<String> mfb = dbHelper.getCMVMMVFiles(divid,rangeCode,fbid);
+        String path = GetFilePath()+name;
+        File dir = new File(path);
+        for (File file : dir.listFiles())
+            if (!file.isFile())
+                file.delete();
+        DownloadPointKMLFiles();//state, circle, ran, div
+    }
 
     private void checkCMVData() {
         try {
@@ -366,8 +616,7 @@ public class SearchMapFile extends AppCompatActivity {
                             mmvsta1 = false;
                         }
                     }
-                }
-                else {
+                } else {
                     cmvavls1 = false;
                     mmvavls1 = false;
                 }
@@ -380,6 +629,82 @@ public class SearchMapFile extends AppCompatActivity {
             ee.printStackTrace();
         }
     }
+    private String checkPointKML() {
+        String pointKMLname=null;
+        try {
+            dbHelper.open();
+
+            ArrayList<String> mfb = dbHelper.getUpdatedPillarPointFiles(divid, rangeCode, fbid);
+            String path = GetFilePath();
+                if (!mfb.get(0).equals("null")) {
+                    File f = new File(path + "/" + mfb.get(0));
+                    pointKMLname=mfb.get(0);
+                    if (f.exists())
+                    {
+                        pointkml  =true;
+                    }
+                    else
+                    {
+                        pointkml  =false;
+                    }
+                } else {
+                    pointkml  = false;
+                }
+            dbHelper.close();
+        } catch (Exception ee) {
+            ee.printStackTrace();
+        }
+        return pointKMLname;
+    }
+
+   /* private void checkOtherData() {
+        try {
+            dbHelper.open();
+            String path = GetFilePath();
+            for (int i = 0; i < master.length; i++) {
+                if (!master[i].equals("null")) {
+                    // getCMVData(mfb.get(i));
+                    File f = new File(path + "/" + master[i]);
+                    if (i == 0) {
+                        if (f.exists()) {
+                            state = true;
+                        } else {
+                            state = false;
+                        }
+                    } else if (i == 1) {
+                        if (f.exists()) {
+                            circle = true;
+                        } else {
+                            circle = false;
+                        }
+                    } else if (i == 2) {
+                        if (f.exists()) {
+                            ran = true;
+                        } else {
+                            ran = false;
+                        }
+                    } else {
+                        if (f.exists()) {
+                            div = true;
+                        } else {
+                            div = false;
+                        }
+                    }
+                } else {
+                    state = false;
+                    circle = false;
+                    div = false;
+                    ran = false;
+                }
+                //progressDialog1.dismiss();
+
+            }
+
+            dbHelper.close();
+        } catch (Exception ee) {
+            ee.printStackTrace();
+        }
+    }*/
 
     private String GetFilePath() {
         File directory = getExternalFilesDir(null);
@@ -395,6 +720,39 @@ public class SearchMapFile extends AppCompatActivity {
             } else {
                 AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
                 alertDialogBuilder.setMessage("CMV/MMV file for this fb is not available....");
+                alertDialogBuilder.setPositiveButton("Ok",
+                        new DialogInterface.OnClickListener() {
+
+                            @Override
+                            public void onClick(DialogInterface arg0, int arg1) {
+                            }
+                        });
+
+                alertDialogBuilder.setNegativeButton("Cancel",
+                        new DialogInterface.OnClickListener() {
+
+                            @Override
+                            public void onClick(DialogInterface arg0, int arg1) {
+
+                            }
+                        });
+
+                AlertDialog alertDialog = alertDialogBuilder.create();
+                alertDialog.show();
+                //Toast.makeText(this,"CMV/MMV file for this fb is not available....",Toast.LENGTH_LONG).show();
+            }
+        } catch (Exception ee) {
+            ee.printStackTrace();
+        }
+    }
+    public void getKMLPointData(String filename) {
+        try {
+            if (!filename.equals("null")) {
+
+                new SearchMapFile.DownloadPointFile().execute(url + filename);
+            } else {
+                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+                alertDialogBuilder.setMessage("Point KML file for this fb is not available....");
                 alertDialogBuilder.setPositiveButton("Ok",
                         new DialogInterface.OnClickListener() {
 
@@ -473,7 +831,7 @@ public class SearchMapFile extends AppCompatActivity {
         cursor.moveToFirst();
         if (cursor.moveToFirst()) {
             do {
-                fbName.add(cursor.getString(cursor.getColumnIndex("m_fb_name")));
+                fbName.add(cursor.getString(cursor.getColumnIndex("m_fb_name"))+" "+cursor.getString(cursor.getColumnIndex("fb_type")));
                 fbKey.put(cursor.getString(cursor.getColumnIndex("m_fb_name")),
                         cursor.getString(cursor.getColumnIndex("m_fb_id")));
 
@@ -496,7 +854,8 @@ public class SearchMapFile extends AppCompatActivity {
 
     }
 
-    private class DownloadFile extends AsyncTask<String, String, String> {
+    private class DownloadFile extends AsyncTask<String, String, String>
+    {
 
         private ProgressDialog progressDialog;
         private String fileName;
@@ -521,8 +880,10 @@ public class SearchMapFile extends AppCompatActivity {
         @Override
         protected String doInBackground(String... f_url) {
             int count;
-            if (f_url[0].substring(f_url[0].lastIndexOf('/') + 1) != "null" || f_url[0].substring(f_url[0].lastIndexOf('/') + 1) != "") {
-                try {
+            if (f_url[0].substring(f_url[0].lastIndexOf('/') + 1) != "null" || f_url[0].substring(f_url[0].lastIndexOf('/') + 1) != "")
+            {
+                try
+                {
                     URL url = new URL(f_url[0]);
                     URLConnection connection = url.openConnection();
                     connection.connect();
@@ -552,10 +913,99 @@ public class SearchMapFile extends AppCompatActivity {
                     input.close();
                     return "Downloaded at: " + folder + fileName;
 
-                } catch (Exception e) {
+                }
+                catch (Exception e) {
                     Log.e("Error: ", e.getMessage());
                 }
                 return "CMV/MMV files is missing in the server.Please contact your Admin";
+            } else {
+                return "These is some issue in downloading the file.Please contact your Admin";
+            }
+
+            //return "CMV/MMV files is missing in the server";
+        }
+
+        /**
+         * Updating progress bar
+         */
+        protected void onProgressUpdate(String... progress) {
+            // setting progress percentage
+            progressDialog.setProgress(Integer.parseInt(progress[0]));
+        }
+
+
+        @Override
+        protected void onPostExecute(String message) {
+            // dismiss the dialog after the file was downloaded
+            this.progressDialog.dismiss();
+            Toast.makeText(getApplicationContext(),
+                    message, Toast.LENGTH_LONG).show();
+        }
+    }
+    private class DownloadPointFile extends AsyncTask<String, String, String>
+    {
+
+        private ProgressDialog progressDialog;
+        private String fileName;
+        private String folder;
+        private boolean isDownloaded;
+
+        /**
+         * Before starting background thread
+         * Show Progress Bar Dialog
+         */
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            this.progressDialog = ProgressDialog.show(SearchMapFile.this, "", "Please wait...Your Point KML data is downloading", false);
+            this.progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+            this.progressDialog.setCancelable(false);
+        }
+
+        /**
+         * Downloading file in background thread
+         */
+        @Override
+        protected String doInBackground(String... f_url) {
+            int count;
+            if (f_url[0].substring(f_url[0].lastIndexOf('/') + 1) != "null" || f_url[0].substring(f_url[0].lastIndexOf('/') + 1) != "")
+            {
+                try
+                {
+                    URL url = new URL(f_url[0]);
+                    URLConnection connection = url.openConnection();
+                    connection.connect();
+                    int lengthOfFile = connection.getContentLength();
+                    InputStream input = new BufferedInputStream(url.openStream(), 8192);
+                    fileName = f_url[0].substring(f_url[0].lastIndexOf('/') + 1);
+                    File directory = getExternalFilesDir(null);
+                    String folder = directory.getAbsolutePath();
+
+                    if (!directory.exists()) {
+                        directory.mkdirs();
+                    }
+
+                    OutputStream output = new FileOutputStream(folder + "/" + fileName);
+
+                    byte[] data = new byte[16384];
+
+                    long total = 0;
+
+                    while ((count = input.read(data)) != -1) {
+                        total += count;
+                        publishProgress("" + (int) ((total * 100) / lengthOfFile));
+                        output.write(data, 0, count);
+                    }
+                    output.flush();
+                    output.close();
+                    input.close();
+                    return "Downloaded at: " + folder + fileName;
+
+                }
+                catch (Exception e) {
+                    Log.e("Error: ", e.getMessage());
+                }
+                return "Point KML files is missing in the server.Please contact your Admin";
             } else {
                 return "These is some issue in downloading the file.Please contact your Admin";
             }

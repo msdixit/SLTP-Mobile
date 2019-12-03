@@ -6,6 +6,7 @@
     android:layout_height="wrap_content"
     android:ellipsize="marquee"
     android:paddingLeft="5dp"
+    android:textStyle="bold"
     android:singleLine="true"
     android:textAlignment="inherit"
     />

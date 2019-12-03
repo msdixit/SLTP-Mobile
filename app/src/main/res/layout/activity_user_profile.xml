@@ -28,20 +28,20 @@
                 android:gravity="center"
                 android:orientation="vertical">
 
-                <ImageView
+              <!--  <ImageView
                     android:id="@+id/logout"
                     android:layout_width="40sp"
                     android:layout_height="40sp"
                     android:layout_gravity="right"
                     android:paddingRight="10dp"
-                    android:src="@drawable/ic_exit_to_app_black_24dp" />
+                    android:src="@drawable/ic_exit_to_app_black_24dp" />-->
 
                 <TextView
                     android:id="@+id/user_profile_name"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center"
-                    android:textColor="@color/color1"
+                    android:textColor="@color/white"
                     android:textSize="18sp"
                     android:textStyle="bold" />
 
@@ -50,7 +50,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center|top"
-                    android:textColor="@color/color1"
+                    android:textColor="@color/white"
                     android:textSize="15sp" />
 
                 <LinearLayout
@@ -68,7 +68,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
                         android:paddingLeft="5dp"
-                        android:textColor="@color/color1"
+                        android:textColor="@color/white"
                         android:textSize="15sp" />
                 </LinearLayout>
 
@@ -81,7 +81,7 @@
                 android:layout_height="0dp"
                 android:layout_margin="10dp"
                 android:layout_weight="1"
-                android:background="@drawable/profilecorner"
+                android:background="@drawable/other_box_cornner"
                 android:elevation="5dp"
                 android:orientation="horizontal"
                 android:weightSum="4">
@@ -90,18 +90,17 @@
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
-
                     android:gravity="center"
+                    android:textStyle="bold"
                     android:text="Circle :"
-                    android:textColor="@color/color1"
-                    android:textSize="13sp" />
+                    android:textColor="@color/colorBackground"
+                    android:textSize="16sp" />
 
                 <TextView
                     android:id="@+id/circle"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="3"
-
                     android:gravity="center|left"
                     android:textColor="@color/color1"
                     android:textSize="15sp" />
@@ -112,7 +111,7 @@
                 android:layout_height="0dp"
                 android:layout_margin="10dp"
                 android:layout_weight="1"
-                android:background="@drawable/profilecorner"
+                android:background="@drawable/other_box_cornner"
                 android:elevation="5dp"
                 android:orientation="horizontal"
                 android:weightSum="4">
@@ -123,9 +122,10 @@
                     android:layout_weight="1"
                     android:fontFamily="@font/abeezee"
                     android:gravity="center"
+                    android:textStyle="bold"
                     android:text="Division :"
-                    android:textColor="@color/color1"
-                    android:textSize="13sp" />
+                    android:textColor="@color/colorBackground"
+                    android:textSize="16sp" />
 
                 <TextView
                     android:id="@+id/div"
@@ -160,15 +160,12 @@
                     android:layout_height="match_parent"
                     android:layout_margin="10dp"
                     android:layout_weight="1"
-                    android:background="@drawable/profilecorner"
+                    android:background="@drawable/other_box_cornner"
                     android:elevation="5dp"
                     android:orientation="vertical"
                     android:weightSum="2"
 
                     >
-
-
-
                     <TextView
                         android:id="@+id/totrange"
                         android:layout_width="match_parent"
@@ -176,10 +173,12 @@
                         android:layout_weight="1"
                         android:fontFamily="@font/abeezee"
                         android:gravity="center|bottom"
-                        android:textColor="@color/color1"
-                        android:textColorHint="@color/colorbutton"
+                        android:textColor="@color/white"
+                        android:textColorHint="@color/white"
                         android:textSize="26dp"
-                        android:textStyle="bold" />
+                        android:textStyle="bold"
+                        android:background="@color/range"
+                        />
 
                     <TextView
                         android:layout_width="match_parent"
@@ -188,9 +187,10 @@
                         android:fontFamily="@font/abeezee"
                         android:gravity="center|top"
                         android:text="Range"
-                        android:textColor="@color/color1"
+                        android:textColor="@color/white"
                         android:textSize="18dp"
-                        android:textStyle="normal" />
+                        android:textStyle="normal"
+                        android:background="@color/range"/>
 
 
                 </LinearLayout>
@@ -212,9 +212,10 @@
                         android:layout_weight="1"
                         android:fontFamily="@font/abeezee"
                         android:gravity="center|bottom"
-                        android:textColor="@color/colorbutton"
+                        android:textColor="@color/white"
                         android:textSize="26dp"
-                        android:textStyle="bold" />
+                        android:textStyle="bold"
+                        android:background="@color/fb"/>
 
                     <TextView
 
@@ -224,9 +225,10 @@
                         android:fontFamily="@font/abeezee"
                         android:gravity="center|top"
                         android:text="Forest Block"
-                        android:textColor="@color/color1"
+                        android:textColor="@color/white"
                         android:textSize="18dp"
-                        android:textStyle="normal" />
+                        android:textStyle="normal"
+                        android:background="@color/fb"/>
 
                 </LinearLayout>
 
@@ -256,9 +258,10 @@
                         android:layout_weight="1"
                         android:fontFamily="@font/abeezee"
                         android:gravity="center|bottom"
-                        android:textColor="@color/colorbutton"
+                        android:textColor="@color/white"
                         android:textSize="26dp"
-                        android:textStyle="bold" />
+                        android:textStyle="bold"
+                        android:background="@color/tp"/>
 
                     <TextView
 
@@ -268,9 +271,10 @@
                         android:fontFamily="@font/abeezee"
                         android:gravity="center|top"
                         android:text="Total Point"
-                        android:textColor="@color/color1"
+                        android:textColor="@color/white"
                         android:textSize="18dp"
-                        android:textStyle="normal" />
+                        android:textStyle="normal"
+                        android:background="@color/tp"/>
                 </LinearLayout>
 
                 <LinearLayout
@@ -292,10 +296,11 @@
                         android:layout_weight="1"
                         android:fontFamily="@font/abeezee"
                         android:gravity="center|bottom"
-                        android:textColor="@color/color1"
+                        android:textColor="@color/white"
                         android:textColorHint="@color/colorbutton"
                         android:textSize="26dp"
-                        android:textStyle="bold" />
+                        android:textStyle="bold"
+                        android:background="@color/sp"/>
 
                     <TextView
 
@@ -305,9 +310,10 @@
                         android:fontFamily="@font/abeezee"
                         android:gravity="center|top"
                         android:text="Sync Point"
-                        android:textColor="@color/color1"
+                        android:textColor="@color/white"
                         android:textSize="18dp"
-                        android:textStyle="normal" />
+                        android:textStyle="normal"
+                        android:background="@color/sp"/>
                 </LinearLayout>
 
             </LinearLayout>

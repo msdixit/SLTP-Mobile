@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <group android:checkableBehavior="single">
+
+        <item
+            android:id="@+id/normal"
+            android:title="@string/Default"
+            app:itemIconTint="@color/colorBackground"
+            app:showAsAction="never"
+            />
+        <item
+            android:id="@+id/World_Topo"
+            android:title="@string/TopoMenu"
+            app:itemIconTint="@color/colorBackground"
+            app:showAsAction="never" />
+        <item
+            android:id="@+id/Imagery_Basemap"
+            app:itemIconTint="@color/colorBackground"
+            android:title="@string/Imagery"
+            app:showAsAction="never" />
+    </group>
+</menu>

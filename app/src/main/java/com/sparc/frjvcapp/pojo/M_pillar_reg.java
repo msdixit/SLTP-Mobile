@@ -1,6 +1,8 @@
 package com.sparc.frjvcapp.pojo;
 
-public class M_pillar_reg {
+import java.io.Serializable;
+
+public class M_pillar_reg implements Serializable {
     private String img_status;
     private String delete_status;
     private String d_id;
@@ -25,12 +27,37 @@ public class M_pillar_reg {
     private String fb_name;
     private String p_sl_no;
     private String uid;
+    private String shifting_status;
 
-    public M_pillar_reg(String d_id, String r_id, String fb_id,String p_sl_no, String p_lat, String p_long, String p_type, String p_cond, String p_rmk, String p_pic, String p_sts,String patch_no,String ring_no,String p_loc_type,String p_no,String p_paint_status,String fb_name,String uid,int point_no,String img_status,String delete_status) {
+    public String getSurv_direction() {
+        return surv_direction;
+    }
+
+    public void setSurv_direction(String surv_direction) {
+        this.surv_direction = surv_direction;
+    }
+
+    private String surv_direction;
+
+
+    public String getAccuracy() {
+        return p_accuracy;
+    }
+
+    public void setAccuracy(String p_accuracy) {
+        this.p_accuracy = p_accuracy;
+    }
+
+    private String p_accuracy;
+
+    public M_pillar_reg(String d_id, String r_id, String fb_id, String p_sl_no, String p_lat, String p_long, String p_type,
+                        String p_cond, String p_rmk, String p_pic, String p_sts, String patch_no, String ring_no, String p_loc_type,
+                        String p_no, String p_paint_status, String fb_name, String uid, int point_no, String img_status,
+                        String delete_status, String shifting_status, String surv_direction, String p_accuracy) {
         this.d_id = d_id;
         this.r_id = r_id;
         this.fb_id = fb_id;
-        this.p_sl_no=p_sl_no;
+        this.p_sl_no = p_sl_no;
         this.p_lat = p_lat;
         this.p_long = p_long;
         this.p_type = p_type;
@@ -38,16 +65,21 @@ public class M_pillar_reg {
         this.p_rmk = p_rmk;
         this.p_pic = p_pic;
         this.p_sts = p_sts;
-        this.patch_no=patch_no;
-        this.ring_no=ring_no;
-        this.p_loc_type=p_loc_type;
+        this.patch_no = patch_no;
+        this.ring_no = ring_no;
+        this.p_loc_type = p_loc_type;
         this.p_no = p_no;
-        this.p_paint_status=p_paint_status;
-        this.fb_name=fb_name;
-        this.uid=uid;
-        this.point_no=point_no;
-        this.img_status=img_status;
-        this.delete_status=delete_status;
+        this.p_paint_status = p_paint_status;
+        this.fb_name = fb_name;
+        this.uid = uid;
+        this.point_no = point_no;
+        this.img_status = img_status;
+        this.delete_status = delete_status;
+        this.shifting_status = shifting_status;
+        this.surv_direction = surv_direction;
+        /*,String surv_direction,String accuracy
+        this.surv_direction = surv_direction;*/
+        this.p_accuracy = p_accuracy;
     }
 
     public String getD_id() {
@@ -240,5 +272,13 @@ public class M_pillar_reg {
 
     public void setDelete_status(String delete_status) {
         this.delete_status = delete_status;
+    }
+
+    public String getShifting_status() {
+        return shifting_status;
+    }
+
+    public void setShifting_status(String shifting_status) {
+        this.shifting_status = shifting_status;
     }
 }

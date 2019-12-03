@@ -1,5 +1,7 @@
 package com.sparc.frjvcapp;
 
+import com.sparc.frjvcapp.pojo.Response1;
+
 import okhttp3.MultipartBody;
 import retrofit2.Call;
 import retrofit2.http.Multipart;

@@ -11,7 +11,6 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -33,6 +32,7 @@ import com.android.volley.toolbox.HttpHeaderParser;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.gson.Gson;
+import com.sparc.frjvcapp.pojo.Response1;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -61,7 +61,7 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class UserProfileActivity extends AppCompatActivity implements EasyPermissions.PermissionCallbacks {
-    public static final String userlogin = "userlogin";
+    public static final String userlogin = "coltlogin";
     private static final int WRITE_REQUEST_CODE = 300;
     private static final String TAG = UserProfileActivity.class.getSimpleName();
     TextView name, design, email, circle, division, totdiv, totrange, totfb, totfp;
@@ -70,11 +70,11 @@ public class UserProfileActivity extends AppCompatActivity implements EasyPermis
     SQLiteDatabase db;
     JSONArray jsonArray;
     JSONObject fp_data;
-    ProgressDialog progressDialog;
+    ProgressDialog progressDialog1,ProgreesDialog2;
     boolean doubleBackToExitPressedOnce = false;
     ImageView logout;
     private Button record, sync;
-    private String url = "http://203.129.207.130:5060/kml/";
+    private String url = "http://odishaforestlandsurvey.in/kml/";
     private DbHelper.DatabaseHelper mDbHelper;
 
     @Override
@@ -95,7 +95,7 @@ public class UserProfileActivity extends AppCompatActivity implements EasyPermis
         totrange = findViewById(R.id.totrange);
         totfb = findViewById(R.id.totfb);
         totfp = findViewById(R.id.totfp);
-        logout = findViewById(R.id.logout);
+
 
         SharedPreferences shared = getSharedPreferences(userlogin, MODE_PRIVATE);
         name.setText(shared.getString("uname", "0"));
@@ -115,9 +115,40 @@ public class UserProfileActivity extends AppCompatActivity implements EasyPermis
             }
         });
         sync.setOnClickListener(new View.OnClickListener() {
+            Cursor cursor,cursor1,cursor2;
             @Override
             public void onClick(View v) {
-                getDataforSync(divid,userid);
+                db = openOrCreateDatabase("sltp.db", MODE_PRIVATE, null);
+                try {
+                    cursor = db.rawQuery("select * from m_pillar_reg where uid='" + userid + "' and d_id='" + divid + "' and p_sts ='" + 0 + "' order by point_no", null);
+                    cursor1 = db.rawQuery("select * from m_survey_pillar_reg where uid='" + userid + "' and d_id='" + divid + "' and p_sts ='" + 0 + "' order by point_no", null);
+                    cursor2 = db.rawQuery("select * from m_shifting_pillar_reg where uid='" + userid + "' and sync_status ='" + 0 + "'", null);
+                    if (cursor.getCount() > 0) {
+                        getDataforSync(divid, userid);
+                    } else {
+                        Toast.makeText(getApplicationContext(), "You dont have any data for Synchronization", Toast.LENGTH_LONG).show();
+                    }
+                    if (cursor1.getCount() > 0) {
+
+                        getResurveyedPillarData(divid, userid);
+                    } else {
+                        Toast.makeText(getApplicationContext(), "You dont have any data for Synchronization", Toast.LENGTH_LONG).show();
+                    }
+                    if (cursor2.getCount() > 0) {
+                        getShiftinhDataforSync(userid);
+                    } else {
+                        Toast.makeText(getApplicationContext(), "You dont have any data for Synchronization", Toast.LENGTH_LONG).show();
+                    }
+                }catch (Exception ee)
+                {
+                    ee.printStackTrace();
+                }finally {
+                    cursor.close();
+                    cursor1.close();
+                    cursor2.close();
+                    db.close();
+
+                }
             }
         });
 
@@ -157,22 +188,7 @@ public class UserProfileActivity extends AppCompatActivity implements EasyPermis
         cursor3.close();
         db.close();
 
-        logout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                db = openOrCreateDatabase("sltp.db", MODE_PRIVATE, null);
-                db.execSQL("DELETE from m_fb");
-                db.delete("m_range",null,null);
-                db.close();
-                SharedPreferences sharedPreferences = getSharedPreferences(userlogin, 0);
-                SharedPreferences.Editor editor = sharedPreferences.edit();
-                editor.clear();
-                editor.apply();
-                Intent i = new Intent(getApplicationContext(), LoginActivity.class);
-                i.setFlags(i.FLAG_ACTIVITY_NEW_TASK | i.FLAG_ACTIVITY_CLEAR_TASK);
-                startActivity(i);
-            }
-        });
+
 
     }
 
@@ -219,7 +235,7 @@ public class UserProfileActivity extends AppCompatActivity implements EasyPermis
     }
 
     private void getDataforSync(String divid, String userid) {
-
+    try {
         jsonArray = new JSONArray();
         db = openOrCreateDatabase("sltp.db", MODE_PRIVATE, null);
         Cursor cursor = db.rawQuery("select * from m_pillar_reg where uid='" + userid + "' and d_id='" + divid + "' and p_sts ='" + 0 + "' order by point_no", null);
@@ -227,7 +243,8 @@ public class UserProfileActivity extends AppCompatActivity implements EasyPermis
 
             cursor.moveToFirst();
             if (cursor.moveToFirst()) {
-                progressDialog = ProgressDialog.show(UserProfileActivity.this, "", "Uploading files to server.....", false);
+
+                //progressDialog1 = ProgressDialog.show(UserProfileActivity.this, "", "Uploading files to server.....", false);
                 do {
                     try {
                         JSONObject json = new JSONObject();
@@ -251,6 +268,9 @@ public class UserProfileActivity extends AppCompatActivity implements EasyPermis
                         json.put("uid", cursor.getString(cursor.getColumnIndex("uid")));
                         json.put("img_status", cursor.getString(cursor.getColumnIndex("img_status")));
                         json.put("delete_status", cursor.getString(cursor.getColumnIndex("delete_status")));
+                        json.put("shifting_status", cursor.getString(cursor.getColumnIndex("shifting_status")));
+                        json.put("survey_dir", cursor.getString(cursor.getColumnIndex("surv_direction")));
+                        json.put("accuracy", cursor.getString(cursor.getColumnIndex("p_accuracy")));
                         jsonArray.put(json);
                     } catch (Exception ee) {
                         ee.printStackTrace();
@@ -259,98 +279,371 @@ public class UserProfileActivity extends AppCompatActivity implements EasyPermis
                 } while (cursor.moveToNext());
 
             }
+            sendDatatoServer(jsonArray);
         } else {
             Toast.makeText(getApplicationContext(), "You dont have any data for Synchronization", Toast.LENGTH_LONG).show();
         }
         cursor.close();
         db.close();
-        sendDatatoServer(jsonArray);
+    }catch (Exception ee)
+    {
+        ee.printStackTrace();
     }
 
-    public void sendDatatoServer(JSONArray jsonArray) {
-        ConnectivityManager cm = (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo nInfo = cm.getActiveNetworkInfo();
-        if (nInfo != null && nInfo.isAvailable() && nInfo.isConnected()) {
-            try {
-                fp_data = new JSONObject();
-                fp_data.put("fpdata", jsonArray);
-                RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
-                String URL = "http://odishaforestlandsurvey.in/api/values/addpillar";
-                requestQueue.getCache().remove(URL);
-                final String requestBody = fp_data.toString();
-                StringRequest stringRequest = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        // SendImageFile();
-                        db = openOrCreateDatabase("sltp.db", MODE_PRIVATE, null);
-                        Cursor c = db.rawQuery("update m_pillar_reg set p_sts='1' where uid='" + userid + "' and d_id='" + divid + "'", null);
-                        if (c.getCount() >= 0) {
-                            progressDialog.dismiss();
-                            Toast.makeText(UserProfileActivity.this, "Data Synchronization successfully completed", Toast.LENGTH_SHORT).show();
-                        }
-                        c.close();
-                        db.close();
-                    }
-                }, new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
+    }
+    private void getResurveyedPillarData(String divid, String userid) {
+    try {
+        jsonArray = new JSONArray();
+        db = openOrCreateDatabase("sltp.db", MODE_PRIVATE, null);
+        Cursor cursor = db.rawQuery("select * from m_survey_pillar_reg where uid='" + userid + "' and d_id='" + divid + "' and p_sts ='" + 0 + "' order by point_no", null);
+        if (cursor.getCount() > 0) {
 
-                    }
-                }) {
-                    @Override
-                    public String getBodyContentType() {
-                        return "application/json; charset=utf-8";
+            cursor.moveToFirst();
+            if (cursor.moveToFirst()) {
+                /*progressDialog1 = new ProgressDialog(this, R.style.MyAlertDialogStyle);
+                progressDialog1.setMessage("Uploading files to Server.....");
+                progressDialog1.show();*/
+                //progressDialog1 = ProgressDialog.show(UserProfileActivity.this, "", "Uploading files to server.....", false);
+                do {
+                    try {
+                        JSONObject json = new JSONObject();
+                        json.put("id", cursor.getString(cursor.getColumnIndex("point_no")));
+                        json.put("d_id", cursor.getString(cursor.getColumnIndex("d_id")));
+                        json.put("r_id", cursor.getString(cursor.getColumnIndex("r_id")));
+                        json.put("fb_id", cursor.getString(cursor.getColumnIndex("fb_id")));
+                        json.put("p_sl_no", cursor.getString(cursor.getColumnIndex("p_sl_no")));
+                        json.put("p_lat", cursor.getString(cursor.getColumnIndex("p_lat")));
+                        json.put("p_long", cursor.getString(cursor.getColumnIndex("p_long")));
+                        json.put("p_type", cursor.getString(cursor.getColumnIndex("p_type")));
+                        json.put("p_cond", cursor.getString(cursor.getColumnIndex("p_cond")));
+                        json.put("p_rmk", cursor.getString(cursor.getColumnIndex("p_rmk")));
+                        json.put("p_pic", cursor.getString(cursor.getColumnIndex("p_pic")));
+                        json.put("patch_no", cursor.getString(cursor.getColumnIndex("patch_no")));
+                        json.put("ring_no", cursor.getString(cursor.getColumnIndex("ring_no")));
+                        json.put("p_loc_type", cursor.getString(cursor.getColumnIndex("p_loc_type")));
+                        json.put("p_no", cursor.getString(cursor.getColumnIndex("p_no")));
+                        json.put("p_paint_status", cursor.getString(cursor.getColumnIndex("p_paint_status")));
+                        json.put("fb_name", cursor.getString(cursor.getColumnIndex("fb_name")));
+                        json.put("uid", cursor.getString(cursor.getColumnIndex("uid")));
+                        json.put("img_status", cursor.getString(cursor.getColumnIndex("img_status")));
+                        json.put("delete_status", cursor.getString(cursor.getColumnIndex("delete_status")));
+                        json.put("shifting_status", cursor.getString(cursor.getColumnIndex("shifting_status")));
+                        json.put("past_lat", cursor.getString(cursor.getColumnIndex("past_lat")));
+                        json.put("past_long", cursor.getString(cursor.getColumnIndex("past_long")));
+                        json.put("survey_dir", cursor.getString(cursor.getColumnIndex("surv_direction")));
+                        json.put("accuracy", cursor.getString(cursor.getColumnIndex("p_accuracy")));
+                        jsonArray.put(json);
+                    } catch (Exception ee) {
+                        ee.printStackTrace();
                     }
 
-                    @Override
-                    public byte[] getBody() throws AuthFailureError {
-                        try {
-                            return requestBody == null ? null : requestBody.getBytes("utf-8");
-                        } catch (UnsupportedEncodingException uee) {
-                            VolleyLog.wtf("Unsupported Encoding while trying to get the bytes of %s using %s", requestBody, "utf-8");
-                            return null;
-                        }
-                    }
+                } while (cursor.moveToNext());
 
-                    @Override
-                    protected Response<String> parseNetworkResponse(NetworkResponse response) {
-                        String responseString = "";
-                        if (response != null) {
-                            responseString = String.valueOf(response.statusCode);
-                            // can get more details such as response.headers
-                        }
-                        return Response.success(responseString, HttpHeaderParser.parseCacheHeaders(response));
-                    }
-                };
-                stringRequest.setRetryPolicy(new DefaultRetryPolicy(
-                        30000,
-                        DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
-                        DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-                requestQueue.add(stringRequest);
-            } catch (JSONException e) {
-                e.printStackTrace();
             }
+            sendOtherSurveyDatatoServer(jsonArray);
         } else {
-            Toast.makeText(UserProfileActivity.this, "You do not have Internet Connection", Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(), "You dont have any data for Synchronization", Toast.LENGTH_LONG).show();
+        }
+        cursor.close();
+        db.close();
+
+    }catch (Exception ee)
+    {
+        ee.printStackTrace();
+    }
+
+    }
+    private void getShiftinhDataforSync(String userid) {
+        try {
+            jsonArray = new JSONArray();
+            db = openOrCreateDatabase("sltp.db", MODE_PRIVATE, null);
+            Cursor cursor = db.rawQuery("select * from m_shifting_pillar_reg where uid='" + userid + "' and sync_status ='" + 0 + "'", null);
+            if (cursor.getCount() > 0) {
+
+                cursor.moveToFirst();
+                if (cursor.moveToFirst()) {
+               /* ProgreesDialog2 = new ProgressDialog(this , R.style.MyAlertDialogStyle);
+                ProgreesDialog2.setMessage("Uploading files to Server.....");
+                ProgreesDialog2.show();*/
+                    //ProgreesDialog2 = ProgressDialog.show(UserProfileActivity.this, "", "Uploading files to server.....", false);
+                    do {
+                        try {
+                            JSONObject json = new JSONObject();
+                            json.put("slat", cursor.getString(cursor.getColumnIndex("s_lat")));
+                            json.put("slong", cursor.getString(cursor.getColumnIndex("s_long")));
+                            json.put("sremark", cursor.getString(cursor.getColumnIndex("s_rmk")));
+                            json.put("spic", cursor.getString(cursor.getColumnIndex("s_pic")));
+                            json.put("spicstatus", cursor.getString(cursor.getColumnIndex("simg_status")));
+                            json.put("sfbname", cursor.getString(cursor.getColumnIndex("fb_name")));
+                            json.put("suid", cursor.getString(cursor.getColumnIndex("uid")));
+                            json.put("sfbid", cursor.getString(cursor.getColumnIndex("fb_id")));
+                            json.put("spno", cursor.getString(cursor.getColumnIndex("p_no")));
+                            json.put("ssyncsts", cursor.getString(cursor.getColumnIndex("sync_status")));
+                            json.put("sdelsts", cursor.getString(cursor.getColumnIndex("sdelete_status")));
+                            jsonArray.put(json);
+                        } catch (Exception ee) {
+                            ee.printStackTrace();
+                        }
+
+                    } while (cursor.moveToNext());
+
+                }
+            } else {
+                Toast.makeText(getApplicationContext(), "You dont have any data for Synchronization", Toast.LENGTH_LONG).show();
+            }
+            cursor.close();
+            db.close();
+            sendShiftingDatatoServer(jsonArray);
+        }catch (Exception ee)
+        {
+            ee.printStackTrace();
+        }
+    }
+    public void sendDatatoServer(JSONArray jsonArray) {
+        try {
+            ConnectivityManager cm = (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+            NetworkInfo nInfo = cm.getActiveNetworkInfo();
+            if (nInfo != null && nInfo.isAvailable() && nInfo.isConnected()) {
+                try {
+                    progressDialog1 = new ProgressDialog(this, R.style.MyAlertDialogStyle);
+                    progressDialog1.setMessage("Uploading files to Server.....");
+                    progressDialog1.show();
+                    fp_data = new JSONObject();
+                    fp_data.put("fpdata", jsonArray);
+                    RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
+                    String URL = "http://odishaforestlandsurvey.in/api/values/addpillar";
+                    requestQueue.getCache().remove(URL);
+                    final String requestBody = fp_data.toString();
+                    StringRequest stringRequest = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
+                        @Override
+                        public void onResponse(String response) {
+                            // SendImageFile();
+                            try {
+                                db = openOrCreateDatabase("sltp.db", MODE_PRIVATE, null);
+                                Cursor c = db.rawQuery("update m_pillar_reg set p_sts='1' where uid='" + userid + "' and d_id='" + divid + "'", null);
+                                if (c.getCount() >= 0) {
+                                    progressDialog1.dismiss();
+                                    Toast.makeText(UserProfileActivity.this, "Data Synchronization successfully completed", Toast.LENGTH_SHORT).show();
+                                }
+                                c.close();
+                                db.close();
+                            } catch (Exception ee) {
+                                ee.printStackTrace();
+                            }
+                            finally {
+                                progressDialog1.dismiss();
+                            }
+                        }
+                    }, new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            progressDialog1.dismiss();
+
+                        }
+                    }) {
+                        @Override
+                        public String getBodyContentType() {
+                            return "application/json; charset=utf-8";
+                        }
+
+                        @Override
+                        public byte[] getBody() throws AuthFailureError {
+                            try {
+                                return requestBody == null ? null : requestBody.getBytes("utf-8");
+                            } catch (UnsupportedEncodingException uee) {
+                                VolleyLog.wtf("Unsupported Encoding while trying to get the bytes of %s using %s", requestBody, "utf-8");
+                                return null;
+                            }
+                        }
+
+                        @Override
+                        protected Response<String> parseNetworkResponse(NetworkResponse response) {
+                            String responseString = "";
+                            if (response != null) {
+                                responseString = String.valueOf(response.statusCode);
+                                // can get more details such as response.headers
+                            }
+                            return Response.success(responseString, HttpHeaderParser.parseCacheHeaders(response));
+                        }
+                    };
+                    stringRequest.setRetryPolicy(new DefaultRetryPolicy(
+                            30000,
+                            DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                            DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+                    requestQueue.add(stringRequest);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            } else {
+                Toast.makeText(UserProfileActivity.this, "You do not have Internet Connection", Toast.LENGTH_LONG).show();
+            }
+        }catch (Exception ee)
+        {
+            ee.printStackTrace();
+        }
+    }
+    public void sendOtherSurveyDatatoServer(JSONArray jsonArray) {
+        try {
+            ConnectivityManager cm = (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+            NetworkInfo nInfo = cm.getActiveNetworkInfo();
+            if (nInfo != null && nInfo.isAvailable() && nInfo.isConnected()) {
+                try {
+                    progressDialog1 = new ProgressDialog(this, R.style.MyAlertDialogStyle);
+                    progressDialog1.setMessage("Uploading files to Server.....");
+                    progressDialog1.show();
+                    fp_data = new JSONObject();
+                    fp_data.put("fpdata", jsonArray);
+                    RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
+                    String URL = "http://odishaforestlandsurvey.in/api/values/confirmpillar";
+                    requestQueue.getCache().remove(URL);
+                    final String requestBody = fp_data.toString();
+                    StringRequest stringRequest = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
+                        @Override
+                        public void onResponse(String response) {
+                            // SendImageFile();
+                            try {
+                                db = openOrCreateDatabase("sltp.db", MODE_PRIVATE, null);
+                                Cursor c = db.rawQuery("update m_survey_pillar_reg set p_sts='1' where uid='" + userid + "' and d_id='" + divid + "'", null);
+                                if (c.getCount() >= 0) {
+                                    progressDialog1.dismiss();
+                                    Toast.makeText(UserProfileActivity.this, "Data Synchronization successfully completed", Toast.LENGTH_SHORT).show();
+                                }
+                                c.close();
+                                db.close();
+                            } catch (Exception ee) {
+                                ee.printStackTrace();
+                            }
+                        }
+                    }, new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+
+                        }
+                    }) {
+                        @Override
+                        public String getBodyContentType() {
+                            return "application/json; charset=utf-8";
+                        }
+
+                        @Override
+                        public byte[] getBody() throws AuthFailureError {
+                            try {
+                                return requestBody == null ? null : requestBody.getBytes("utf-8");
+                            } catch (UnsupportedEncodingException uee) {
+                                VolleyLog.wtf("Unsupported Encoding while trying to get the bytes of %s using %s", requestBody, "utf-8");
+                                return null;
+                            }
+                        }
+
+                        @Override
+                        protected Response<String> parseNetworkResponse(NetworkResponse response) {
+                            String responseString = "";
+                            if (response != null) {
+                                responseString = String.valueOf(response.statusCode);
+                                // can get more details such as response.headers
+                            }
+                            return Response.success(responseString, HttpHeaderParser.parseCacheHeaders(response));
+                        }
+                    };
+                    stringRequest.setRetryPolicy(new DefaultRetryPolicy(
+                            30000,
+                            DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                            DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+                    requestQueue.add(stringRequest);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            } else {
+                Toast.makeText(UserProfileActivity.this, "You do not have Internet Connection", Toast.LENGTH_LONG).show();
+            }
+        }catch (Exception ee)
+        {
+            ee.printStackTrace();
+        }
+    }
+    public void sendShiftingDatatoServer(JSONArray jsonArray) {
+        try {
+            ConnectivityManager cm = (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+            NetworkInfo nInfo = cm.getActiveNetworkInfo();
+            if (nInfo != null && nInfo.isAvailable() && nInfo.isConnected()) {
+                try {
+                    progressDialog1 = new ProgressDialog(this, R.style.MyAlertDialogStyle);
+                    progressDialog1.setMessage("Uploading files to Server.....");
+                    progressDialog1.show();
+                    fp_data = new JSONObject();
+                    fp_data.put("sfpdata", jsonArray);
+                    RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
+                    String URL = "http://odishaforestlandsurvey.in/api/values/addshiftpillar";
+                    requestQueue.getCache().remove(URL);
+                    final String requestBody = fp_data.toString();
+                    StringRequest stringRequest = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
+                        @Override
+                        public void onResponse(String response) {
+                            // SendImageFile();
+                            db = openOrCreateDatabase("sltp.db", MODE_PRIVATE, null);
+                            Cursor c = db.rawQuery("update m_shifting_pillar_reg set sync_status='1' where uid='" + userid + "'", null);
+                            if (c.getCount() >= 0) {
+                                progressDialog1.dismiss();
+                                Toast.makeText(UserProfileActivity.this, "Data Synchronization successfully completed", Toast.LENGTH_SHORT).show();
+                            }
+                            c.close();
+                            db.close();
+                        }
+                    }, new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+
+                        }
+                    }) {
+                        @Override
+                        public String getBodyContentType() {
+                            return "application/json; charset=utf-8";
+                        }
+
+                        @Override
+                        public byte[] getBody() throws AuthFailureError {
+                            try {
+                                return requestBody == null ? null : requestBody.getBytes("utf-8");
+                            } catch (UnsupportedEncodingException uee) {
+                                VolleyLog.wtf("Unsupported Encoding while trying to get the bytes of %s using %s", requestBody, "utf-8");
+                                return null;
+                            }
+                        }
+
+                        @Override
+                        protected Response<String> parseNetworkResponse(NetworkResponse response) {
+                            String responseString = "";
+                            if (response != null) {
+                                responseString = String.valueOf(response.statusCode);
+                                // can get more details such as response.headers
+                            }
+                            return Response.success(responseString, HttpHeaderParser.parseCacheHeaders(response));
+                        }
+                    };
+                    stringRequest.setRetryPolicy(new DefaultRetryPolicy(
+                            30000,
+                            DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                            DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+                    requestQueue.add(stringRequest);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            } else {
+                Toast.makeText(UserProfileActivity.this, "You do not have Internet Connection", Toast.LENGTH_LONG).show();
+            }
+        }catch (Exception ee)
+        {
+            ee.printStackTrace();
         }
     }
 
     @Override
     public void onBackPressed() {
-        if (doubleBackToExitPressedOnce) {
-            super.onBackPressed();
-            return;
-        }
-        this.doubleBackToExitPressedOnce = true;
-        Toast.makeText(this, "Please click BACK again to exit", Toast.LENGTH_SHORT).show();
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                doubleBackToExitPressedOnce = false;
-                Intent intent = new Intent();
-                intent.setFlags(intent.FLAG_ACTIVITY_NEW_TASK | intent.FLAG_ACTIVITY_CLEAR_TASK);
-            }
-        }, 2000);
+        Intent intent = new Intent(getApplicationContext(), MainContainerActivity.class);
+        intent.setFlags(intent.FLAG_ACTIVITY_NEW_TASK | intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+        finish();
+
     }
 
     private void uploadImage(byte[] imageBytes, final String imgname) {
@@ -358,57 +651,59 @@ public class UserProfileActivity extends AppCompatActivity implements EasyPermis
 //        progress.setCancelable(false);
 //        progress.setProgressStyle(android.R.style.Widget_Holo_ProgressBar);
 //        progress.show();
-        ConnectivityManager cm = (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo nInfo = cm.getActiveNetworkInfo();
-        if (nInfo != null && nInfo.isAvailable() && nInfo.isConnected()) {
-            Retrofit retrofit = new Retrofit.Builder()
-                    .baseUrl("http://203.129.207.130:5067/")
-                    .addConverterFactory(GsonConverterFactory.create())
-                    .build();
-            RetrofitInterface retrofitInterface = retrofit.create(RetrofitInterface.class);
-            RequestBody requestFile = RequestBody.create(MediaType.parse("image/jpeg"), imageBytes);
-            MultipartBody.Part body = null;
+        try {
+            ConnectivityManager cm = (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+            NetworkInfo nInfo = cm.getActiveNetworkInfo();
+            if (nInfo != null && nInfo.isAvailable() && nInfo.isConnected()) {
+                Retrofit retrofit = new Retrofit.Builder()
+                        .baseUrl("http://203.129.207.130:5067/")
+                        .addConverterFactory(GsonConverterFactory.create())
+                        .build();
+                RetrofitInterface retrofitInterface = retrofit.create(RetrofitInterface.class);
+                RequestBody requestFile = RequestBody.create(MediaType.parse("image/jpeg"), imageBytes);
+                MultipartBody.Part body = null;
 
-            body = MultipartBody.Part.createFormData("image", imgname, requestFile);
+                body = MultipartBody.Part.createFormData("image", imgname, requestFile);
 
-            Call<Response1> call = retrofitInterface.uploadImage(body);
-            // mProgressBar.setVisibility(View.VISIBLE);
-            call.enqueue(new Callback<Response1>() {
-                @Override
-                public void onResponse(Call<Response1> call, retrofit2.Response<Response1> response) {
-                    if (response.isSuccessful()) {
-                        db = openOrCreateDatabase("sltp.db", MODE_PRIVATE, null);
-                        Cursor c = db.rawQuery("update m_pillar_reg set img_status='1' where uid='" + userid + "' and d_id='" + divid + "' and p_pic='" + imgname + "'", null);
-                        int aa = c.getCount();
-                        if (c.getCount() >= 0) {
-                            Response1 responseBody = response.body();
-                            Toast.makeText(UserProfileActivity.this, responseBody.getPath(), Toast.LENGTH_SHORT).show();
-                        }
-                        c.close();
-                        db.close();
-                        //SendImageFile();
-                    } else {
-                        ResponseBody errorBody = response.errorBody();
-                        Gson gson = new Gson();
-                        try {
-                            Response errorResponse = gson.fromJson(errorBody.string(), Response.class);
-                        } catch (IOException e) {
-                            e.printStackTrace();
+                Call<Response1> call = retrofitInterface.uploadImage(body);
+                // mProgressBar.setVisibility(View.VISIBLE);
+                call.enqueue(new Callback<Response1>() {
+                    @Override
+                    public void onResponse(Call<Response1> call, retrofit2.Response<Response1> response) {
+                        if (response.isSuccessful()) {
+                            db = openOrCreateDatabase("sltp.db", MODE_PRIVATE, null);
+                            Cursor c = db.rawQuery("update m_pillar_reg set img_status='1' where uid='" + userid + "' and d_id='" + divid + "' and p_pic='" + imgname + "'", null);
+                            int aa = c.getCount();
+                            if (c.getCount() >= 0) {
+                                Response1 responseBody = response.body();
+                                Toast.makeText(UserProfileActivity.this, responseBody.getPath(), Toast.LENGTH_SHORT).show();
+                            }
+                            c.close();
+                            db.close();
+                            //SendImageFile();
+                        } else {
+                            ResponseBody errorBody = response.errorBody();
+                            Gson gson = new Gson();
+                            try {
+                                Response errorResponse = gson.fromJson(errorBody.string(), Response.class);
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
                         }
                     }
-                }
 
-                @Override
-                public void onFailure(Call<Response1> call, Throwable t) {
-//                    db = openOrCreateDatabase("sltp.db", MODE_PRIVATE, null);
-//                    Cursor c = db.rawQuery("update m_pillar_reg set img_status='0' where uid='" + userid + "' and d_id='" + divid + "' and p_pic='" + imgname + "'", null);
-//                    c.close();
-//                    db.close();
-                }
+                    @Override
+                    public void onFailure(Call<Response1> call, Throwable t) {
 
-            });
-        } else {
-            Toast.makeText(UserProfileActivity.this, "Internet Connection is Not Available", Toast.LENGTH_LONG).show();
+                    }
+
+                });
+            } else {
+                Toast.makeText(UserProfileActivity.this, "Internet Connection is Not Available", Toast.LENGTH_LONG).show();
+            }
+        }catch (Exception ee)
+        {
+            ee.printStackTrace();
         }
     }
 

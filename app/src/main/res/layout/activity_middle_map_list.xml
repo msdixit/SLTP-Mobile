@@ -2,37 +2,77 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/color1"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg"
     tools:context=".MiddleMapListActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_marginBottom="50dp"
         android:orientation="vertical"
-        android:weightSum="3"
         >
-        <ImageView
-            android:id="@+id/mapview"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:background="@drawable/menu_1"
-            />
-        <ImageView
-            android:id="@+id/dataview"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:background="@drawable/menu_2"/>
-        <ImageView
-            android:id="@+id/sync"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:background="@drawable/menu_4"/>
 
-
+<!--    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="0.2"
+        android:orientation="vertical"
+        android:weightSum="3">-->
     </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:weightSum="8">
 
+            <ImageView
+                android:id="@+id/mapview"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_below="@+id/name_textView"
+                android:layout_marginLeft="22dp"
+                android:layout_marginTop="22dp"
+                android:layout_marginRight="22dp"
+                android:layout_weight="2"
+                android:background="@drawable/menu_1"
+                android:clickable="true" />
+
+            <ImageView
+                android:id="@+id/dataview"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_below="@+id/mapview"
+                android:layout_marginLeft="22dp"
+                android:layout_marginTop="22dp"
+                android:layout_marginRight="22dp"
+                android:layout_weight="2"
+                android:background="@drawable/menu_2"
+                android:clickable="true" />
+
+            <ImageView
+                android:id="@+id/sync"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_below="@+id/dataview"
+                android:layout_marginLeft="22dp"
+                android:layout_marginTop="22dp"
+                android:layout_marginRight="22dp"
+                android:layout_weight="2"
+                android:background="@drawable/menu_3"
+                android:clickable="true" />
+            <ImageView
+                android:id="@+id/download"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_below="@+id/sync"
+                android:layout_marginLeft="22dp"
+                android:layout_marginTop="22dp"
+                android:layout_marginRight="22dp"
+                android:layout_marginBottom="22dp"
+                android:layout_weight="2"
+                android:background="@drawable/download_point_data"
+                android:clickable="false" />
+
+        </LinearLayout>
 </RelativeLayout>

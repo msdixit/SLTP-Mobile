@@ -19,6 +19,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Parcelable;
 import android.os.StrictMode;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
@@ -28,6 +29,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.AdapterView;
@@ -49,6 +51,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -66,12 +69,13 @@ public class RegisterPointActivity extends AppCompatActivity implements GoogleAp
     private final int REQUEST_CODE_STORAGE_PERMS = 321;
     public String imgValue = "blank";
     String[] loc_type = {"Existing", "Proposed"};
-    String[] pillar_type = {"Concrete", "Stone Cairn", "Brick"};
+    String[] pillar_type = {"Concrete", "Stone Cairn", "Brick","Others"};
     String[] pillar_paint_status = {"Required", "Not Required"};
-    String[] pillar_cond = {"Good", "Repair", "Replace"};
-/*    String[] pillar_shift_status = {"Required", "Not Required"};*/
-    MaterialSpinner loctype, pill_type, pill_cond, paint_status,pillshiftsts;
-    String locationtype, pillartype, pillacond, pillarpaintstatus, sharediv, sharerange, sharefb, sharefbtype, sharefbname, userid,pilshiftsts;
+    String[] pillar_cond = {"Good", "Needs Repair", "Needs Replacement"};
+    String[] pillar_shift_status = {"Required", "Not Required"};
+    String[] survey_direction = {"Clockwise", "Anticlockwise"};
+    MaterialSpinner loctype, pill_type, pill_cond, paint_status, pillshiftsts,direction;
+    String locationtype, pillartype, pillacond, pillarpaintstatus, sharediv, sharerange, sharefb, sharefbtype, sharefbname, userid, pilshiftsts,surdir;
     String b_type, p_value, pt_value, status_value, cnd_value;
     ImageView takepic, setpic;
     Integer REQUEST_CAMERA = 1, SELECT_FILE = 0;
@@ -116,7 +120,8 @@ public class RegisterPointActivity extends AppCompatActivity implements GoogleAp
         pill_type = findViewById(R.id.ptype);
         pill_cond = findViewById(R.id.pcond);
         paint_status = findViewById(R.id.paintstatus);
-        //pillshiftsts=findViewById(R.id.shiftingstatus);
+        pillshiftsts = findViewById(R.id.shiftingstatus);
+        direction=findViewById(R.id.direction);
 
         fbname = findViewById(R.id.fbname);
         takepic = findViewById(R.id.takepic);
@@ -147,7 +152,7 @@ public class RegisterPointActivity extends AppCompatActivity implements GoogleAp
         userid = shared.getString("userid", "0");
         fbname.setText(sharefbname + " " + sharefbtype);
         txtpatchno.setText("1");
-        txtringno.setText("1");
+        txtringno.setText("0");
         point_no = getSLNO(sharefb);
         slno.setText(String.valueOf(point_no));
         Intent i = getIntent();
@@ -216,7 +221,7 @@ public class RegisterPointActivity extends AppCompatActivity implements GoogleAp
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 pillartype = (String) parent.getItemAtPosition(position);
-                if (!pillartype.equals("Select Pillar Type")) {
+                if (!pillartype.equals("Material")) {
                 }
             }
 
@@ -263,7 +268,7 @@ public class RegisterPointActivity extends AppCompatActivity implements GoogleAp
 
             }
         });
-        /*final ArrayAdapter<String> pststsadapter = new ArrayAdapter<String>(getApplicationContext(), R.layout.spinner_row, pillar_shift_status);
+        final ArrayAdapter<String> pststsadapter = new ArrayAdapter<String>(getApplicationContext(), R.layout.spinner_row, pillar_shift_status);
         pillshiftsts.setAdapter(pststsadapter);
         pillshiftsts.setPaddingSafe(0, 0, 0, 0);
         pillshiftsts.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -271,9 +276,7 @@ public class RegisterPointActivity extends AppCompatActivity implements GoogleAp
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 pilshiftsts = (String) parent.getItemAtPosition(position);
                 if (!pilshiftsts.equals("Select Shifting Status")) {
-                    //componentMaster();
 
-                    //status_value=statusValue;
                 }
             }
 
@@ -281,7 +284,23 @@ public class RegisterPointActivity extends AppCompatActivity implements GoogleAp
             public void onNothingSelected(AdapterView<?> parent) {
 
             }
-        });*/
+        });
+        final ArrayAdapter<String> diradapter = new ArrayAdapter<String>(getApplicationContext(), R.layout.spinner_row, survey_direction);
+        direction.setAdapter(diradapter);
+        direction.setPaddingSafe(0, 0, 0, 0);
+        direction.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                surdir = (String) parent.getItemAtPosition(position);
+                if (!surdir.equals("Select Survey Direction")) {
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO) {
             mAlbumStorageDirFactory = new FroyoAlbumDirFactory();
         } else {
@@ -309,7 +328,7 @@ public class RegisterPointActivity extends AppCompatActivity implements GoogleAp
             pillartype = "NA";
             pillacond = "NA";
             pillarpaintstatus = "NA";
-            pilshiftsts="NA";
+            pilshiftsts = "NA";
         }
     }
 
@@ -323,20 +342,26 @@ public class RegisterPointActivity extends AppCompatActivity implements GoogleAp
             Toast.makeText(this, "Longitude value can not ne blank", Toast.LENGTH_LONG).show();
         } else if (locationtype.equals("Select Location Type")) {
             Toast.makeText(this, "Please Select the Location Type", Toast.LENGTH_LONG).show();
-        } else if (locationtype.equals("Existing") && pillartype.equals("Select Pillar Type")) {
-            Toast.makeText(this, "Please Select the Pilar Type", Toast.LENGTH_LONG).show();
+        } else if (locationtype.equals("Existing") && pillartype.equals("Material")) {
+            Toast.makeText(this, "Material", Toast.LENGTH_LONG).show();
         } else if (locationtype.equals("Existing") && pillacond.equals("Select Pillar Condition")) {
             Toast.makeText(this, "Please Select the Pilar condition", Toast.LENGTH_LONG).show();
-        }/* else if (locationtype.equals("Existing") && pillarpaintstatus.equals("Select Paint Status")) {
-            Toast.makeText(this, "Please Select Paint Status", Toast.LENGTH_LONG).show();
-        } */ else {
+        } else if (locationtype.equals("Existing") && pillarpaintstatus.equals("Select Shifting Status")) {
+            Toast.makeText(this, "Please Select Shifting Status", Toast.LENGTH_LONG).show();
+        }else if (surdir.equals("Select Survey Direction")) {
+            Toast.makeText(this, "Please Select Survey Direction", Toast.LENGTH_LONG).show();
+        }else if (imagepath1==null) {
+            Toast.makeText(this, "Please Select the image.Go back and get the point again.", Toast.LENGTH_LONG).show();
+        } else {
             db = openOrCreateDatabase("sltp.db", MODE_PRIVATE, null);
             Cursor cursor = db.rawQuery("select * from m_pillar_reg where uid='" + userid + "' and d_id='" + sharediv + "' and r_id='" + sharerange + "' and fb_id='" + sharefb + "' and p_lat='" + lat.getText().toString() + "' and p_long='" + lon.getText().toString() + "' order by p_no", null);
             if (cursor.getCount() > 0) {
                 Toast.makeText(this, "This Latitude and Longitude already available.Please click the refresh button", Toast.LENGTH_LONG).show();
             } else {
                 AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
-                alertDialogBuilder.setMessage("Are you sure to save this pillar data?");
+                //alertDialogBuilder.setMessage("Are you sure to save this pillar data?");
+                final View customLayout = getLayoutInflater().inflate(R.layout.save_custome_dialod_register_pillar, null);
+                alertDialogBuilder.setView(customLayout);
                 alertDialogBuilder.setPositiveButton("Ok",
                         new DialogInterface.OnClickListener() {
 
@@ -348,20 +373,46 @@ public class RegisterPointActivity extends AppCompatActivity implements GoogleAp
                                 String sl = slno.getText().toString();
                                 String latitude = lat.getText().toString();
                                 String longitude = lon.getText().toString();
+                                String accuracy = accuracyy.getText().toString();
                                 String rem = remark.getText().toString();
-                                M_pillar_reg mpr = new M_pillar_reg(sharediv, sharerange, sharefb, pillarsno.getText().toString(),
+                                M_pillar_reg mpr1 = new M_pillar_reg(sharediv, sharerange, sharefb, pillarsno.getText().toString(),
                                         latitude, longitude, pillartype, pillacond, rem, imagepath1, "0",
                                         txtpatchno.getText().toString(), txtringno.getText().toString(), locationtype, sl,
-                                        pillarpaintstatus, fbname.getText().toString(), userid, point_no, "0", "0");//+"_"+pilshiftsts
-                                dbHelper.open();
-                                dbHelper.insertPillarData(mpr);
-                                dbHelper.close();
-                                Toast.makeText(getApplicationContext(), "Your Pillar registered Successfully", Toast.LENGTH_LONG).show();
-                                // slno.setText(String.valueOf(getSLNO(sharefb)));
-                                i = new Intent(getApplicationContext(), RegisterPointActivity.class);
-                                i.putExtra("kml_status", kmlstatus);
-                                finishAffinity();
-                                startActivity(i);
+                                        pillarpaintstatus, fbname.getText().toString(), userid, point_no, "0", "0",pilshiftsts,surdir,accuracy);//+"_"+pilshiftsts,surdir,accuracy
+
+                                //dbHelper.open();
+
+                                //dbHelper.close();
+                                if (pilshiftsts.equals("Required")) {
+                                    Intent si = new Intent(getApplicationContext(), StoreShiftingPillarDataActivity.class);
+                                    si.putExtra("kml_status", kmlstatus);
+                                    si.putExtra("slno", sl);
+                                    si.putExtra("userid", userid);
+                                    si.putExtra("fbname", fbname.getText().toString());
+                                    si.putExtra("fbcode", sharefb);
+                                    si.putExtra("mpillar", (Serializable) mpr1);
+                                    finishAffinity();
+                                    startActivity(si);
+                                } else {
+                                    try {
+                                        dbHelper.open();
+                                        dbHelper.insertPillarData(mpr1);
+                                        dbHelper.close();
+                                        Toast.makeText(getApplicationContext(), "Your Pillar registered Successfully", Toast.LENGTH_LONG).show();
+                                        i = new Intent(getApplicationContext(), RegisterPointActivity.class);
+                                        i.putExtra("kml_status", kmlstatus);
+                                        finishAffinity();
+                                        startActivity(i);
+                                    } catch (Exception ee) {
+                                        throw ee;
+                                    } finally {
+                                        if (dbHelper != null) {
+                                            dbHelper.close();
+                                        }
+                                    }
+                                }
+
+
                             }
                         });
 
@@ -804,6 +855,7 @@ public class RegisterPointActivity extends AppCompatActivity implements GoogleAp
                 return rotatedBitmap;
         }
     }
+
     //location code
     protected synchronized void buildGoogleApiClient() {
         mGoogleApiClient = new GoogleApiClient.Builder(getApplicationContext())
@@ -849,7 +901,7 @@ public class RegisterPointActivity extends AppCompatActivity implements GoogleAp
         // lon = String.valueOf(location.getLongitude());
         lat.setText(String.valueOf(location.getLatitude()));
         lon.setText(String.valueOf(location.getLongitude()));
-        accuracyy.setText((String.valueOf(location.getAccuracy())) + "mtr.");
+        accuracyy.setText(String.valueOf(location.getAccuracy()));
     }
 
 

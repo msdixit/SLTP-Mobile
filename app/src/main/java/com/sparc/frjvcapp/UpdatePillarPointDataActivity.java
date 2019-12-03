@@ -59,7 +59,7 @@ public class UpdatePillarPointDataActivity extends AppCompatActivity {
     TextView lat, lon,fbname;
 EditText slno,remark,txtpatchno,txtringno,pillarsno,loctype, pill_type, pill_cond,paint_status;
     DbHelper dbHelper;
-        SharedPreferences shared;;
+        SharedPreferences shared;
     LinearLayout ll;
     String id;
     SQLiteDatabase db;
@@ -234,12 +234,6 @@ EditText slno,remark,txtpatchno,txtringno,pillarsno,loctype, pill_type, pill_con
         } else {
             mAlbumStorageDirFactory = new BaseAlbumDirFactory();
         }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            //checkLocationPermission();
-            //buildGoogleApiClient();
-
-
-        }
         getDataforUpdate(i.getStringExtra("lat"),i.getStringExtra("lon"),userid);
     }
 
@@ -317,7 +311,7 @@ EditText slno,remark,txtpatchno,txtringno,pillarsno,loctype, pill_type, pill_con
                 String latitude = lat.getText().toString();
                 String longitude = lon.getText().toString();
                 String rem = remark.getText().toString();
-                M_pillar_reg mpr = new M_pillar_reg(sharediv, sharerange, sharefb, pillarsno.getText().toString(), latitude, longitude, pillartype, pillacond, rem, imagepath1, "0", txtpatchno.getText().toString(), txtringno.getText().toString(), locationtype, sl, pillarpaintstatus, fbname.getText().toString(), userid,pillar_point,"0","0");
+                M_pillar_reg mpr = new M_pillar_reg(sharediv, sharerange, sharefb, pillarsno.getText().toString(), latitude, longitude, pillartype, pillacond, rem, imagepath1, "0", txtpatchno.getText().toString(), txtringno.getText().toString(), locationtype, sl, pillarpaintstatus, fbname.getText().toString(), userid,pillar_point,"0","0","","","");//,"",""
                 dbHelper.open();
                 dbHelper.insertPillarData(mpr);
                 dbHelper.close();
@@ -340,21 +334,17 @@ EditText slno,remark,txtpatchno,txtringno,pillarsno,loctype, pill_type, pill_con
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Add Image");
 
-        builder.setItems(items, new DialogInterface.OnClickListener() {
+        builder.setItems(items, (dialogInterface, i) -> {
+            if (items[i].equals("Camera")) {
+                dispatchTakePictureIntent(1);
+            } else if (items[i].equals("Gallery")) {
+                Intent intent = new Intent();
+                intent.setType("image/*");
+                intent.setAction(Intent.ACTION_GET_CONTENT);
+                startActivityForResult(intent, SELECT_FILE);
 
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                if (items[i].equals("Camera")) {
-                    dispatchTakePictureIntent(1);
-                } else if (items[i].equals("Gallery")) {
-                    Intent intent = new Intent();
-                    intent.setType("image/*");
-                    intent.setAction(Intent.ACTION_GET_CONTENT);
-                    startActivityForResult(intent, SELECT_FILE);
-
-                } else if (items[i].equals("Cancel")) {
-                    dialogInterface.dismiss();
-                }
+            } else if (items[i].equals("Cancel")) {
+                dialogInterface.dismiss();
             }
         });
         builder.show();
@@ -375,7 +365,7 @@ EditText slno,remark,txtpatchno,txtringno,pillarsno,loctype, pill_type, pill_con
                     takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(f));
                 } catch (IOException e) {
                     e.printStackTrace();
-                    f = null;
+                    //f = null;
                     mCurrentPhotoPath = null;
                 }
                 break;
@@ -398,8 +388,7 @@ EditText slno,remark,txtpatchno,txtringno,pillarsno,loctype, pill_type, pill_con
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
         String imageFileName = JPEG_FILE_PREFIX + timeStamp + "_";
         File albumF = getAlbumDir();
-        File imageF = File.createTempFile(imageFileName, JPEG_FILE_SUFFIX, albumF);
-        return imageF;
+        return File.createTempFile(imageFileName, JPEG_FILE_SUFFIX, albumF);
     }
 
     private File getAlbumDir() {
@@ -454,24 +443,29 @@ EditText slno,remark,txtpatchno,txtringno,pillarsno,loctype, pill_type, pill_con
                 break;
             } // ACTION_TAKE_PHOTO_B
             case ACTION_TAKE_GALLERY_PIC: {
-                if (requestCode == SELECT_FILE) {
-                    Uri selectedImageUri = data.getData();
-                    if (setpic.getDrawable() == null) {
-                        setpic.setImageURI(selectedImageUri);
-                    } else {
-                        setpic.setImageURI(selectedImageUri);
-                        // Toast.makeText(HomeScreen.this, "Cannot capture more photos", Toast.LENGTH_SHORT).show();
+                try {
+                    if (requestCode == SELECT_FILE) {
+                        Uri selectedImageUri = data.getData();
+                        if (setpic.getDrawable() == null) {
+                            setpic.setImageURI(selectedImageUri);
+                        } else {
+                            setpic.setImageURI(selectedImageUri);
+                            // Toast.makeText(HomeScreen.this, "Cannot capture more photos", Toast.LENGTH_SHORT).show();
+                        }
+                        mCurrentPhotoPath = selectedImageUri.toString();
+                        imagepath1 = mCurrentPhotoPath;
+                        clickedStatus = 1;
+                        if (Build.VERSION.SDK_INT >= 21) {
+                            mCurrentPhotoPath = UtilityGetPath.getRealPathFromURI_API19(getApplicationContext(), selectedImageUri);
+                            imgValue = "captured";
+                        } else {
+                            mCurrentPhotoPath = UtilityGetPath.getRealPathFromURI_API11to18(getApplicationContext(), selectedImageUri);
+                            imgValue = "captured";
+                        }
                     }
-                    mCurrentPhotoPath = selectedImageUri.toString();
-                    imagepath1 = mCurrentPhotoPath;
-                    clickedStatus = 1;
-                    if (Build.VERSION.SDK_INT >= 19) {
-                        mCurrentPhotoPath = UtilityGetPath.getRealPathFromURI_API19(getApplicationContext(), selectedImageUri);
-                        imgValue = "captured";
-                    } else {
-                        mCurrentPhotoPath = UtilityGetPath.getRealPathFromURI_API11to18(getApplicationContext(), selectedImageUri);
-                        imgValue = "captured";
-                    }
+                }catch (Exception ee)
+                {
+                    throw ee;
                 }
             }
         } // switch
@@ -586,13 +580,6 @@ EditText slno,remark,txtpatchno,txtringno,pillarsno,loctype, pill_type, pill_con
     }
 
     public void imageupdate() {
-        try {
-//            String imagepath=imagepath1;
-//            String URL = "http://111.93.174.107/VolunteerServices/Service1.svc/post_imagesync";
-//            uploadImage(Utility.getByeArr(Utility.setPic(imagepath)), URL);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
 
     }
     private void setImage(String path) {

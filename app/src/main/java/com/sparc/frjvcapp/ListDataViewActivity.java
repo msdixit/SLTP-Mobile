@@ -86,6 +86,7 @@ public class ListDataViewActivity extends AppCompatActivity implements View.OnCl
         arrayList = new ArrayList<DataViewDetails>();
         syncarrylist = new ArrayList<DataViewDetails>(arrayList.size() + 1);
         adapter = new DataViewAdapter(getApplicationContext(), arrayList);
+
         new displayCard().execute("");
     }
 
@@ -114,23 +115,27 @@ public class ListDataViewActivity extends AppCompatActivity implements View.OnCl
     }
 
     public void loadData() {
-        adapter = new DataViewAdapter(this, arrayList);
-        recyclerView.setAdapter(adapter);
-        adapter.setOnTapListener(new OnTapListener() {
-            @Override
-            public void OnTapView(int position, String presKey) {
-                final DataViewDetails dataViewDetails = arrayList.get(position);
-                if (presKey.equals("delete")) {
-                    db = openOrCreateDatabase("sltp.db", MODE_PRIVATE, null);
-                    Cursor c = db.rawQuery("update m_pillar_reg set delete_status='1' where p_lat='" + dataViewDetails.lat + "' and p_long='" + dataViewDetails.lon + "'", null);
-                    if (c.getCount() >= 0) {
-                        Toast.makeText(ListDataViewActivity.this, "Data successfully deleted", Toast.LENGTH_SHORT).show();
+        try {
+            adapter = new DataViewAdapter(this, arrayList);
+            recyclerView.setAdapter(adapter);
+            adapter.setOnTapListener(new OnTapListener() {
+                @Override
+                public void OnTapView(int position, String presKey) {
+                    final DataViewDetails dataViewDetails = arrayList.get(position);
+                    if (presKey.equals("delete")) {
+                        db = openOrCreateDatabase("sltp.db", MODE_PRIVATE, null);
+                        Cursor c = db.rawQuery("update m_pillar_reg set delete_status='1' where p_lat='" + dataViewDetails.lat + "' and p_long='" + dataViewDetails.lon + "'", null);
+                        if (c.getCount() >= 0) {
+                            Toast.makeText(ListDataViewActivity.this, "Data successfully deleted", Toast.LENGTH_SHORT).show();
+                        }
+                        c.close();
+                        db.close();
                     }
-                    c.close();
-                    db.close();
                 }
-            }
-        });
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public void LoadSyncData() {

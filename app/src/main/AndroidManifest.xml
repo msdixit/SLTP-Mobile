@@ -10,8 +10,13 @@
         android:supportsRtl="true"
         android:theme="@style/MyMaterialTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".ListDataViewActivity"></activity>
-
+        <activity android:name=".UpdateSurveyPillarPointDataActivity"></activity>
+        <activity android:name=".DGPSDataCollectActivity" />
+        <activity android:name=".SelectFBForDGPSActivity" />
+        <activity android:name=".StoreShiftingPillarDataActivity" />
+        <activity android:name=".MapViewerActivity" />
+        <activity android:name=".MainContainerActivity" />
+        <activity android:name=".ListDataViewActivity" />
         <activity android:name=".UpdatePillarPointDataActivity" />
         <activity android:name=".MiddleMapListActivity" />
         <activity android:name=".RegisterPointActivity" />
@@ -29,12 +34,9 @@
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyB-VJ5Dc0Wf-AzmvNlwd48GuzwBN25s8JQ" />
-
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
-
-
         <meta-data
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />
@@ -49,21 +51,21 @@
                 <action android:name="com.firebase.jobdispatcher.ACTION_EXECUTE" />
             </intent-filter>
         </service>
+
         <uses-library
             android:name="org.apache.http.legacy"
             android:required="false" />
     </application>
-
     <uses-feature
         android:name="android.hardware.camera"
         android:required="false" />
     <uses-feature
         android:name="android.hardware.camera.autofocus"
         android:required="false" />
+
     <uses-feature
         android:name="android.hardware.camera.flash"
         android:required="false" />
-
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
@@ -72,6 +74,7 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.CAMERA" />
+
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
 </manifest>

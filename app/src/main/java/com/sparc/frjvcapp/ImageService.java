@@ -1,4 +1,5 @@
 package com.sparc.frjvcapp;
+
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
@@ -13,6 +14,7 @@ import android.widget.Toast;
 import com.android.volley.Response;
 import com.firebase.jobdispatcher.JobService;
 import com.google.gson.Gson;
+import com.sparc.frjvcapp.pojo.Response1;
 
 import java.io.IOException;
 
@@ -28,14 +30,14 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class ImageService extends JobService {
     public static final String userlogin = "userlogin";
-    SQLiteDatabase db;
+    SQLiteDatabase db,db1;
     String divid, userid;
 
     @Override
     public boolean onStartJob(com.firebase.jobdispatcher.JobParameters job) {
         Log.d("util123", "pass");
         Util.scheduleJob(getApplication());
-        Log.d("util", "pass");
+       Log.d("util", "pass");
         new imgaeSync().execute("");
         return true;
     }
@@ -46,29 +48,51 @@ public class ImageService extends JobService {
     }
 
     public void Images() {
-        SharedPreferences shared = getSharedPreferences(userlogin, MODE_PRIVATE);
-        divid = shared.getString("udivid", "0");
-        userid = shared.getString("uemail", "0");
-        db = openOrCreateDatabase("sltp.db", MODE_PRIVATE, null);
-        //Cursor c1 = db.rawQuery("update m_pillar_reg set img_status='0' where uid='" + userid + "' and d_id='" + divid + "'", null);
+        try {
+            SharedPreferences shared = getSharedPreferences(userlogin, MODE_PRIVATE);
+            divid = shared.getString("udivid", "0");
+            userid = shared.getString("uemail", "0");
+            db = openOrCreateDatabase("sltp.db", MODE_PRIVATE, null);
+            db1 = openOrCreateDatabase("sltp.db", MODE_PRIVATE, null);
+            //Cursor c1 = db.rawQuery("update m_pillar_reg set img_status='0' where uid='" + userid + "' and d_id='" + divid + "'", null);
 
-        Cursor c = db.rawQuery("select * from m_pillar_reg where d_id='" + divid + "' and uid='" + userid + "' and img_status='0'", null);
-        int count = c.getCount();
-        if (c.getCount() >= 1) {
-            if (c.moveToFirst()) {
-                try {
-                    uploadImage(Utility.getByeArr(Utility.setPic(c.getString(c.getColumnIndex("p_pic")))), c.getString(c.getColumnIndex("p_pic")));
-                } catch (Exception e) {
-                    e.printStackTrace();
+
+            Cursor c = db.rawQuery("select * from m_pillar_reg where d_id='" + divid + "' and uid='" + userid + "' and img_status='0' and p_pic is not null", null);
+            int count = c.getCount();
+            if (c.getCount() >= 1) {
+                if (c.moveToFirst()) {
+                    try {
+                        uploadImage(Utility.getByeArr(Utility.setPic(c.getString(c.getColumnIndex("p_pic")))), c.getString(c.getColumnIndex("p_pic")), "1");
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 }
+
+                c.close();
+                db.close();
             }
-            c.close();
-            //  c1.close();
-            db.close();
+            Cursor c1 = db1.rawQuery("select * from m_shifting_pillar_reg where uid='" + userid + "' and simg_status='0' and s_pic is not null", null);
+            int count1 = c.getCount();
+            if (c1.getCount() >= 1) {
+                if (c1.moveToFirst()) {
+                    try {
+                        uploadImage(Utility.getByeArr(Utility.setPic(c1.getString(c1.getColumnIndex("s_pic")))), c1.getString(c1.getColumnIndex("s_pic")), "2");
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                c1.close();
+                db1.close();
+            }
+        }catch (Exception ee)
+        {
+        ee.printStackTrace();
         }
+
     }
 
-    private void uploadImage(byte[] imageBytes, final String imgname) {
+    private void uploadImage(byte[] imageBytes, final String imgname, String value) {
         ConnectivityManager cm = (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo nInfo = cm.getActiveNetworkInfo();
         if (nInfo != null && nInfo.isAvailable() && nInfo.isConnected()) {
@@ -86,14 +110,25 @@ public class ImageService extends JobService {
                 @Override
                 public void onResponse(Call<Response1> call, retrofit2.Response<Response1> response) {
                     if (response.isSuccessful()) {
-                        db = openOrCreateDatabase("sltp.db", MODE_PRIVATE, null);
-                        Cursor c = db.rawQuery("update m_pillar_reg set img_status='1' where uid='" + userid + "' and d_id='" + divid + "' and p_pic='" + imgname + "'", null);
-                        if (c.getCount() >= 0) {
-                            Response1 responseBody = response.body();
-                            Toast.makeText(ImageService.this, responseBody.getPath(), Toast.LENGTH_SHORT).show();
+                        if (value.equals("1")) {
+                            db = openOrCreateDatabase("sltp.db", MODE_PRIVATE, null);
+                            Cursor c = db.rawQuery("update m_pillar_reg set img_status='1' where uid='" + userid + "' and d_id='" + divid + "' and p_pic='" + imgname + "'", null);
+                            if (c.getCount() >= 0) {
+                                Response1 responseBody = response.body();
+                                Toast.makeText(ImageService.this, responseBody.getPath(), Toast.LENGTH_SHORT).show();
+                            }
+                            c.close();
+                            db.close();
+                        } else {
+                            db = openOrCreateDatabase("sltp.db", MODE_PRIVATE, null);
+                            Cursor c = db.rawQuery("update m_shifting_pillar_reg set simg_status='1' where uid='" + userid + "' and s_pic='" + imgname + "'", null);
+                            if (c.getCount() >= 0) {
+                                Response1 responseBody = response.body();
+                                Toast.makeText(ImageService.this, responseBody.getPath(), Toast.LENGTH_SHORT).show();
+                            }
+                            c.close();
+                            db.close();
                         }
-                        c.close();
-                        db.close();
                         //Toast.makeText(ImageService.this, "done", Toast.LENGTH_SHORT).show();
                     } else {
                         ResponseBody errorBody = response.errorBody();

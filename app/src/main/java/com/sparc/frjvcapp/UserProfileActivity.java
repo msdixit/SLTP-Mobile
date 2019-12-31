@@ -271,6 +271,7 @@ public class UserProfileActivity extends AppCompatActivity implements EasyPermis
                         json.put("shifting_status", cursor.getString(cursor.getColumnIndex("shifting_status")));
                         json.put("survey_dir", cursor.getString(cursor.getColumnIndex("surv_direction")));
                         json.put("accuracy", cursor.getString(cursor.getColumnIndex("p_accuracy")));
+                        json.put("survey_dt", cursor.getString(cursor.getColumnIndex("survey_dt")));
                         jsonArray.put(json);
                     } catch (Exception ee) {
                         ee.printStackTrace();
@@ -332,6 +333,7 @@ public class UserProfileActivity extends AppCompatActivity implements EasyPermis
                         json.put("past_long", cursor.getString(cursor.getColumnIndex("past_long")));
                         json.put("survey_dir", cursor.getString(cursor.getColumnIndex("surv_direction")));
                         json.put("accuracy", cursor.getString(cursor.getColumnIndex("p_accuracy")));
+                        json.put("survey_dt", cursor.getString(cursor.getColumnIndex("survey_dt")));
                         jsonArray.put(json);
                     } catch (Exception ee) {
                         ee.printStackTrace();

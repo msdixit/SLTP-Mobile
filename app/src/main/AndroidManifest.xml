@@ -10,7 +10,12 @@
         android:supportsRtl="true"
         android:theme="@style/MyMaterialTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".UpdateSurveyPillarPointDataActivity"></activity>
+        <activity android:name=".DGPSViewPillarDetailActivity"></activity>
+        <activity android:name=".DGPSMapViewActivity" />
+        <activity android:name=".DGPSDataExportActivity" />
+        <activity android:name=".DGPSDataViewActivity" />
+        <activity android:name=".ChooseSurvetTypeActivity" />
+        <activity android:name=".UpdateSurveyPillarPointDataActivity" />
         <activity android:name=".DGPSDataCollectActivity" />
         <activity android:name=".SelectFBForDGPSActivity" />
         <activity android:name=".StoreShiftingPillarDataActivity" />
@@ -74,7 +79,7 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.CAMERA" />
-
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
 </manifest>

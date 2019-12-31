@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <!--<item
+        android:id="@+id/dgpsnavigation_layer"
+        android:icon="@drawable/ic_layers_black_24dp"
+        android:title="Layers"
+        android:itemTextAppearance="?android:attr/textAppearance"
+        />-->
+    <item
+        android:id="@+id/dgpsnavigation_legend"
+        android:icon="@drawable/ic_view_list_black_24dp"
+        android:title="Legend"
+        android:itemTextAppearance="?android:attr/textAppearance"
+        />
+
+    <item
+        android:id="@+id/dgpsnavigation_basemap"
+        android:icon="@drawable/ic_dashboard_black_24dp"
+        android:title="Base Map"
+        android:itemTextAppearance="?android:attr/textAppearance"
+        />
+
+</menu>

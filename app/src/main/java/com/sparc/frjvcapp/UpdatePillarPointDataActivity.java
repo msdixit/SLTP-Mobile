@@ -311,7 +311,9 @@ EditText slno,remark,txtpatchno,txtringno,pillarsno,loctype, pill_type, pill_con
                 String latitude = lat.getText().toString();
                 String longitude = lon.getText().toString();
                 String rem = remark.getText().toString();
-                M_pillar_reg mpr = new M_pillar_reg(sharediv, sharerange, sharefb, pillarsno.getText().toString(), latitude, longitude, pillartype, pillacond, rem, imagepath1, "0", txtpatchno.getText().toString(), txtringno.getText().toString(), locationtype, sl, pillarpaintstatus, fbname.getText().toString(), userid,pillar_point,"0","0","","","");//,"",""
+                SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+                Date date = new Date();
+                M_pillar_reg mpr = new M_pillar_reg(sharediv, sharerange, sharefb, pillarsno.getText().toString(), latitude, longitude, pillartype, pillacond, rem, imagepath1, "0", txtpatchno.getText().toString(), txtringno.getText().toString(), locationtype, sl, pillarpaintstatus, fbname.getText().toString(), userid,pillar_point,"0","0","","","",formatter.format(date));//,"",""
                 dbHelper.open();
                 dbHelper.insertPillarData(mpr);
                 dbHelper.close();

@@ -85,7 +85,8 @@ public class LoginActivity extends AppCompatActivity {
             "delete_status TEXT," +
             "shifting_status TEXT," +
             "surv_direction TEXT," +
-            "p_accuracy TEXT)";
+            "p_accuracy TEXT," +
+            "survey_dt TEXT)";
 
     ProgressDialog progressDialog;
     ProgressDialog progress;

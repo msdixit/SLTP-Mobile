@@ -1,5 +1,6 @@
 package com.sparc.frjvcapp;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.ClipData;
 import android.content.ClipboardManager;
@@ -15,95 +16,80 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.Paint;
-import android.location.Location;
 import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
 import android.os.StrictMode;
 import android.provider.MediaStore;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.location.LocationListener;
-import com.google.android.gms.location.LocationRequest;
-import com.google.android.gms.location.LocationServices;
-import com.sparc.frjvcapp.pojo.M_pillar_reg;
-
-import org.w3c.dom.Text;
+import com.sparc.frjvcapp.pojo.M_dgps_pill_pic;
+import com.sparc.frjvcapp.pojo.M_dgps_pilldata;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.Serializable;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import fr.ganfra.materialspinner.MaterialSpinner;
 
-public class DGPSDataCollectActivity extends AppCompatActivity  {
+public class DGPSDataCollectActivity extends AppCompatActivity {
     public static final String data = "data";
-    public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
     private static final int ACTION_TAKE_PHOTO_B = 1;
     private static final String JPEG_FILE_PREFIX = "IMG_";
     private static final String PNG_FILE_SUFFIX = ".jpg";
     private final static int REQUEST_CHECK_SETTINGS = 2000;
     private static final int ACTION_TAKE_GALLERY_PIC = 0;
-    private final int REQUEST_CODE_STORAGE_PERMS = 321;
     public String imgValue = "blank";
-    String[] point_type = {"BP", "GT","FRA"};
-    String[] gt_remark = {"Road Crossing", "Drain Crossing", "Culvert","Specify"};
-    String[] duration = {"Instant","5", "15","30","Manual"};
-    String[] fra_obsr_point = {"Centroid", "Corner"};
-    String[] pillar_shift_status = {"Required", "Not Required"};
-    MaterialSpinner pointtype, bpduration, gtremark, gtduration, fraobservpoint;
-    EditText edttxtpillarno, remark,edttxtpatchno,edttxtringno,fraoverview,edttxtrtxlat,edttxtrtxlong,edtForestoffnm,edtJobID;
-    ImageView setpicforward, takepicforward,setpicbackward,takepicbackward,setpicinward,takepicinward,setpicoutward,takepicoutward,setpictop,takepictop;
-    TextView txtViewdiv,txtViewran,txtViewfb,txtViewusername,fbname;
-    LinearLayout lh1,lh2,lh3;
-    String  sharediv, sharerange, sharefb, sharefbtype, sharefbname, userid,jobid;
-    String b_type, p_value, pt_value, status_value, cnd_value;
+    String[] duration = {"Clockwise", "Anticlockwise"};
+    String[] survey_segment = {"A", "B", "C", "D", "E", "F", "G", "H", "I", "J"};
+    MaterialSpinner bpduration, dpSegment;
+    EditText edttxtpillarno, remark, edttxtpatchno, edttxtringno, edtForestoffnm, edtJobID, edtdpillno;
+    ImageView setpicforward, takepicforward, setpicbackward, takepicbackward, setpicinward, takepicinward, setpicoutward, takepicoutward, setpictop, takepictop;
+    TextView txtViewdiv, txtViewran, txtViewfb, fbname;
+    LinearLayout lh1;
+    String sharediv, sharerange, sharefb, sharefbtype, sharefbname,
+            userid, jobid, div_name, range_name, fb_name, spinner_duration, spinner_segment, id, d_frjvc_lat, d_frjvc_long,
+            d_frjvc_pill_no, imagepath1_F, imagepath1_B, imagepath1_I, imagepath1_O, imagepath1_T, d_check_sts;
     Integer REQUEST_CAMERA = 1, SELECT_FILE = 0;
-    int targetW;
-    int targetH;
-
-    boolean imagestatus1 = false;
+    Map<Character, String> image_name;
     String image1;
     int clickedStatus = 0;
-    GoogleApiClient mGoogleApiClient;
-    LocationRequest mLocationRequest;
-    Location mLastLocation;
     DbHelper dbHelper;
     SharedPreferences shared;
 
-    String id;
     SQLiteDatabase db;
     TextView etName;
     //ImageView refresh;
     int point_no;
     String kmlstatus;
     //set the image
-    private String mCurrentPhotoPath_F,mCurrentPhotoPath_B,mCurrentPhotoPath_I,mCurrentPhotoPath_O,mCurrentPhotoPath_T;
-    //get the image name
-    String imagepath1_F,imagepath1_B,imagepath1_I,imagepath1_O,imagepath1_T;
-
+    private String mCurrentPhotoPath_F, mCurrentPhotoPath_B, mCurrentPhotoPath_I, mCurrentPhotoPath_O, mCurrentPhotoPath_T;
     private Character pic_status;
     private AlbumStorageDirFactory mAlbumStorageDirFactory = null;
-    private String mImageUrl = "";
 
     public static Bitmap rotateImage(Bitmap source, float angle) {
         Matrix matrix = new Matrix();
@@ -111,6 +97,7 @@ public class DGPSDataCollectActivity extends AppCompatActivity  {
         return Bitmap.createBitmap(source, 0, 0, source.getWidth(), source.getHeight(),
                 matrix, true);
     }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -123,48 +110,50 @@ public class DGPSDataCollectActivity extends AppCompatActivity  {
         } else {
             mAlbumStorageDirFactory = new BaseAlbumDirFactory();
         }
-
+        dbHelper = new DbHelper(getApplicationContext());
         //Matterial Spinner
         /*pointtype=findViewById(R.id.pointtype);*/
-        bpduration=findViewById(R.id.bpduration);
+        bpduration = findViewById(R.id.bpduration);
+        /* dpSegment = findViewById(R.id.dpSegment);*/
        /* gtremark=findViewById(R.id.gtremark);
         gtduration=findViewById(R.id.gtduration);
         fraobservpoint=findViewById(R.id.fraobservpoint);*/
 
         //EditText
-        edttxtpillarno=findViewById(R.id.edttxtpillarno);
-        remark=findViewById(R.id.remark);
-        edttxtpatchno=findViewById(R.id.edttxtpatchno);
-        edttxtringno=findViewById(R.id.edttxtringno);
-        edtJobID=findViewById(R.id.edtJobID);
-       /* fraoverview=findViewById(R.id.fraoverview);*/
+        edttxtpillarno = findViewById(R.id.edttxtpillarno);
+        remark = findViewById(R.id.remark);
+        edttxtpatchno = findViewById(R.id.edttxtpatchno);
+        edttxtringno = findViewById(R.id.edttxtringno);
+        edtJobID = findViewById(R.id.edtJobID);
+        edtdpillno = findViewById(R.id.edtdpillno);
+        /* fraoverview=findViewById(R.id.fraoverview);*/
        /* edttxtrtxlat=findViewById(R.id.edttxtrtxlat);
         edttxtrtxlong=findViewById(R.id.edttxtrtxlong);*/
-        edtForestoffnm=findViewById(R.id.edtForestoffnm);
+        edtForestoffnm = findViewById(R.id.edtForestoffnm);
 
         //Image View
-        setpicforward=findViewById(R.id.setpicforward);
-        takepicforward=findViewById(R.id.takepicforward);
-        setpicbackward=findViewById(R.id.setpicbackward);
-        takepicbackward=findViewById(R.id.takepicbackward);
-        setpicinward=findViewById(R.id.setpicinward);
-        takepicinward=findViewById(R.id.takepicinward);
-        setpicoutward=findViewById(R.id.setpicoutward);
-        takepicoutward=findViewById(R.id.takepicoutward);
-        setpictop=findViewById(R.id.setpictop);
-        takepictop=findViewById(R.id.takepictop);
+        setpicforward = findViewById(R.id.setpicforward);
+        takepicforward = findViewById(R.id.takepicforward);
+        setpicbackward = findViewById(R.id.setpicbackward);
+        takepicbackward = findViewById(R.id.takepicbackward);
+        setpicinward = findViewById(R.id.setpicinward);
+        takepicinward = findViewById(R.id.takepicinward);
+        setpicoutward = findViewById(R.id.setpicoutward);
+        takepicoutward = findViewById(R.id.takepicoutward);
+        setpictop = findViewById(R.id.setpictop);
+        takepictop = findViewById(R.id.takepictop);
 
         //TextView
-        txtViewdiv=findViewById(R.id.txtViewdiv);
-        txtViewran=findViewById(R.id.txtViewran);
-        txtViewfb=findViewById(R.id.txtViewfb);
-        fbname=findViewById(R.id.fbname);
-      /*  txtViewusername=findViewById(R.id.txtViewusername);*/
+        txtViewdiv = findViewById(R.id.txtViewdiv);
+        txtViewran = findViewById(R.id.txtViewran);
+        txtViewfb = findViewById(R.id.txtViewfb);
+        fbname = findViewById(R.id.fbname);
+        /*  txtViewusername=findViewById(R.id.txtViewusername);*/
 
         //Layout
-        lh1=findViewById(R.id.lh1);
-      /*  lh2=findViewById(R.id.lh2);*/
-       /* lh3=findViewById(R.id.lh3);*/
+        lh1 = findViewById(R.id.lh1);
+        /*  lh2=findViewById(R.id.lh2);*/
+        /* lh3=findViewById(R.id.lh3);*/
 
         shared = getApplicationContext().getSharedPreferences(data, MODE_PRIVATE);
         sharediv = shared.getString("fbdivcode", "0");
@@ -174,27 +163,39 @@ public class DGPSDataCollectActivity extends AppCompatActivity  {
         sharefbname = shared.getString("fbname", "0");
         jobid = shared.getString("jobid", "0");
         userid = shared.getString("userid", "0");
+        div_name = shared.getString("div_name", "0");
+        range_name = shared.getString("range_name", "0");
+        fb_name = shared.getString("fb_name", "0");
+
         fbname.setText(sharefbname + " " + sharefbtype);
         edttxtpatchno.setText("1");
         edttxtringno.setText("0");
         edtJobID.setText(jobid);
-        point_no = getSLNO(sharefb);
-        edttxtpillarno.setText(String.valueOf(point_no));
+        //point_no = getSLNO(sharefb);
+
+
         Intent i = getIntent();
         kmlstatus = i.getStringExtra("kml_status");
         id = i.getStringExtra("id");
+        d_frjvc_lat = i.getStringExtra("lat");
+        d_frjvc_long = i.getStringExtra("lon");
+        d_frjvc_pill_no = i.getStringExtra("pill_no");
+        /*  d_check_sts = i.getStringExtra("checksts");*/
+        point_no = Integer.parseInt(d_frjvc_pill_no);
+        edttxtpillarno.setText(String.valueOf(point_no));
 
-
+        txtViewdiv.setText(div_name);
+        txtViewran.setText(range_name);
+        txtViewfb.setText(fb_name);
 
         (findViewById(R.id.button_close)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent i = null;
-                i = new Intent(getApplicationContext(), SelectFBForDGPSActivity.class);
+                i = new Intent(getApplicationContext(), DGPSMapViewActivity.class);
                 i.putExtra("kml_status", kmlstatus);
+                /* i.putExtra("check_sts", d_check_sts);*/
                 startActivity(i);
-
-
             }
         });
         (findViewById(R.id.save)).setOnClickListener(new View.OnClickListener() {
@@ -289,58 +290,160 @@ public class DGPSDataCollectActivity extends AppCompatActivity  {
                 }
             }
         });
-       /* if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO) {
-            mAlbumStorageDirFactory = new FroyoAlbumDirFactory();
-        } else {
-            mAlbumStorageDirFactory = new BaseAlbumDirFactory();
-        }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            //checkLocationPermission();
-            buildGoogleApiClient();
-        }*/
+
+        final ArrayAdapter<String> durationadapter = new ArrayAdapter<String>(getApplicationContext(), R.layout.spinner_row, duration);
+        bpduration.setAdapter(durationadapter);
+        bpduration.setPaddingSafe(0, 0, 0, 0);
+        bpduration.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                spinner_duration = (String) parent.getItemAtPosition(position);
+                if (!spinner_duration.equals("Select Duration")) {
+                    //CheckPillarStatus(locationtype);
+
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
+        /*final ArrayAdapter<String> segmentadapter = new ArrayAdapter<String>(getApplicationContext(), R.layout.spinner_row, survey_segment);
+        dpSegment.setAdapter(segmentadapter);
+        dpSegment.setPaddingSafe(0, 0, 0, 0);
+        dpSegment.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                spinner_segment = (String) parent.getItemAtPosition(position);
+                if (!spinner_segment.equals("Select Segment Type")) {
+                    //CheckPillarStatus(locationtype);
+
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });*/
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        //point_no = getSLNO(sharefb);
+        //edttxtpillarno.setText(String.valueOf(point_no));
+    }
+
+    @Override
+    public void onBackPressed() {
+        Intent i = new Intent(getApplicationContext(), ChooseSurvetTypeActivity.class);
+        i.setFlags(i.FLAG_ACTIVITY_NEW_TASK | i.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(i);
+
     }
 
     private int getSLNO(String sharefb) {
         //List<String> fbName = new ArrayList<String>();
         //return dbHelper.getPillarData(sharefb);
-        return 0;
+        return dbHelper.getDGPSPillarData(sharefb);
     }
 
-   /* private void CheckPillarStatus(String statusValue) {
-        if (statusValue.equals("Existing")) {
-            ll.setVisibility(View.VISIBLE);
-            ll.setVisibility(View.VISIBLE);
-        } else {
-            ll.setVisibility(View.GONE);
-            ll.setVisibility(View.GONE);
-            pillartype = "NA";
-            pillacond = "NA";
-            pillarpaintstatus = "NA";
-            pilshiftsts = "NA";
-        }
-    }*/
     private void SaveData() {
-                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+        String imei = getUniqueIMEIId(this);
+        if (edttxtpillarno.getText().toString() == "" || edttxtpillarno.getText().toString() == "0") {
+            Toast.makeText(this, "Serial Number can not ne blank or Zero", Toast.LENGTH_LONG).show();
+        } else if (spinner_duration.equals("Select Duration")) {
+            Toast.makeText(this, "Please Select Duration", Toast.LENGTH_LONG).show();
+        } else if (edtForestoffnm.getText().toString() == "") {
+            Toast.makeText(this, "Please Provide the Forest official name", Toast.LENGTH_LONG).show();
+        } else if (imagepath1_F == "" || imagepath1_F == null) {
+            Toast.makeText(this, "Front view of pillar is not available", Toast.LENGTH_LONG).show();
+        } else if (imagepath1_B == "" || imagepath1_B == null) {
+            Toast.makeText(this, "Back view of pillar is not available", Toast.LENGTH_LONG).show();
+        } else if (imagepath1_I == "" || imagepath1_I == null) {
+            Toast.makeText(this, "Inward view of pillar is not available", Toast.LENGTH_LONG).show();
+        } else if (imagepath1_O == "" || imagepath1_O == null) {
+            Toast.makeText(this, "Outward view of pillar is not available", Toast.LENGTH_LONG).show();
+        } else if (imagepath1_T == "" || imagepath1_T == null) {
+            Toast.makeText(this, "Withdevice view of pillar is not available", Toast.LENGTH_LONG).show();
+        } else {
+            db = openOrCreateDatabase("sltp.db", MODE_PRIVATE, null);
+            Cursor c = db.rawQuery("select * from m_fb_dgps_survey_pill_data where u_id='" + userid + "' and d_id='" + sharediv + "' and r_id='" + sharerange + "' and fb_id='" + sharefb + "' and frjvc_lat='" + d_frjvc_lat + "' and frjvc_long='" + d_frjvc_long + "'", null);
+            if (c.getCount() > 0) {
+                if (c.moveToFirst()) {
+                    if (Integer.parseInt(c.getString(c.getColumnIndex("pillar_sfile_status"))) == 0) {
+                        Toast.makeText(this, "This pillar is already registered.Please tag the pillar with its Static Observation data.", Toast.LENGTH_LONG).show();
+                    } else if (Integer.parseInt(c.getString(c.getColumnIndex("pillar_sfile_status"))) == 1) {
+                        Toast.makeText(this, "This pillar is already registered and Tagged.", Toast.LENGTH_LONG).show();
+                    } else {
 
+                    }
+                }
+            } else {
+                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
                 //alertDialogBuilder.setMessage("Are you sure to save this pillar data?");
-                final View customLayout = getLayoutInflater().inflate(R.layout.save_custom_dialog_layout, null);
-                etName =customLayout.findViewById(R.id.txtView);
-                //String data=getJobID(sharediv,sharerange,sharefb,userid);
-                etName.setText(data);
+                final View customLayout = getLayoutInflater().inflate(R.layout.save_custome_dialod_register_pillar, null);
                 alertDialogBuilder.setView(customLayout);
-                alertDialogBuilder.setPositiveButton("OK",
+                alertDialogBuilder.setPositiveButton("Ok",
                         new DialogInterface.OnClickListener() {
 
                             @Override
                             public void onClick(DialogInterface arg0, int arg1) {
-                                ClipboardManager cm = (ClipboardManager) getApplication().getSystemService(Context.CLIPBOARD_SERVICE);
-                                ClipData clipData = ClipData.newPlainText("JobID", etName.getText().toString());
-                                cm.setPrimaryClip(clipData);
-                                Intent launchIntent = getPackageManager().getLaunchIntentForPackage("SurveyMobile.Droid");
-                                if (launchIntent != null) {
-                                    startActivity(launchIntent);
-                                } else {
-                                    Toast.makeText(DGPSDataCollectActivity.this, "There is no package available in android", Toast.LENGTH_LONG).show();
+                                int sl = Integer.parseInt(edttxtpillarno.getText().toString());
+
+                                String jobID = edtJobID.getText().toString();
+                                SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+                                Date date = new Date();
+                                M_dgps_pilldata mpr1 = new M_dgps_pilldata(sharediv, sharerange, sharefb, sl, jobID, userid, spinner_duration,
+                                        "0", "0", "0", "0", "0",
+                                        edttxtpatchno.getText().toString(), edttxtringno.getText().toString(), edtForestoffnm.getText().toString(),
+                                        userid, formatter.format(date), txtViewdiv.getText().toString(), txtViewran.getText().toString(),
+                                        txtViewfb.getText().toString(), "0", "0", "0", "",
+                                        "", imagepath1_F, imagepath1_B, imagepath1_I, imagepath1_O, imagepath1_T, imei, "", "0"
+                                        , d_frjvc_lat, d_frjvc_long, edtdpillno.getText().toString());//+"_"+pilshiftsts,surdir,accuracy
+                                try {
+                                    dbHelper.open();
+                                    long status = dbHelper.insertDGPSSurveyPillarData(mpr1);
+                                    dbHelper.close();
+                                    if (status >= 0) {
+                                        if (checkDGPSDataAvalability()) {
+                                            image_name = new HashMap<Character, String>();
+                                            image_name.put('F', imagepath1_F);
+                                            image_name.put('B', imagepath1_B);
+                                            image_name.put('I', imagepath1_I);
+                                            image_name.put('O', imagepath1_O);
+                                            image_name.put('T', imagepath1_T);
+                                            long a = insertDGPSImage((HashMap<Character, String>) image_name, userid, sl);
+                                            if (a == 5) {
+                                                ClipboardManager cm = (ClipboardManager) getApplication().getSystemService(Context.CLIPBOARD_SERVICE);
+                                                ClipData clipData = ClipData.newPlainText("JobID", jobID);
+                                                cm.setPrimaryClip(clipData);
+                                                Intent launchIntent = getPackageManager().getLaunchIntentForPackage("SurveyMobile.Droid");
+                                                if (launchIntent != null) {
+                                                    // finishAffinity();
+                                                    reset();
+                                                    startActivity(launchIntent);
+                                                } else {
+                                                    Toast.makeText(DGPSDataCollectActivity.this, "There is no package available in android", Toast.LENGTH_LONG).show();
+                                                }
+                                            } else {
+                                                Toast.makeText(getApplicationContext(), "Pillar pictures is not stored", Toast.LENGTH_LONG).show();
+                                            }
+                                        } else {
+                                            Toast.makeText(getApplicationContext(), "NoT Pillar registered Successfully", Toast.LENGTH_LONG).show();
+                                        }
+                                    }
+
+
+                                } catch (Exception ee) {
+                                    ee.printStackTrace();
+                                } finally {
+                                    if (dbHelper != null) {
+                                        dbHelper.close();
+                                    }
                                 }
                             }
                         });
@@ -350,21 +453,88 @@ public class DGPSDataCollectActivity extends AppCompatActivity  {
 
                             @Override
                             public void onClick(DialogInterface arg0, int arg1) {
-                                Toast.makeText(getApplicationContext(), "You canceled the request...please try again", Toast.LENGTH_LONG).show();
+                                Toast.makeText(getApplicationContext(), "You canceled the save request...please try again", Toast.LENGTH_LONG).show();
                             }
                         });
 
                 AlertDialog alertDialog = alertDialogBuilder.create();
                 alertDialog.show();
-
-            //cursor.close();
-//            db.close();
-
-
-        //dismiss();
+            }
+        }
     }
 
+    private int insertDGPSImage(HashMap<Character, String> image_name, String userid, int sl) {
+        long status = 0;
+        int count = 0;
+        try {
+            for (Map.Entry entry : image_name.entrySet()) {
+                M_dgps_pill_pic mpic = new M_dgps_pill_pic(sl, userid, "0", entry.getValue().toString(), entry.getKey().toString());
+                dbHelper.open();
+                status = dbHelper.insertDGPSSurveyPillarPic(mpic);
+                if (status > 0) {
+                    count += 1;
+                }
+                dbHelper.close();
+            }
+        } catch (Exception ee) {
+            ee.printStackTrace();
+        }
+        return count;
+    }
 
+    private boolean checkDGPSDataAvalability() {
+        boolean b = false;
+        try {
+            db = openOrCreateDatabase("sltp.db", MODE_PRIVATE, null);
+            Cursor c = db.rawQuery("update m_dgps_Survey_pill_data set m_dgps_surv_sts='1' where m_p_lat='" + d_frjvc_lat + "' and m_p_long='" + d_frjvc_long + "'", null);
+            if (c.getCount() >= 0) {
+                b = true;
+            }
+            c.close();
+            db.close();
+        } catch (Exception ee) {
+            ee.printStackTrace();
+        }
+        return b;
+    }
+
+    public static String getUniqueIMEIId(Context context) {
+        try {
+            /*TelephonyManager telephonyManager = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
+            String imei = telephonyManager.getDeviceId();
+            Log.e("imei", "=" + imei);
+            if (imei != null && !imei.isEmpty()) {
+                return imei;
+            } else {
+                return android.os.Build.SERIAL;
+            }*/
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return "not_found";
+    }
+
+    private void reset() {
+        imagepath1_F = null;
+        imagepath1_B = null;
+        imagepath1_I = null;
+        imagepath1_O = null;
+        imagepath1_T = null;
+        mCurrentPhotoPath_F = null;
+        mCurrentPhotoPath_B = null;
+        mCurrentPhotoPath_I = null;
+        mCurrentPhotoPath_O = null;
+        mCurrentPhotoPath_T = null;
+        edtForestoffnm.setText("");
+        edtdpillno.setText("");
+        /* dpSegment.setSelection(0);*/
+        bpduration.setSelection(0);
+        setpicoutward.setImageResource(0);
+        setpictop.setImageResource(0);
+        setpicbackward.setImageResource(0);
+        setpicforward.setImageResource(0);
+        setpicinward.setImageResource(0);
+    }
 
     private void SelectImage() {
         final CharSequence[] items = {"Camera", "Cancel"};
@@ -377,7 +547,7 @@ public class DGPSDataCollectActivity extends AppCompatActivity  {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 if (items[i].equals("Camera")) {
-                    dispatchTakePictureIntent(1,'F',edttxtpillarno.getText().toString());
+                    dispatchTakePictureIntent(1, 'F', edttxtpillarno.getText().toString());
                 } else if (items[i].equals("Gallery")) {
                     Intent intent = new Intent();
                     intent.setType("image/*");
@@ -391,6 +561,7 @@ public class DGPSDataCollectActivity extends AppCompatActivity  {
         });
         builder.show();
     }
+
     private void SelectImageBackward() {
         final CharSequence[] items = {"Camera", "Cancel"};
 
@@ -402,7 +573,7 @@ public class DGPSDataCollectActivity extends AppCompatActivity  {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 if (items[i].equals("Camera")) {
-                    dispatchTakePictureIntent(1,'B',edttxtpillarno.getText().toString());
+                    dispatchTakePictureIntent(1, 'B', edttxtpillarno.getText().toString());
                 } else if (items[i].equals("Gallery")) {
                     Intent intent = new Intent();
                     intent.setType("image/*");
@@ -416,6 +587,7 @@ public class DGPSDataCollectActivity extends AppCompatActivity  {
         });
         builder.show();
     }
+
     private void SelectImageInward() {
         final CharSequence[] items = {"Camera", "Cancel"};
 
@@ -427,7 +599,7 @@ public class DGPSDataCollectActivity extends AppCompatActivity  {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 if (items[i].equals("Camera")) {
-                    dispatchTakePictureIntent(1,'I',edttxtpillarno.getText().toString());
+                    dispatchTakePictureIntent(1, 'I', edttxtpillarno.getText().toString());
                 } else if (items[i].equals("Gallery")) {
                     Intent intent = new Intent();
                     intent.setType("image/*");
@@ -441,6 +613,7 @@ public class DGPSDataCollectActivity extends AppCompatActivity  {
         });
         builder.show();
     }
+
     private void SelectImageOutward() {
         final CharSequence[] items = {"Camera", "Cancel"};
 
@@ -452,7 +625,7 @@ public class DGPSDataCollectActivity extends AppCompatActivity  {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 if (items[i].equals("Camera")) {
-                    dispatchTakePictureIntent(1,'O',edttxtpillarno.getText().toString());
+                    dispatchTakePictureIntent(1, 'O', edttxtpillarno.getText().toString());
                 } else if (items[i].equals("Gallery")) {
                     Intent intent = new Intent();
                     intent.setType("image/*");
@@ -466,6 +639,7 @@ public class DGPSDataCollectActivity extends AppCompatActivity  {
         });
         builder.show();
     }
+
     private void SelectImageTop() {
         final CharSequence[] items = {"Camera", "Cancel"};
 
@@ -477,7 +651,7 @@ public class DGPSDataCollectActivity extends AppCompatActivity  {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 if (items[i].equals("Camera")) {
-                    dispatchTakePictureIntent(1,'T',edttxtpillarno.getText().toString());
+                    dispatchTakePictureIntent(1, 'T', edttxtpillarno.getText().toString());
                 } else if (items[i].equals("Gallery")) {
                     Intent intent = new Intent();
                     intent.setType("image/*");
@@ -492,7 +666,7 @@ public class DGPSDataCollectActivity extends AppCompatActivity  {
         builder.show();
     }
 
-    private void dispatchTakePictureIntent(int actionCode,Character character,String pll_no) {
+    private void dispatchTakePictureIntent(int actionCode, Character character, String pll_no) {
         StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
         StrictMode.setVmPolicy(builder.build());
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
@@ -500,7 +674,7 @@ public class DGPSDataCollectActivity extends AppCompatActivity  {
         switch (actionCode) {
             case ACTION_TAKE_PHOTO_B:
                 File f = null;
-                if(character=='F') {
+                if (character == 'F') {
                     try {
                         f = setUpPhotoFile(character, pll_no);
                         pic_status = character;
@@ -512,8 +686,7 @@ public class DGPSDataCollectActivity extends AppCompatActivity  {
                         mCurrentPhotoPath_F = null;
                     }
                     break;
-                }
-                else if(character=='B') {
+                } else if (character == 'B') {
                     try {
                         f = setUpPhotoFile(character, pll_no);
                         pic_status = character;
@@ -522,11 +695,10 @@ public class DGPSDataCollectActivity extends AppCompatActivity  {
                     } catch (IOException e) {
                         e.printStackTrace();
                         f = null;
-                         mCurrentPhotoPath_B= null;
+                        mCurrentPhotoPath_B = null;
                     }
                     break;
-                }
-                else if(character=='I') {
+                } else if (character == 'I') {
                     try {
                         f = setUpPhotoFile(character, pll_no);
                         pic_status = character;
@@ -538,8 +710,7 @@ public class DGPSDataCollectActivity extends AppCompatActivity  {
                         mCurrentPhotoPath_I = null;
                     }
                     break;
-                }
-                else if(character=='O') {
+                } else if (character == 'O') {
                     try {
                         f = setUpPhotoFile(character, pll_no);
                         pic_status = character;
@@ -551,8 +722,7 @@ public class DGPSDataCollectActivity extends AppCompatActivity  {
                         mCurrentPhotoPath_O = null;
                     }
                     break;
-                }
-                else if(character=='T') {
+                } else if (character == 'T') {
                     try {
                         f = setUpPhotoFile(character, pll_no);
                         pic_status = character;
@@ -573,40 +743,31 @@ public class DGPSDataCollectActivity extends AppCompatActivity  {
         startActivityForResult(takePictureIntent, actionCode);
     }
 
-    private File setUpPhotoFile(Character character,String pill_no) throws IOException {
-        File f=null;
-        if(character=='F')
-        {
-            f= createImageFile(character, pill_no);
-            mCurrentPhotoPath_F= f.getAbsolutePath();
-        }
-        else if(character=='B')
-        {
-            f= createImageFile(character, pill_no);
-            mCurrentPhotoPath_B= f.getAbsolutePath();
-        }
-        else if(character=='I')
-        {
-            f= createImageFile(character, pill_no);
-            mCurrentPhotoPath_I= f.getAbsolutePath();
-        }
-        else if(character=='O')
-        {
-            f= createImageFile(character, pill_no);
-            mCurrentPhotoPath_O= f.getAbsolutePath();
-        }
-        else if(character=='T')
-        {
-            f= createImageFile(character, pill_no);
-            mCurrentPhotoPath_T= f.getAbsolutePath();
+    private File setUpPhotoFile(Character character, String pill_no) throws IOException {
+        File f = null;
+        if (character == 'F') {
+            f = createImageFile(character, pill_no);
+            mCurrentPhotoPath_F = f.getAbsolutePath();
+        } else if (character == 'B') {
+            f = createImageFile(character, pill_no);
+            mCurrentPhotoPath_B = f.getAbsolutePath();
+        } else if (character == 'I') {
+            f = createImageFile(character, pill_no);
+            mCurrentPhotoPath_I = f.getAbsolutePath();
+        } else if (character == 'O') {
+            f = createImageFile(character, pill_no);
+            mCurrentPhotoPath_O = f.getAbsolutePath();
+        } else if (character == 'T') {
+            f = createImageFile(character, pill_no);
+            mCurrentPhotoPath_T = f.getAbsolutePath();
         }
         return f;
     }
 
-    private File createImageFile(Character character,String pill_no) throws IOException {
+    private File createImageFile(Character character, String pill_no) throws IOException {
         // Create an image file name
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        String imageFileName = JPEG_FILE_PREFIX + timeStamp + "_" + sharefb + "_"+ character +"_"+pill_no+"_";
+        String imageFileName = JPEG_FILE_PREFIX + timeStamp + "_" + sharefb + "_" + character + "_" + pill_no + "_";
         File albumF = getAlbumDir();
         File imageF = File.createTempFile(imageFileName + sharefb, PNG_FILE_SUFFIX, albumF);
         return imageF;
@@ -658,19 +819,15 @@ public class DGPSDataCollectActivity extends AppCompatActivity  {
 //                break;
             case ACTION_TAKE_PHOTO_B: {
                 if (resultCode == RESULT_OK) {
-                    if(pic_status == 'F') {
+                    if (pic_status == 'F') {
                         handleBigCameraPhoto(pic_status);
-                    }
-                    else if(pic_status == 'B') {
+                    } else if (pic_status == 'B') {
                         handleBigCameraPhoto(pic_status);
-                    }
-                    else if(pic_status == 'I') {
+                    } else if (pic_status == 'I') {
                         handleBigCameraPhoto(pic_status);
-                    }
-                    else if(pic_status == 'O') {
+                    } else if (pic_status == 'O') {
                         handleBigCameraPhoto(pic_status);
-                    }
-                    else if(pic_status == 'T') {
+                    } else if (pic_status == 'T') {
                         handleBigCameraPhoto(pic_status);
                     }
 
@@ -697,8 +854,7 @@ public class DGPSDataCollectActivity extends AppCompatActivity  {
                             mCurrentPhotoPath_F = UtilityGetPath.getRealPathFromURI_API11to18(getApplicationContext(), selectedImageUri);
                             imgValue = "captured";
                         }
-                    }
-                    else if (pic_status == 'B') {
+                    } else if (pic_status == 'B') {
                         Uri selectedImageUri = data.getData();
                         if (setpicbackward.getDrawable() == null) {
                             setpicbackward.setImageURI(selectedImageUri);
@@ -716,8 +872,7 @@ public class DGPSDataCollectActivity extends AppCompatActivity  {
                             mCurrentPhotoPath_B = UtilityGetPath.getRealPathFromURI_API11to18(getApplicationContext(), selectedImageUri);
                             imgValue = "captured";
                         }
-                    }
-                    else if (pic_status == 'I') {
+                    } else if (pic_status == 'I') {
                         Uri selectedImageUri = data.getData();
                         if (setpicbackward.getDrawable() == null) {
                             setpicbackward.setImageURI(selectedImageUri);
@@ -735,8 +890,7 @@ public class DGPSDataCollectActivity extends AppCompatActivity  {
                             mCurrentPhotoPath_I = UtilityGetPath.getRealPathFromURI_API11to18(getApplicationContext(), selectedImageUri);
                             imgValue = "captured";
                         }
-                    }
-                    else if (pic_status == 'O') {
+                    } else if (pic_status == 'O') {
                         Uri selectedImageUri = data.getData();
                         if (setpicbackward.getDrawable() == null) {
                             setpicbackward.setImageURI(selectedImageUri);
@@ -754,8 +908,7 @@ public class DGPSDataCollectActivity extends AppCompatActivity  {
                             mCurrentPhotoPath_O = UtilityGetPath.getRealPathFromURI_API11to18(getApplicationContext(), selectedImageUri);
                             imgValue = "captured";
                         }
-                    }
-                    else if (pic_status == 'T') {
+                    } else if (pic_status == 'T') {
                         Uri selectedImageUri = data.getData();
                         if (setpicbackward.getDrawable() == null) {
                             setpicbackward.setImageURI(selectedImageUri);
@@ -780,38 +933,29 @@ public class DGPSDataCollectActivity extends AppCompatActivity  {
     }
 
     private void handleBigCameraPhoto(Character character) {
-        if(character=='F')
-        {
+        if (character == 'F') {
             if (mCurrentPhotoPath_F != null) {
-                String path = compressImage(mCurrentPhotoPath_F,character);
+                String path = compressImage(mCurrentPhotoPath_F, character);
                 galleryAddPic(path);
             }
-        }
-        else if(character=='B')
-        {
+        } else if (character == 'B') {
             if (mCurrentPhotoPath_B != null) {
-                String path = compressImage(mCurrentPhotoPath_B,character);
+                String path = compressImage(mCurrentPhotoPath_B, character);
                 galleryAddPic(path);
             }
-        }
-        else if(character=='I')
-        {
+        } else if (character == 'I') {
             if (mCurrentPhotoPath_I != null) {
-                String path = compressImage(mCurrentPhotoPath_I,character);
+                String path = compressImage(mCurrentPhotoPath_I, character);
                 galleryAddPic(path);
             }
-        }
-        else if(character=='O')
-        {
+        } else if (character == 'O') {
             if (mCurrentPhotoPath_O != null) {
-                String path = compressImage(mCurrentPhotoPath_O,character);
+                String path = compressImage(mCurrentPhotoPath_O, character);
                 galleryAddPic(path);
             }
-        }
-        else if(character=='T')
-        {
+        } else if (character == 'T') {
             if (mCurrentPhotoPath_T != null) {
-                String path = compressImage(mCurrentPhotoPath_T,character);
+                String path = compressImage(mCurrentPhotoPath_T, character);
                 galleryAddPic(path);
             }
         }
@@ -822,10 +966,9 @@ public class DGPSDataCollectActivity extends AppCompatActivity  {
 
     }
 
-    public String compressImage(String imageUri,Character character) {
-        String filename="";
-        if(character=='F')
-        {
+    public String compressImage(String imageUri, Character character) {
+        String filename = "";
+        if (character == 'F') {
             imagepath1_F = imageUri;
             String filePath = getRealPathFromURI(imageUri);
             Bitmap scaledBitmap = null;
@@ -934,7 +1077,7 @@ public class DGPSDataCollectActivity extends AppCompatActivity  {
             }
 
             FileOutputStream out = null;
-            filename= getFilename(character);
+            filename = getFilename(character);
             try {
                 out = new FileOutputStream(filename);
 
@@ -945,9 +1088,7 @@ public class DGPSDataCollectActivity extends AppCompatActivity  {
                 e.printStackTrace();
             }
 
-        }
-        else if(character=='B')
-        {
+        } else if (character == 'B') {
             imagepath1_B = imageUri;
             String filePath = getRealPathFromURI(imageUri);
             Bitmap scaledBitmap = null;
@@ -1056,7 +1197,7 @@ public class DGPSDataCollectActivity extends AppCompatActivity  {
             }
 
             FileOutputStream out = null;
-            filename= getFilename(character);
+            filename = getFilename(character);
             try {
                 out = new FileOutputStream(filename);
 
@@ -1066,9 +1207,7 @@ public class DGPSDataCollectActivity extends AppCompatActivity  {
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
             }
-        }
-        else if(character=='I')
-        {
+        } else if (character == 'I') {
             imagepath1_I = imageUri;
             String filePath = getRealPathFromURI(imageUri);
             Bitmap scaledBitmap = null;
@@ -1177,7 +1316,7 @@ public class DGPSDataCollectActivity extends AppCompatActivity  {
             }
 
             FileOutputStream out = null;
-            filename= getFilename(character);
+            filename = getFilename(character);
             try {
                 out = new FileOutputStream(filename);
 
@@ -1188,9 +1327,7 @@ public class DGPSDataCollectActivity extends AppCompatActivity  {
                 e.printStackTrace();
             }
 
-        }
-        else if(character=='O')
-        {
+        } else if (character == 'O') {
             imagepath1_O = imageUri;
             String filePath = getRealPathFromURI(imageUri);
             Bitmap scaledBitmap = null;
@@ -1299,7 +1436,7 @@ public class DGPSDataCollectActivity extends AppCompatActivity  {
             }
 
             FileOutputStream out = null;
-            filename= getFilename(character);
+            filename = getFilename(character);
             try {
                 out = new FileOutputStream(filename);
 
@@ -1310,9 +1447,7 @@ public class DGPSDataCollectActivity extends AppCompatActivity  {
                 e.printStackTrace();
             }
 
-        }
-        else if(character=='T')
-        {
+        } else if (character == 'T') {
             imagepath1_T = imageUri;
             String filePath = getRealPathFromURI(imageUri);
             Bitmap scaledBitmap = null;
@@ -1421,7 +1556,7 @@ public class DGPSDataCollectActivity extends AppCompatActivity  {
             }
 
             FileOutputStream out = null;
-            filename= getFilename(character);
+            filename = getFilename(character);
             try {
                 out = new FileOutputStream(filename);
 
@@ -1441,24 +1576,20 @@ public class DGPSDataCollectActivity extends AppCompatActivity  {
 //        if (!file.exists()) {
 //            file.mkdirs();
 //        }
-        String uriSting="";
-        if(character=='F') {
+        String uriSting = "";
+        if (character == 'F') {
             uriSting = mCurrentPhotoPath_F;
 
-        }
-        else if(character=='B') {
+        } else if (character == 'B') {
             uriSting = mCurrentPhotoPath_B;
 
-        }
-        else if(character=='I') {
+        } else if (character == 'I') {
             uriSting = mCurrentPhotoPath_I;
 
-        }
-        else if(character=='O') {
+        } else if (character == 'O') {
             uriSting = mCurrentPhotoPath_O;
 
-        }
-        else if(character=='T') {
+        } else if (character == 'T') {
             uriSting = mCurrentPhotoPath_T;
 
         }
@@ -1506,127 +1637,4 @@ public class DGPSDataCollectActivity extends AppCompatActivity  {
         getApplicationContext().sendBroadcast(mediaScanIntent);
     }
 
-
-    /*private void setPic() {
-
-        *//* There isn't enough memory to open up more than a couple camera photos
-         So pre-scale the target bitmap into which the file is decoded
-
-         Get the size of the ImageView *//*
-
-
-        // if (personImg.getDrawable() == null) {
-        targetW = setpicforward.getWidth();
-        targetH = setpicforward.getHeight();
-
-        imagepath1 = mCurrentPhotoPath;
-        //Utility.getByeArr(Utility.setPic(imagepath1));
-
-        clickedStatus = 1;
-        Log.d("ImagePath", "1" + imagepath1);
-        //  } else {
-        //   Toast.makeText(HomeScreen.this, "Cannot capture more photos", Toast.LENGTH_SHORT).show();
-        //  }
-
-        int targetW = setpicforward.getWidth();
-        int targetH = setpicforward.getHeight();
-
-        *//* Get the size of the image *//*
-        BitmapFactory.Options bmOptions = new BitmapFactory.Options();
-        bmOptions.inJustDecodeBounds = true;
-        BitmapFactory.decodeFile(mCurrentPhotoPath, bmOptions);
-        int photoW = bmOptions.outWidth;
-        int photoH = bmOptions.outHeight;
-
-        *//*   Figure out which way needs to be reduced less *//*
-        int scaleFactor = 1;
-        if ((targetW > 0) || (targetH > 0)) {
-            scaleFactor = Math.min(photoW / targetW, photoH / targetH);
-        }
-
-        *//* Set bitmap options to scale the image decode target *//*
-        bmOptions.inJustDecodeBounds = false;
-        bmOptions.inSampleSize = scaleFactor;
-        bmOptions.inPurgeable = true;
-
-        *//*  Decode the JPEG file into a Bitmap *//*
-        Bitmap bitmap = BitmapFactory.decodeFile(mCurrentPhotoPath, bmOptions);
-
-        *//*  Rotate the file according to the device to portait mode*//*
-        Bitmap bmp = rotatePhoto(mCurrentPhotoPath, bitmap);
-        *//*Associate the Bitmap to the ImageView *//*
-
-        if (setpicforward.getDrawable() == null) {
-
-
-            setpicforward.setImageBitmap(bmp);
-        } else {
-            setpicforward.setImageBitmap(bmp);
-        }
-        //assign value to the image variable
-        imgValue = "captured";
-    }
-
-
-    private Bitmap rotatePhoto(String photoPath, Bitmap bitmap) {
-        ExifInterface ei = null;
-        try {
-            ei = new ExifInterface(photoPath);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        int orientation = ei.getAttributeInt(ExifInterface.TAG_ORIENTATION,
-                ExifInterface.ORIENTATION_UNDEFINED);
-
-        Bitmap rotatedBitmap = null;
-        switch (orientation) {
-
-            case ExifInterface.ORIENTATION_ROTATE_90:
-                rotatedBitmap = rotateImage(bitmap, 90);
-                return rotatedBitmap;
-
-            case ExifInterface.ORIENTATION_ROTATE_180:
-                rotatedBitmap = rotateImage(bitmap, 180);
-                return rotatedBitmap;
-
-            case ExifInterface.ORIENTATION_ROTATE_270:
-                rotatedBitmap = rotateImage(bitmap, 270);
-                return rotatedBitmap;
-
-            case ExifInterface.ORIENTATION_NORMAL:
-            default:
-                rotatedBitmap = bitmap;
-                return rotatedBitmap;
-        }
-    }*/
-
-    //location code
-    /*protected synchronized void buildGoogleApiClient() {
-        mGoogleApiClient = new GoogleApiClient.Builder(getApplicationContext())
-                .addConnectionCallbacks(this)
-                .addOnConnectionFailedListener(this)
-                .addApi(LocationServices.API)
-                .build();
-        mGoogleApiClient.connect();
-    }*/
-
-   /* @Override
-    public void onConnected(@Nullable Bundle bundle) {
-
-    }
-
-    @Override
-    public void onConnectionSuspended(int i) {
-
-    }
-
-    @Override
-    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-
-    }
-
-    @Override
-    public void onLocationChanged(Location location) {
-
-    }*/
 }

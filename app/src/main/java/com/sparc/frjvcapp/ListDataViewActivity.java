@@ -91,27 +91,32 @@ public class ListDataViewActivity extends AppCompatActivity implements View.OnCl
     }
 
     public void getDataFromDataBase() {
-        db = openOrCreateDatabase("sltp.db", MODE_PRIVATE, null);
-        arrayList.clear();
-        c = db.rawQuery("SELECT * from m_pillar_reg where r_id = '" + sharerange + "' and  fb_id = '" + sharefb + "'  and uid='" + userid + "' and p_sts='" + 0 + "' and delete_status='0' order by p_sl_no", null);
-        int count = c.getCount();
-        if (count >= 1) {
-            if (c.moveToFirst()) {
-                do {
+        try {
+            db = openOrCreateDatabase("sltp.db", MODE_PRIVATE, null);
+            arrayList.clear();
+            c = db.rawQuery("SELECT * from m_pillar_reg where r_id = '" + sharerange + "' and  fb_id = '" + sharefb + "'  and uid='" + userid + "' and p_sts='" + 0 + "' and delete_status='0' order by p_sl_no", null);
+            int count = c.getCount();
+            if (count >= 1) {
+                if (c.moveToFirst()) {
+                    do {
 
-                    DataViewDetails dataViewDetails = new DataViewDetails();
-                    dataViewDetails.setPillarNo(c.getString(c.getColumnIndex("p_no")));
-                    dataViewDetails.setLat(c.getString(c.getColumnIndex("p_lat")));
-                    dataViewDetails.setLon(c.getString(c.getColumnIndex("p_long")));
-                    dataViewDetails.setImage(c.getString(c.getColumnIndex("p_pic")));
-                    dataViewDetails.setSyncStatus("0");
-                    arrayList.add(dataViewDetails);
+                        DataViewDetails dataViewDetails = new DataViewDetails();
+                        dataViewDetails.setPillarNo(c.getString(c.getColumnIndex("p_no")));
+                        dataViewDetails.setLat(c.getString(c.getColumnIndex("p_lat")));
+                        dataViewDetails.setLon(c.getString(c.getColumnIndex("p_long")));
+                        dataViewDetails.setImage(c.getString(c.getColumnIndex("p_pic")));
+                        dataViewDetails.setSyncStatus("0");
+                        arrayList.add(dataViewDetails);
+                    }
+                    while (c.moveToNext());
                 }
-                while (c.moveToNext());
             }
+            c.close();
+            db.close();
+        }catch (Exception ee)
+        {
+            ee.printStackTrace();
         }
-        c.close();
-        db.close();
     }
 
     public void loadData() {
@@ -124,7 +129,7 @@ public class ListDataViewActivity extends AppCompatActivity implements View.OnCl
                     final DataViewDetails dataViewDetails = arrayList.get(position);
                     if (presKey.equals("delete")) {
                         db = openOrCreateDatabase("sltp.db", MODE_PRIVATE, null);
-                        Cursor c = db.rawQuery("update m_pillar_reg set delete_status='1' where p_lat='" + dataViewDetails.lat + "' and p_long='" + dataViewDetails.lon + "'", null);
+                        Cursor c = db.rawQuery("update m_pillar_reg set delete_status='3' where p_lat='" + dataViewDetails.lat + "' and p_long='" + dataViewDetails.lon + "'", null);
                         if (c.getCount() >= 0) {
                             Toast.makeText(ListDataViewActivity.this, "Data successfully deleted", Toast.LENGTH_SHORT).show();
                         }

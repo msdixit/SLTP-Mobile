@@ -1,5 +1,7 @@
 package com.sparc.frjvcapp.pojo;
 
+import java.util.Date;
+
 public class M_dgps_pilldata {
     private String d_id;
 
@@ -218,9 +220,126 @@ public class M_dgps_pilldata {
     private String ack_status;
     private String delete_status;
     private String survey_segment;
+    private String device_imei_no;
+    private String pillar_sfile_path;
+    private String pillar_sfile_status;
+
+    public String getDevice_imei_no() {
+        return device_imei_no;
+    }
+
+    public void setDevice_imei_no(String device_imei_no) {
+        this.device_imei_no = device_imei_no;
+    }
+
+    public String getPillar_sfile_path() {
+        return pillar_sfile_path;
+    }
+
+    public void setPillar_sfile_path(String pillar_sfile_path) {
+        this.pillar_sfile_path = pillar_sfile_path;
+    }
+
+    public String getPillar_sfile_status() {
+        return pillar_sfile_status;
+    }
+
+    public void setPillar_sfile_status(String pillar_sfile_status) {
+        this.pillar_sfile_status = pillar_sfile_status;
+    }
+    public String getF_pic_name() {
+        return f_pic_name;
+    }
+
+    public void setF_pic_name(String f_pic_name) {
+        this.f_pic_name = f_pic_name;
+    }
+
+    public String getB_pic_name() {
+        return b_pic_name;
+    }
+
+    public void setB_pic_name(String b_pic_name) {
+        this.b_pic_name = b_pic_name;
+    }
+
+    public String getI_pic_name() {
+        return i_pic_name;
+    }
+
+    public void setI_pic_name(String i_pic_name) {
+        this.i_pic_name = i_pic_name;
+    }
+
+    public String getO_pic_name() {
+        return o_pic_name;
+    }
+
+    public void setO_pic_name(String o_pic_name) {
+        this.o_pic_name = o_pic_name;
+    }
+
+    public String getDiv_pic_name() {
+        return div_pic_name;
+    }
+
+    public void setDiv_pic_name(String div_pic_name) {
+        this.div_pic_name = div_pic_name;
+    }
+
+    private String f_pic_name;
+    private String b_pic_name;
+    private String i_pic_name;
+    private String o_pic_name;
+    private String div_pic_name;
 
 
-    public M_dgps_pilldata(String d_id, String r_id, String fb_id, int pill_no, String job_id, String u_id, String survey_durn, String f_pic_status, String b_pic_status, String i_pic_status, String o_pic_status, String div_pic_status, String patch_no, String ring_no, String forest_person, String surveyor_name, String survey_time, String div_name, String range_name, String fb_name, String sync_status, String ack_status, String delete_status, String survey_segment) {
+    public String getCompletion_sts() {
+        return completion_sts;
+    }
+
+    public void setCompletion_sts(String completion_sts) {
+        this.completion_sts = completion_sts;
+    }
+
+    private String completion_sts;
+    private String frjvc_lat;
+
+    public String getFrjvc_lat() {
+        return frjvc_lat;
+    }
+
+    public void setFrjvc_lat(String frjvc_lat) {
+        this.frjvc_lat = frjvc_lat;
+    }
+
+    public String getFrjvc_long() {
+        return frjvc_long;
+    }
+
+    public void setFrjvc_long(String frjvc_long) {
+        this.frjvc_long = frjvc_long;
+    }
+
+    private String frjvc_long;
+
+    public String getD_pill_no() {
+        return d_pill_no;
+    }
+
+    public void setD_pill_no(String d_pill_no) {
+        this.d_pill_no = d_pill_no;
+    }
+
+    private String d_pill_no;
+
+
+    public M_dgps_pilldata(String d_id, String r_id, String fb_id, int pill_no, String job_id, String u_id, String survey_durn,
+                           String f_pic_status, String b_pic_status, String i_pic_status, String o_pic_status, String div_pic_status,
+                           String patch_no,String ring_no, String forest_person, String surveyor_name, String survey_time, String div_name,
+                           String range_name, String fb_name, String sync_status, String ack_status, String delete_status,
+                           String survey_segment,String completion_sts, String f_pic_name, String b_pic_name,
+                           String i_pic_name, String o_pic_name, String div_pic_name,String device_imei_no,String pillar_sfile_path,String pillar_sfile_status,String frjvc_lat,String frjvc_long,String d_pill_no) {
         this.d_id = d_id;
         this.r_id = r_id;
         this.fb_id = fb_id;
@@ -245,6 +364,18 @@ public class M_dgps_pilldata {
         this.ack_status = ack_status;
         this.delete_status = delete_status;
         this.survey_segment = survey_segment;
+        this.completion_sts = completion_sts;
+        this.f_pic_name = f_pic_name;
+        this.b_pic_name = b_pic_name;
+        this.i_pic_name = i_pic_name;
+        this.o_pic_name = o_pic_name;
+        this.div_pic_name = div_pic_name;
+        this.device_imei_no = device_imei_no;
+        this.pillar_sfile_path = pillar_sfile_path;
+        this.pillar_sfile_status = pillar_sfile_status;
+        this.frjvc_lat=frjvc_lat;
+        this.frjvc_long=frjvc_long;
+        this.d_pill_no=d_pill_no;
     }
 
 

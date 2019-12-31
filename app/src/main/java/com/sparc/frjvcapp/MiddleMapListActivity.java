@@ -97,7 +97,7 @@ public class MiddleMapListActivity extends AppCompatActivity {
         download.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(CheckDataAvalability()) {
+                if(CheckDataAvalability(fbid)) {
                 getDataForSurveyPoints(fbid);
                 }else{
 
@@ -109,7 +109,7 @@ public class MiddleMapListActivity extends AppCompatActivity {
     private void getDataForSurveyPoints(String fbid) {
         try {
             RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
-            String URL = "http://111.93.174.107/sltp/api/values/getPillarPointDetails/" + fbid;
+            String URL = "http://14.98.253.212/sltp/api/values/getPillarPointDetails/" + fbid;
             StringRequest stringRequest = new StringRequest(Request.Method.GET, URL, new Response.Listener<String>() {
                 @Override
                 public void onResponse(String response) {
@@ -146,13 +146,13 @@ public class MiddleMapListActivity extends AppCompatActivity {
         }
     }
 
-    private boolean CheckDataAvalability() {
+    private boolean CheckDataAvalability(String fbid) {
         db = openOrCreateDatabase("sltp.db", MODE_PRIVATE, null);
         boolean b=false;
-        Cursor cursor = db.rawQuery("select * from m_fb_Survey_pill_data", null);
+        Cursor cursor = db.rawQuery("select * from m_fb_Survey_pill_data where m_fb_id='"+fbid+"'", null);
         try {
             if (cursor.getCount() > 0) {
-                db.execSQL("delete from m_fb_Survey_pill_data");
+                db.execSQL("delete from m_fb_Survey_pill_data where m_fb_id='"+fbid+"'");
                 b = true;
             } else {
                 b = true;
@@ -206,6 +206,13 @@ public class MiddleMapListActivity extends AppCompatActivity {
                 sheet.addCell(new Label(15, 0, "Paint Status"));
                 sheet.addCell(new Label(16, 0, "FB Name"));
                 sheet.addCell(new Label(17, 0, "User ID"));
+                sheet.addCell(new Label(18, 0, "Point No"));
+                sheet.addCell(new Label(19, 0, "Image Status"));
+                sheet.addCell(new Label(20, 0, "Delete Status"));
+                sheet.addCell(new Label(21, 0, "Shifting Status"));
+                sheet.addCell(new Label(22, 0, "Survey Duration"));
+                sheet.addCell(new Label(23, 0, "Accuracy"));
+                sheet.addCell(new Label(24, 0, "Date"));
                 //cursor.moveToFirst();
                 if (cursor.moveToFirst()) {
                     do {
@@ -228,6 +235,13 @@ public class MiddleMapListActivity extends AppCompatActivity {
                         sheet.addCell(new Label(15, i, cursor.getString(cursor.getColumnIndex("p_paint_status"))));
                         sheet.addCell(new Label(16, i, cursor.getString(cursor.getColumnIndex("fb_name"))));
                         sheet.addCell(new Label(17, i, cursor.getString(cursor.getColumnIndex("uid"))));
+                        sheet.addCell(new Label(18, i, cursor.getString(cursor.getColumnIndex("point_no"))));
+                        sheet.addCell(new Label(19, i, cursor.getString(cursor.getColumnIndex("img_status"))));
+                        sheet.addCell(new Label(20, i, cursor.getString(cursor.getColumnIndex("delete_status"))));
+                        sheet.addCell(new Label(21, i, cursor.getString(cursor.getColumnIndex("shifting_status"))));
+                        sheet.addCell(new Label(22, i, cursor.getString(cursor.getColumnIndex("surv_direction"))));
+                        sheet.addCell(new Label(23, i, cursor.getString(cursor.getColumnIndex("p_accuracy"))));
+                        sheet.addCell(new Label(24, i, cursor.getString(cursor.getColumnIndex("survey_dt"))));
                     } while (cursor.moveToNext());
                     cursor.close();
                     workbook.write();

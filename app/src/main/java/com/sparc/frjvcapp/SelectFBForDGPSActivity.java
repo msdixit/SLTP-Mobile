@@ -108,7 +108,7 @@ public class SelectFBForDGPSActivity extends AppCompatActivity {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 fbValue = (String) parent.getItemAtPosition(position);
-                fbid = fbKey.get(fbValue);
+                fbid = fbKey.get(fbValue.substring(0, fbValue.lastIndexOf(" ")));
                 if (!fbValue.equals("Select Forest Block")) {
                     //componentMaster();
                     getForestType(rangeCode, divid, fbid);
@@ -144,7 +144,7 @@ public class SelectFBForDGPSActivity extends AppCompatActivity {
                 } else {
                     String jobid=getJobID(divid,rangeCode,fbid,foresttype);
                     if(jobid!="") {
-                        Intent i = new Intent(getApplicationContext(), DGPSDataCollectActivity.class);
+                        Intent i = new Intent(getApplicationContext(), ChooseSurvetTypeActivity.class);
                         SharedPreferences sharedPreferences = getSharedPreferences(data, 0);
                         SharedPreferences.Editor editor = sharedPreferences.edit();
                         editor.clear();
@@ -155,6 +155,9 @@ public class SelectFBForDGPSActivity extends AppCompatActivity {
                         editor.putString("fbname", forbname);
                         editor.putString("userid", userid);
                         editor.putString("jobid", jobid);
+                        editor.putString("div_name", divValue);
+                        editor.putString("range_name", rangeValue);
+                        editor.putString("fb_name", fbValue);
                         editor.apply();
                         startActivity(i);
                     }else {
@@ -220,7 +223,7 @@ public class SelectFBForDGPSActivity extends AppCompatActivity {
         cursor.moveToFirst();
         if (cursor.moveToFirst()) {
             do {
-                fbName.add(cursor.getString(cursor.getColumnIndex("m_fb_name")));
+                fbName.add(cursor.getString(cursor.getColumnIndex("m_fb_name"))+ " " + cursor.getString(cursor.getColumnIndex("fb_type")));
                 fbKey.put(cursor.getString(cursor.getColumnIndex("m_fb_name")),
                         cursor.getString(cursor.getColumnIndex("m_fb_id")));
 

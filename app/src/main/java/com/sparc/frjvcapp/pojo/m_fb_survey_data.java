@@ -29,6 +29,24 @@ public class m_fb_survey_data implements Serializable {
     private String uid;
     private String shifting_status;
 
+    public String getSurvey_dt() {
+        return survey_dt;
+    }
+
+    public void setSurvey_dt(String survey_dt) {
+        this.survey_dt = survey_dt;
+    }
+
+    public String getP_accuracy() {
+        return p_accuracy;
+    }
+
+    public void setP_accuracy(String p_accuracy) {
+        this.p_accuracy = p_accuracy;
+    }
+
+    private String survey_dt;
+
     public String getPast_lat() {
         return past_lat;
     }
@@ -72,7 +90,7 @@ public class m_fb_survey_data implements Serializable {
                             String p_rmk, String p_pic, String p_sts,String patch_no,String ring_no,
                             String p_loc_type,String p_no,String p_paint_status,String fb_name,String uid,
                             int point_no,String img_status,String delete_status,String shifting_status, String past_lat,
-                            String past_long, String surv_direction, String p_accuracy) {
+                            String past_long, String surv_direction, String p_accuracy,String survey_dt) {
         this.d_id = d_id;
         this.past_lat = past_lat;
         this.past_long = past_long;
@@ -101,6 +119,7 @@ public class m_fb_survey_data implements Serializable {
         /*,String surv_direction,String accuracy
         this.surv_direction = surv_direction;*/
         this.p_accuracy = p_accuracy;
+        this.survey_dt=survey_dt;
     }
 
     public String getD_id() {

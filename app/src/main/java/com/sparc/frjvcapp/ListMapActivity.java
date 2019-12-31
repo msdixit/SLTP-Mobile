@@ -883,11 +883,6 @@ public class ListMapActivity extends AppCompatActivity implements OnMapReadyCall
                             item.setChecked(true);
                             baseMapMenuPos = 0;
                             return true;
-                        case R.id.World_Topo:
-                            googleMap.setMapType(GoogleMap.MAP_TYPE_TERRAIN);
-                            item.setChecked(true);
-                            baseMapMenuPos = 1;
-                            return true;
                         case R.id.Imagery_Basemap:
                             googleMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
                             item.setChecked(true);
@@ -940,8 +935,8 @@ public class ListMapActivity extends AppCompatActivity implements OnMapReadyCall
            /* c1 = alertLayout2.findViewById(R.id.chkstate);
             c2 = alertLayout2.findViewById(R.id.chkdivision);*/
             c3 = alertLayout2.findViewById(R.id.chkSurveyPillar);
-            c4 = alertLayout2.findViewById(R.id.chkcmv);
-            c5 = alertLayout2.findViewById(R.id.chkmmv);
+            c4 = alertLayout2.findViewById(R.id.checkCMV);
+            c5 = alertLayout2.findViewById(R.id.CheckMMV);
             message=alertLayout2.findViewById(R.id.message);
             /* c6 = alertLayout2.findViewById(R.id.chkcircle);*/
 

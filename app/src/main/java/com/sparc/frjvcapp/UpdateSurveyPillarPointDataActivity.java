@@ -371,10 +371,12 @@ public class UpdateSurveyPillarPointDataActivity extends AppCompatActivity imple
                                 String longitude = lon.getText().toString();
                                 String rem = remark.getText().toString();
                                 String accuracy=accuracyy.getText().toString();
+                                SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+                                Date date = new Date();
                                 m_fb_survey_data mpr = new m_fb_survey_data(sharediv, sharerange, sharefb, pillarsno.getText().toString(),
                                         latitude, longitude, pillartype, pillacond, rem, imagepath1, "0",
                                         txtpatchno.getText().toString(), txtringno.getText().toString(), locationtype, sl,
-                                        pillarpaintstatus, fbname.getText().toString(), userid, point_no, "0", "0",pilshiftsts,past_lat,past_long,surdir,accuracy);//+"_"+pilshiftsts
+                                        pillarpaintstatus, fbname.getText().toString(), userid, point_no, "0", "0",pilshiftsts,past_lat,past_long,surdir,accuracy,formatter.format(date));//+"_"+pilshiftsts
 
                                 //dbHelper.open();
 

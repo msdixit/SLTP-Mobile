@@ -9,6 +9,9 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.sparc.frjvcapp.pojo.M_dgps_pill_pic;
+import com.sparc.frjvcapp.pojo.M_dgps_pilldata;
+import com.sparc.frjvcapp.pojo.M_dgpssurvey_pillar_data;
 import com.sparc.frjvcapp.pojo.M_fb;
 import com.sparc.frjvcapp.pojo.M_pillar_reg;
 import com.sparc.frjvcapp.pojo.M_range;
@@ -28,6 +31,7 @@ public class DbHelper {
     public static final String m_survey_pillar_reg = "m_survey_pillar_reg";
     public static final String m_shifting_pillar_reg = "m_shifting_pillar_reg";
     private static final String m_fb_Survey_pill_data = "m_fb_Survey_pill_data";
+    private static final String m_dgps_Survey_pill_data = "m_dgps_Survey_pill_data";
     private static final String m_fb_dgps_survey_pill_data = "m_fb_dgps_survey_pill_data";
     private static final String m_fb_dgps_survey_pill_pic = "m_fb_dgps_survey_pill_pic";
 
@@ -73,7 +77,8 @@ public class DbHelper {
             "delete_status TEXT," +
             "shifting_status TEXT," +
             "surv_direction TEXT," +
-            "p_accuracy TEXT)";
+            "p_accuracy TEXT," +
+            "survey_dt TEXT)";
 
     private static final String CREATE_m_survey_pillar_reg_Table = "CREATE TABLE IF NOT EXISTS " + m_survey_pillar_reg + "( " +
             "id INTEGER PRIMARY KEY, " +
@@ -102,7 +107,8 @@ public class DbHelper {
             "past_lat TEXT," +
             "past_long TEXT," +
             "surv_direction TEXT," +
-            "p_accuracy TEXT)";
+            "p_accuracy TEXT," +
+            "survey_dt TEXT)";
 
     private static final String CREATE_m_shifting_pillar_reg_Table = "CREATE TABLE IF NOT EXISTS " + m_shifting_pillar_reg + "( " +
             "id INTEGER PRIMARY KEY, " +
@@ -128,7 +134,7 @@ public class DbHelper {
             "m_pillar_avl_sts Text)";
 
     private static final String CREATE_m_fb_dgps_survey_pill_data = "CREATE TABLE IF NOT EXISTS " + m_fb_dgps_survey_pill_data + "( " +
-            "id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, " +
+            "id INTEGER NOT NULL PRIMARY KEY, " +
             "d_id Text, " +
             "r_id Text, " +
             "fb_id Text, " +
@@ -153,27 +159,37 @@ public class DbHelper {
             "ack_status TEXT," +
             "delete_status TEXT,"+
             "survey_segment TEXT,"+
-            "FOREIGN KEY ("+"pill_no"+") REFERENCES m_fb_dgps_survey_pill_pic("+"pic_pill_no"+"))";
-
-    private static final String CREATE_m_fb_dgps_survey_pill_pic = "CREATE TABLE IF NOT EXISTS " + m_fb_dgps_survey_pill_pic + "( " +
-            "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
-            "pic_pill_no INTEGER, " +
-            "job_id TEXT, " +
-            "u_id TEXT, " +
-            "f_pic_status TEXT," +
-            "b_pic_status TEXT," +
-            "i_pic_status TEXT," +
-            "o_pic_status TEXT," +
-            "div_pic_status TEXT," +
+            "completion_sts TEXT,"+
             "f_pic_name TEXT," +
             "b_pic_name TEXT," +
             "i_pic_name TEXT," +
             "o_pic_name TEXT," +
-            "div_pic_name TEXT)";
-    /*private static String CREATE_m_fb_dgps_survey_pill_data="CREATE TABLE IF NOT EXISTS"+m_fb_dgps_survey_pill_data+"("+
-            "id INTEGER PRIMARY KEY, "+
-            ""
-    )";*/
+            "div_pic_name TEXT,"+
+            "device_imei_no TEXT,"+
+            "pillar_sfile_path TEXT,"+
+            "pillar_sfile_status TEXT,"+
+            "frjvc_lat TEXT,"+
+            "frjvc_long TEXT,"+
+            "d_pill_no TEXT)";
+
+    private static final String CREATE_m_dgps_Survey_pill_data = "CREATE TABLE IF NOT EXISTS " + m_dgps_Survey_pill_data + "( " +
+            "id INTEGER PRIMARY KEY, " +
+            "m_fb_id TEXT, " +
+            "m_fb_name TEXT, " +
+            "m_fb_pillar_no TEXT," +
+            "m_p_lat TEXT," +
+            "m_p_long TEXT," +
+            "m_pillar_avl_sts TEXT,"+
+            "m_dgps_surv_sts TEXT,"+
+            "m_dgps_file_sts TEXT)";
+
+    private static final String CREATE_m_fb_dgps_survey_pill_pic = "CREATE TABLE IF NOT EXISTS " + m_fb_dgps_survey_pill_pic + "( " +
+            "id INTEGER PRIMARY KEY, " +
+            "pic_pill_no TEXT, " +
+            "u_id TEXT, " +
+            "pic_status TEXT," +
+            "pic_name TEXT,"+
+            "pic_view TEXT)";
 
     private final Context mCtx;
     private DatabaseHelper mDbHelper;
@@ -198,7 +214,6 @@ public class DbHelper {
     public void close() {
         mDbHelper.close();
     }
-
     public long insertRangeData(M_range range) {
         ContentValues contentValues = new ContentValues();
         contentValues.put("r_name", range.getR_name());
@@ -209,7 +224,6 @@ public class DbHelper {
         long id = mDb.insert(m_range, null, contentValues);
         return id;
     }
-
     public long inserFBData(M_fb fb) {
         ContentValues contentValues = new ContentValues();
         contentValues.put("m_fb_id", fb.getFb_id());
@@ -223,7 +237,6 @@ public class DbHelper {
         long id = mDb.insert(m_fb, null, contentValues);
         return id;
     }
-
     public long insertPillarData(M_pillar_reg mpr) {
         long id = 0;
         try {
@@ -252,6 +265,7 @@ public class DbHelper {
             contentValues.put("shifting_status", mpr.getShifting_status());
             contentValues.put("surv_direction", mpr.getSurv_direction());
             contentValues.put("p_accuracy", mpr.getAccuracy());
+            contentValues.put("survey_dt",mpr.getSurvey_dt());
 
             id = mDb.insert(m_pillar_reg, null, contentValues);
 
@@ -260,7 +274,6 @@ public class DbHelper {
         }
         return id;
     }
-
     public long insertSurveyPillarData(m_fb_survey_data mpr) {
         long id = 0;
         try {
@@ -291,6 +304,7 @@ public class DbHelper {
             contentValues.put("past_long", mpr.getPast_long());
             contentValues.put("surv_direction", mpr.getSurv_direction());
             contentValues.put("p_accuracy", mpr.getAccuracy());
+            contentValues.put("survey_dt", mpr.getSurvey_dt());
 
             id = mDb.insert(m_survey_pillar_reg, null, contentValues);
 
@@ -299,7 +313,6 @@ public class DbHelper {
         }
         return id;
     }
-
     public long insertSurveyedPointDataData(M_survey_pillar_data fb) {
 
         ContentValues contentValues = new ContentValues();
@@ -312,8 +325,6 @@ public class DbHelper {
         long id = mDb.insert(m_fb_Survey_pill_data, null, contentValues);
         return id;
     }
-
-
     public long insertShiftingPillarData(M_shifting_pillar_details mspd) {
         ContentValues contentValues = new ContentValues();
 
@@ -330,6 +341,89 @@ public class DbHelper {
         contentValues.put("sdelete_status", mspd.getDelete_status());
 
         long id = mDb.insert(m_shifting_pillar_reg, null, contentValues);
+        return id;
+    }
+    public long insertDGPSSurveyPillarData(M_dgps_pilldata mpr) {
+        long id = 0;
+        mDb.beginTransaction();
+        try {
+            ContentValues contentValues = new ContentValues();
+            contentValues.put("d_id", mpr.getD_id());
+            contentValues.put("r_id", mpr.getR_id());
+            contentValues.put("fb_id", mpr.getFb_id());
+            contentValues.put("pill_no", mpr.getPill_no());
+            contentValues.put("job_id", mpr.getJob_id());
+            contentValues.put("u_id", mpr.getU_id());
+            contentValues.put("survey_durn", mpr.getSurvey_durn());
+            contentValues.put("f_pic_status", mpr.getF_pic_status());
+            contentValues.put("b_pic_status", mpr.getB_pic_status());
+            contentValues.put("i_pic_status", mpr.getI_pic_status());
+            contentValues.put("o_pic_status", mpr.getO_pic_status());
+            contentValues.put("div_pic_status", mpr.getDiv_pic_status());
+            contentValues.put("patch_no", mpr.getPatch_no());
+            contentValues.put("ring_no", mpr.getRing_no());
+            contentValues.put("forest_person", mpr.getForest_person());
+            contentValues.put("surveyor_name", mpr.getSurveyor_name());
+            contentValues.put("survey_time", mpr.getSurvey_time());
+            contentValues.put("div_name", mpr.getDiv_name());
+            contentValues.put("range_name", mpr.getRange_name());
+            contentValues.put("fb_name", mpr.getFb_name());
+            contentValues.put("sync_status", mpr.getSync_status());
+            contentValues.put("ack_status", mpr.getAck_status());
+            contentValues.put("delete_status", mpr.getDelete_status());
+            contentValues.put("survey_segment", mpr.getSurvey_segment());
+            contentValues.put("completion_sts", mpr.getCompletion_sts());
+            contentValues.put("f_pic_name", mpr.getF_pic_name());
+            contentValues.put("b_pic_name", mpr.getB_pic_name());
+            contentValues.put("i_pic_name", mpr.getI_pic_name());
+            contentValues.put("o_pic_name", mpr.getO_pic_name());
+            contentValues.put("div_pic_name", mpr.getDiv_pic_name());
+            contentValues.put("device_imei_no", mpr.getDevice_imei_no());
+            contentValues.put("pillar_sfile_path", mpr.getPillar_sfile_path());
+            contentValues.put("pillar_sfile_status", mpr.getPillar_sfile_status());
+            contentValues.put("frjvc_lat", mpr.getFrjvc_lat());
+            contentValues.put("frjvc_long", mpr.getFrjvc_long());
+            contentValues.put("d_pill_no", mpr.getD_pill_no());
+            id = mDb.insert(m_fb_dgps_survey_pill_data, null, contentValues);
+            mDb.setTransactionSuccessful();
+        } catch (Exception ee) {
+            ee.printStackTrace();
+        }finally {
+            mDb.endTransaction();
+        }
+        return id;
+    }
+    public long insertdgpsSurveyedPointDataData(M_dgpssurvey_pillar_data fb) {
+
+        ContentValues contentValues = new ContentValues();
+        contentValues.put("m_fb_id", fb.getFb_id());
+        contentValues.put("m_fb_name", fb.getFb_name());
+        contentValues.put("m_fb_pillar_no", fb.getPillar_no());
+        contentValues.put("m_p_lat", fb.getP_lat());
+        contentValues.put("m_p_long", fb.getP_long());
+        contentValues.put("m_pillar_avl_sts", fb.getP_syrvey_sts());
+        contentValues.put("m_dgps_surv_sts", fb.getM_dgps_surv_sts());
+        contentValues.put("m_dgps_file_sts", fb.getM_dgps_file_sts());
+        long id = mDb.insert(m_dgps_Survey_pill_data, null, contentValues);
+        return id;
+    }
+    public long insertDGPSSurveyPillarPic(M_dgps_pill_pic mpr) {
+        long id = 0;
+        mDb.beginTransaction();
+            try {
+                ContentValues contentValues = new ContentValues();
+                contentValues.put("pic_pill_no", mpr.getPic_pill_no());
+                contentValues.put("u_id", mpr.getU_id());
+                contentValues.put("pic_status", mpr.getPic_status());
+                contentValues.put("pic_name", mpr.getPic_name());
+                contentValues.put("pic_view", mpr.getPic_view().toString());
+                id = mDb.insert(m_fb_dgps_survey_pill_pic, null, contentValues);
+                mDb.setTransactionSuccessful();
+            } catch (Exception ee) {
+                ee.printStackTrace();
+            } finally {
+                mDb.endTransaction();
+            }
         return id;
     }
 
@@ -458,6 +552,22 @@ public class DbHelper {
         }
         return array_list;
     }
+    public int getDGPSPillarData(String fb_id) {
+        ArrayList<String> array_list = new ArrayList<String>();
+        int slno = 0;
+        //mDb.rawQuery("update m_fb set m_fb_cmv_path='cmv_1_1_AN1_1.kml' where m_fb_cmv_path IS NOT NULL and m_fb_cmv_path<>''",null);COALESCE(MAX(p_no),0)+1 as slno
+        Cursor res = mDbHelper.getReadableDatabase().rawQuery("select COALESCE(MAX(pill_no),0)+1 as slno from m_fb_dgps_survey_pill_data where fb_id='" + fb_id + "'", null);
+        if (res == null) {
+            slno = 1;
+        } else {
+            res.moveToFirst();
+            while (res.isAfterLast() == false) {
+                slno = res.getInt(res.getColumnIndex("slno"));
+                res.moveToNext();
+            }           //slno=array_list[0];
+        }
+        return slno;
+    }
 
     public static class DatabaseHelper extends SQLiteOpenHelper {
         DatabaseHelper(Context context) {
@@ -471,13 +581,18 @@ public class DbHelper {
                 db.execSQL("PRAGMA foreign_keys=ON;");
             }
         }
-
+        @Override
+        public void onConfigure(SQLiteDatabase db) {
+            super.onConfigure(db);
+            db.setForeignKeyConstraintsEnabled(true);
+        }
         public void onCreate(SQLiteDatabase db) {
             db.execSQL(CREATE_m_range_Table);
             db.execSQL(CREATE_m_fb_Table);
             db.execSQL(CREATE_m_pillar_reg_Table);
             db.execSQL(CREATE_m_shifting_pillar_reg_Table);
             db.execSQL(CREATE_m_fb_Survey_pill_data);
+            db.execSQL(CREATE_m_dgps_Survey_pill_data);
             db.execSQL(CREATE_m_survey_pillar_reg_Table);
             db.execSQL(CREATE_m_fb_dgps_survey_pill_data);
             db.execSQL(CREATE_m_fb_dgps_survey_pill_pic);
@@ -489,6 +604,7 @@ public class DbHelper {
             db.execSQL("DROP TABLE IF EXISTS " + m_pillar_reg);
             db.execSQL("DROP TABLE IF EXISTS " + m_shifting_pillar_reg);
             db.execSQL("DROP TABLE IF EXISTS " + m_fb_Survey_pill_data);
+            db.execSQL("DROP TABLE IF EXISTS " + m_dgps_Survey_pill_data);
             db.execSQL("DROP TABLE IF EXISTS " + m_survey_pillar_reg);
             db.execSQL("DROP TABLE IF EXISTS " + m_fb_dgps_survey_pill_data);
             db.execSQL("DROP TABLE IF EXISTS " + m_fb_dgps_survey_pill_pic);

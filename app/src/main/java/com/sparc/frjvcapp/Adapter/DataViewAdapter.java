@@ -47,20 +47,8 @@ public class DataViewAdapter extends RecyclerView.Adapter<setViewHolder> {
         holder.txtPillarLat.setText("Lat: " + dataitems.get(holder.getAdapterPosition()).getLat());
         holder.txtPillarLon.setText("Lon:" + dataitems.get(holder.getAdapterPosition()).getLon());
         if (dataitems.get(holder.getAdapterPosition()).getSyncStatus().equals("0")) {
+
             holder.DeleteImg.setVisibility(View.VISIBLE);
-            String ab = dataitems.get(holder.getAdapterPosition()).getImage();
-            try {
-                InputStream is = new FileInputStream(ab);
-                Drawable icon = new BitmapDrawable(is);
-                holder.PillarImg.setImageDrawable(icon);
-            }catch (Exception ee)
-            {
-                ee.printStackTrace();
-            }
-        } else {
-            holder.DeleteImg.setVisibility(View.INVISIBLE);
-            String ab = dataitems.get(holder.getAdapterPosition()).getImage();
-            Glide.with(context).load("http://203.129.207.130:5065/pillarsphoto/" + ab + "").into(holder.PillarImg);
             holder.DeleteImg.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -69,6 +57,21 @@ public class DataViewAdapter extends RecyclerView.Adapter<setViewHolder> {
                     }
                 }
             });
+            String ab = dataitems.get(holder.getAdapterPosition()).getImage();
+            try {
+                InputStream is = new FileInputStream(ab);
+                Drawable icon = new BitmapDrawable(is);
+                holder.PillarImg.setImageDrawable(icon);
+
+            }catch (Exception ee)
+            {
+                ee.printStackTrace();
+            }
+        } else {
+            holder.DeleteImg.setVisibility(View.INVISIBLE);
+            String ab = dataitems.get(holder.getAdapterPosition()).getImage();
+            Glide.with(context).load("http://203.129.207.130:5065/pillarsphoto/" + ab + "").into(holder.PillarImg);
+
         }
 
     }

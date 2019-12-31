@@ -115,7 +115,7 @@
                         android:singleLine="true"
                         android:textAlignment="gravity"
                         android:textColor="@color/color1"
-                        android:textSize="20sp"
+                        android:textSize="15sp"
                         android:textStyle="normal"
 
                         />
@@ -172,7 +172,7 @@
                         android:singleLine="true"
                         android:textAlignment="gravity"
                         android:textColor="@color/color1"
-                        android:textSize="20sp"
+                        android:textSize="15sp"
                         android:textStyle="normal"
 
                         />
@@ -228,7 +228,7 @@
                         android:singleLine="true"
                         android:textAlignment="gravity"
                         android:textColor="@color/color1"
-                        android:textSize="20sp"
+                        android:textSize="15sp"
                         android:textStyle="normal"
 
                         />
@@ -282,8 +282,9 @@
                         android:background="@drawable/back"
                         android:enabled="true"
                         android:textAlignment="center"
-                        android:textColor="@color/colorBackground"
-                        android:textSize="20sp"
+                        android:inputType="number"
+                        android:textColor="@color/color1"
+                        android:textSize="15sp"
                         android:textStyle="normal" />
 
                 </LinearLayout>
@@ -333,9 +334,10 @@
                         android:layout_gravity="right"
                         android:background="@drawable/back"
                         android:enabled="true"
+                        android:inputType="number"
                         android:textAlignment="center"
-                        android:textColor="@color/colorBackground"
-                        android:textSize="20sp"
+                        android:textColor="@color/color1"
+                        android:textSize="15sp"
                         android:textStyle="normal" />
 
                 </LinearLayout>
@@ -397,7 +399,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/lh1"
-                android:layout_marginTop="10sp"
+                android:layout_marginTop="5sp"
                 android:layout_weight="1"
                 android:orientation="horizontal"
                 android:weightSum="5">
@@ -435,9 +437,10 @@
                         android:layout_gravity="right"
                         android:background="@drawable/back"
                         android:enabled="true"
+                        android:inputType="number"
                         android:textAlignment="center"
-                        android:textColor="@color/colorBackground"
-                        android:textSize="20sp"
+                        android:textColor="@color/color1"
+                        android:textSize="15sp"
                         android:textStyle="normal" />
 
                 </LinearLayout>
@@ -463,8 +466,10 @@
                         android:id="@+id/bpduration"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_marginTop="5sp"
                         android:layout_marginLeft="5sp"
                         android:layout_marginRight="5sp"
+                        android:layout_marginBottom="5sp"
                         app:ms_alignLabels="false"
                         app:ms_arrowColor="@color/color1"
                         app:ms_arrowSize="14dp"
@@ -474,21 +479,73 @@
                         app:ms_enableFloatingLabel="true"
                         app:ms_errorColor="@color/red"
                         app:ms_floatingLabelColor="@color/color1"
-                        app:ms_floatingLabelText="Location Type"
+                        app:ms_floatingLabelText="Duration"
                         app:ms_highlightColor="@color/color1"
-                        app:ms_hint="Select Duration Type"
+                        app:ms_hint="Select Duration"
+                        app:ms_hintTextSize="15sp"
                         app:ms_hintColor="@color/color1"
                         app:ms_hintView="@layout/hint_item_layout"
                         app:ms_multiline="false"
                         app:ms_thickness="0.5dp" />
                 </LinearLayout>
             </LinearLayout>
+                <LinearLayout
+                    android:id="@+id/l9"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/l8"
+                    android:layout_marginTop="10sp"
+                    android:layout_weight="1"
+                    android:orientation="horizontal"
+                    android:weightSum="5">
 
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginRight="5sp"
+                        android:layout_weight="2"
+                        android:gravity="center">
+
+                        <TextView
+                            android:id="@+id/txtPillarNumber"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:enabled="true"
+                            android:singleLine="true"
+                            android:text="Insc. Pill No"
+                            android:textAlignment="gravity"
+                            android:textColor="@color/color1"
+                            android:textSize="20sp"
+                            android:textStyle="normal" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="3"
+                        android:gravity="center">
+
+                        <EditText
+                            android:id="@+id/edtdpillno"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_gravity="right"
+                            android:background="@drawable/back"
+                            android:enabled="true"
+                            android:inputType="text"
+                            android:textAlignment="center"
+                            android:textColor="@color/color1"
+                            android:textSize="15sp"
+                            android:textStyle="normal" />
+
+                    </LinearLayout>
+                </LinearLayout>
             <LinearLayout
-                android:id="@+id/l9"
+                android:id="@+id/l10"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_below="@+id/l8"
+                android:layout_below="@+id/l9"
                 android:layout_marginTop="10sp"
                 android:layout_marginLeft="5sp"
                 android:layout_weight="1"
@@ -620,10 +677,10 @@
 
                 </LinearLayout>
             <LinearLayout
-                android:id="@+id/l10"
+                android:id="@+id/l11"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_below="@+id/l9"
+                android:layout_below="@+id/l10"
                 android:layout_marginTop="10sp"
                 android:layout_weight="1"
                 android:orientation="horizontal"
@@ -1145,7 +1202,7 @@
                         android:layout_height="match_parent"
                         android:enabled="true"
                         android:singleLine="true"
-                        android:text="Forest Personal:"
+                        android:text="Frst. Person:"
                         android:textAlignment="gravity"
                         android:textColor="@color/color1"
                         android:textSize="20sp"
@@ -1167,9 +1224,12 @@
                         android:background="@drawable/back"
                         android:enabled="true"
                         android:textAlignment="center"
-                        android:textColor="@color/colorBackground"
-                        android:textSize="20sp"
-                        android:textStyle="normal" />
+                        android:inputType="text"
+                        android:singleLine="true"
+                        android:textColor="@color/color1"
+                        android:textSize="15sp"
+                        android:textStyle="normal"
+                        />
 
                 </LinearLayout>
             </LinearLayout>
@@ -1219,8 +1279,8 @@
                         android:background="@drawable/back"
                         android:enabled="true"
                         android:textAlignment="center"
-                        android:textColor="@color/colorBackground"
-                        android:textSize="20sp"
+                        android:textColor="@color/color1"
+                        android:textSize="15sp"
                         android:textStyle="normal"
                         />
 

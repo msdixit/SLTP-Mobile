@@ -10,11 +10,6 @@
             app:showAsAction="never"
             />
         <item
-            android:id="@+id/World_Topo"
-            android:title="@string/TopoMenu"
-            app:itemIconTint="@color/colorBackground"
-            app:showAsAction="never" />
-        <item
             android:id="@+id/Imagery_Basemap"
             app:itemIconTint="@color/colorBackground"
             android:title="@string/Imagery"

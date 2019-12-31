@@ -23,8 +23,8 @@
 
     <item
         android:id="@+id/navigation_filter"
-        android:icon="@drawable/add_point"
-        android:title="Add Pillar"
+        android:icon="@drawable/ic_router_black_24dp"
+        android:title="FRJVC Reading"
         android:itemTextAppearance="?android:attr/textAppearance"
         />
 </menu>

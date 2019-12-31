@@ -48,11 +48,11 @@ public class SearchMapFile extends AppCompatActivity {
     MaterialSpinner division, range, fb;
     String divValue, rangeValue, fbValue, divid, forbname, fbid, userid, divCode, locationRange, rangeCode, vanName, vanValue, foresttype;
     //private TextInputEditText txtdivision;
-    Button submit, download,pillarpoint;
+    Button submit, download, pillarpoint;
     DbHelper dbHelper;
     SQLiteDatabase db;
     ArrayList<String> array_list;
-    boolean cmvsta, mmvsta, cmvavls, mmvavls,pointkml;
+    boolean cmvsta, mmvsta, cmvavls, mmvavls, pointkml;
     boolean cmvsta1, mmvsta1, cmvavls1, mmvavls1, state, circle, ran, div;
     ProgressDialog progressDialog1;
     ArrayAdapter<String> divadapter;
@@ -70,7 +70,7 @@ public class SearchMapFile extends AppCompatActivity {
         fb = findViewById(R.id.fb);
         submit = findViewById(R.id.submit);
         download = findViewById(R.id.download);
-        pillarpoint=findViewById(R.id.dwnUpdatedPillar);
+       /* pillarpoint = findViewById(R.id.dwnUpdatedPillar);*/
 
 
         SharedPreferences shared = getSharedPreferences(userlogin, MODE_PRIVATE);
@@ -126,7 +126,7 @@ public class SearchMapFile extends AppCompatActivity {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 fbValue = (String) parent.getItemAtPosition(position);
-                fbid = fbKey.get(fbValue.substring(0,fbValue.lastIndexOf(" ")));
+                fbid = fbKey.get(fbValue.substring(0, fbValue.lastIndexOf(" ")));
                 if (!fbValue.equals("Select Forest Block")) {
                     //componentMaster();
                     getForestType(rangeCode, divid, fbid);
@@ -149,22 +149,19 @@ public class SearchMapFile extends AppCompatActivity {
                     View sbView = snackbar.getView();
                     sbView.setBackgroundColor(ContextCompat.getColor(getApplicationContext(), R.color.colorPrimary));
                     snackbar.show();
-                }
-                else if (rangeValue.equalsIgnoreCase("Select Range")) {
+                } else if (rangeValue.equalsIgnoreCase("Select Range")) {
                     //Snackbar.make(view,"Select Component",Snackbar.LENGTH_LONG).show();
                     Snackbar snackbar = Snackbar.make(view, "Select Range", Snackbar.LENGTH_LONG);
                     View sbView = snackbar.getView();
                     sbView.setBackgroundColor(ContextCompat.getColor(getApplicationContext(), R.color.colorPrimary));
                     snackbar.show();
-                }
-                else if (fbValue.equalsIgnoreCase("Select Forest Block")) {
+                } else if (fbValue.equalsIgnoreCase("Select Forest Block")) {
                     Snackbar.make(view, "", Snackbar.LENGTH_LONG).show();
                     Snackbar snackbar = Snackbar.make(view, "Select Forest Block", Snackbar.LENGTH_LONG);
                     View sbView = snackbar.getView();
                     sbView.setBackgroundColor(ContextCompat.getColor(getApplicationContext(), R.color.colorPrimary));
                     snackbar.show();
-                }
-                else {
+                } else {
                     checkCMVData();
                     //checkOtherData(); && state == true && circle == true && ran == true && div == true
                     if (cmvsta1 == true && mmvsta1 == true) {
@@ -203,12 +200,11 @@ public class SearchMapFile extends AppCompatActivity {
                     View sbView = snackbar.getView();
                     sbView.setBackgroundColor(ContextCompat.getColor(getApplicationContext(), R.color.colorPrimary));
                     snackbar.show();
-                }
-                else {
+                } else {
                     int a = checkData();
-                   // int b = checkOtherKMLData();//&& state == true && circle == true && ran == true && div == true
+                    // int b = checkOtherKMLData();//&& state == true && circle == true && ran == true && div == true
                     if (a == 1) {
-                        if (cmvsta == true && mmvsta == true ) {
+                        if (cmvsta == true && mmvsta == true) {
                             Intent i = new Intent(getApplicationContext(), MiddleMapListActivity.class);
                             i.putExtra("kml_status", "1");
                             SharedPreferences sharedPreferences = getSharedPreferences(data, 0);
@@ -252,7 +248,7 @@ public class SearchMapFile extends AppCompatActivity {
                             editor.apply();
                             startActivity(i);
                             //state, circle, ran, divToast.makeText(getApplicationContext(), "MMV kml file for this fb is not available....Please contact to your admin", Toast.LENGTH_LONG).show();
-                        } else{
+                        } else {
                             Toast.makeText(getApplicationContext(), "CMV and MMV kml file for this fb is available....Please click the download button", Toast.LENGTH_LONG).show();
                         } /*else if (state == false) {
                             Toast.makeText(getApplicationContext(), "State kml file is available....Please click the download button", Toast.LENGTH_LONG).show();
@@ -285,11 +281,11 @@ public class SearchMapFile extends AppCompatActivity {
                 }
             }
         });
-        pillarpoint.setOnClickListener(new View.OnClickListener() {
+        /*pillarpoint.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
-                /*if (divValue.equalsIgnoreCase("Select Division")) {
+                if (divValue.equalsIgnoreCase("Select Division")) {
                     //Snackbar.make(view,"Select Project",Snackbar.LENGTH_LONG).show();
                     Snackbar snackbar = Snackbar.make(view, "Select Division", Snackbar.LENGTH_LONG);
                     View sbView = snackbar.getView();
@@ -319,9 +315,9 @@ public class SearchMapFile extends AppCompatActivity {
                     else if (pointkml == false && name!="null") {
                         DownloadPointKMLFiles();
                     }
-                }*/
+                }
             }
-        });
+        });*/
 
 
     }
@@ -349,6 +345,7 @@ public class SearchMapFile extends AppCompatActivity {
             Toast.makeText(this, "Please check your Internet Connection.", Toast.LENGTH_SHORT).show();
         }
     }
+
     private void DownloadPointKMLFiles() {//boolean state, boolean circle, boolean div, boolean ran
         ConnectivityManager cm = (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo nInfo = cm.getActiveNetworkInfo();
@@ -372,6 +369,7 @@ public class SearchMapFile extends AppCompatActivity {
             Toast.makeText(this, "Please check your Internet Connection.", Toast.LENGTH_SHORT).show();
         }
     }
+
     private void DownloadCMVFiles() {//boolean state, boolean circle, boolean div, boolean ran
         ConnectivityManager cm = (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo nInfo = cm.getActiveNetworkInfo();
@@ -395,6 +393,7 @@ public class SearchMapFile extends AppCompatActivity {
             Toast.makeText(this, "Please check your Internet Connection.", Toast.LENGTH_SHORT).show();
         }
     }
+
     private void DownloadMMVFiles() {//boolean state, boolean circle, boolean div, boolean ran
         ConnectivityManager cm = (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo nInfo = cm.getActiveNetworkInfo();
@@ -548,6 +547,7 @@ public class SearchMapFile extends AppCompatActivity {
         AlertDialog alertDialog = alertDialogBuilder.create();
         alertDialog.show();
     }
+
     private void DeleteRestoreDataPointKML(String name) {
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
         final View customLayout = getLayoutInflater().inflate(R.layout.download_custom_layout, null);
@@ -584,9 +584,10 @@ public class SearchMapFile extends AppCompatActivity {
                 file.delete();
         DownloadCMVMMVFiles();//state, circle, ran, div
     }
+
     private void DeletePointKMLData(String name) {
         //ArrayList<String> mfb = dbHelper.getCMVMMVFiles(divid,rangeCode,fbid);
-        String path = GetFilePath()+name;
+        String path = GetFilePath() + name;
         File dir = new File(path);
         for (File file : dir.listFiles())
             if (!file.isFile())
@@ -629,27 +630,25 @@ public class SearchMapFile extends AppCompatActivity {
             ee.printStackTrace();
         }
     }
+
     private String checkPointKML() {
-        String pointKMLname=null;
+        String pointKMLname = null;
         try {
             dbHelper.open();
 
             ArrayList<String> mfb = dbHelper.getUpdatedPillarPointFiles(divid, rangeCode, fbid);
             String path = GetFilePath();
-                if (!mfb.get(0).equals("null")) {
-                    File f = new File(path + "/" + mfb.get(0));
-                    pointKMLname=mfb.get(0);
-                    if (f.exists())
-                    {
-                        pointkml  =true;
-                    }
-                    else
-                    {
-                        pointkml  =false;
-                    }
+            if (!mfb.get(0).equals("null")) {
+                File f = new File(path + "/" + mfb.get(0));
+                pointKMLname = mfb.get(0);
+                if (f.exists()) {
+                    pointkml = true;
                 } else {
-                    pointkml  = false;
+                    pointkml = false;
                 }
+            } else {
+                pointkml = false;
+            }
             dbHelper.close();
         } catch (Exception ee) {
             ee.printStackTrace();
@@ -745,6 +744,7 @@ public class SearchMapFile extends AppCompatActivity {
             ee.printStackTrace();
         }
     }
+
     public void getKMLPointData(String filename) {
         try {
             if (!filename.equals("null")) {
@@ -831,7 +831,7 @@ public class SearchMapFile extends AppCompatActivity {
         cursor.moveToFirst();
         if (cursor.moveToFirst()) {
             do {
-                fbName.add(cursor.getString(cursor.getColumnIndex("m_fb_name"))+" "+cursor.getString(cursor.getColumnIndex("fb_type")));
+                fbName.add(cursor.getString(cursor.getColumnIndex("m_fb_name")) + " " + cursor.getString(cursor.getColumnIndex("fb_type")));
                 fbKey.put(cursor.getString(cursor.getColumnIndex("m_fb_name")),
                         cursor.getString(cursor.getColumnIndex("m_fb_id")));
 
@@ -854,8 +854,7 @@ public class SearchMapFile extends AppCompatActivity {
 
     }
 
-    private class DownloadFile extends AsyncTask<String, String, String>
-    {
+    private class DownloadFile extends AsyncTask<String, String, String> {
 
         private ProgressDialog progressDialog;
         private String fileName;
@@ -880,10 +879,8 @@ public class SearchMapFile extends AppCompatActivity {
         @Override
         protected String doInBackground(String... f_url) {
             int count;
-            if (f_url[0].substring(f_url[0].lastIndexOf('/') + 1) != "null" || f_url[0].substring(f_url[0].lastIndexOf('/') + 1) != "")
-            {
-                try
-                {
+            if (f_url[0].substring(f_url[0].lastIndexOf('/') + 1) != "null" || f_url[0].substring(f_url[0].lastIndexOf('/') + 1) != "") {
+                try {
                     URL url = new URL(f_url[0]);
                     URLConnection connection = url.openConnection();
                     connection.connect();
@@ -913,8 +910,7 @@ public class SearchMapFile extends AppCompatActivity {
                     input.close();
                     return "Downloaded at: " + folder + fileName;
 
-                }
-                catch (Exception e) {
+                } catch (Exception e) {
                     Log.e("Error: ", e.getMessage());
                 }
                 return "CMV/MMV files is missing in the server.Please contact your Admin";
@@ -942,8 +938,8 @@ public class SearchMapFile extends AppCompatActivity {
                     message, Toast.LENGTH_LONG).show();
         }
     }
-    private class DownloadPointFile extends AsyncTask<String, String, String>
-    {
+
+    private class DownloadPointFile extends AsyncTask<String, String, String> {
 
         private ProgressDialog progressDialog;
         private String fileName;
@@ -968,10 +964,8 @@ public class SearchMapFile extends AppCompatActivity {
         @Override
         protected String doInBackground(String... f_url) {
             int count;
-            if (f_url[0].substring(f_url[0].lastIndexOf('/') + 1) != "null" || f_url[0].substring(f_url[0].lastIndexOf('/') + 1) != "")
-            {
-                try
-                {
+            if (f_url[0].substring(f_url[0].lastIndexOf('/') + 1) != "null" || f_url[0].substring(f_url[0].lastIndexOf('/') + 1) != "") {
+                try {
                     URL url = new URL(f_url[0]);
                     URLConnection connection = url.openConnection();
                     connection.connect();
@@ -1001,8 +995,7 @@ public class SearchMapFile extends AppCompatActivity {
                     input.close();
                     return "Downloaded at: " + folder + fileName;
 
-                }
-                catch (Exception e) {
+                } catch (Exception e) {
                     Log.e("Error: ", e.getMessage());
                 }
                 return "Point KML files is missing in the server.Please contact your Admin";

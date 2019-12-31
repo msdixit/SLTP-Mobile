@@ -29,6 +29,24 @@ public class M_pillar_reg implements Serializable {
     private String uid;
     private String shifting_status;
 
+    public String getSurvey_dt() {
+        return survey_dt;
+    }
+
+    public void setSurvey_dt(String survey_dt) {
+        this.survey_dt = survey_dt;
+    }
+
+    public String getP_accuracy() {
+        return p_accuracy;
+    }
+
+    public void setP_accuracy(String p_accuracy) {
+        this.p_accuracy = p_accuracy;
+    }
+
+    private String survey_dt;
+
     public String getSurv_direction() {
         return surv_direction;
     }
@@ -53,7 +71,7 @@ public class M_pillar_reg implements Serializable {
     public M_pillar_reg(String d_id, String r_id, String fb_id, String p_sl_no, String p_lat, String p_long, String p_type,
                         String p_cond, String p_rmk, String p_pic, String p_sts, String patch_no, String ring_no, String p_loc_type,
                         String p_no, String p_paint_status, String fb_name, String uid, int point_no, String img_status,
-                        String delete_status, String shifting_status, String surv_direction, String p_accuracy) {
+                        String delete_status, String shifting_status, String surv_direction, String p_accuracy,String survey_dt) {
         this.d_id = d_id;
         this.r_id = r_id;
         this.fb_id = fb_id;
@@ -80,6 +98,7 @@ public class M_pillar_reg implements Serializable {
         /*,String surv_direction,String accuracy
         this.surv_direction = surv_direction;*/
         this.p_accuracy = p_accuracy;
+        this.survey_dt = survey_dt;
     }
 
     public String getD_id() {

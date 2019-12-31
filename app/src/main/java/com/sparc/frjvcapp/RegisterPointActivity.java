@@ -375,10 +375,12 @@ public class RegisterPointActivity extends AppCompatActivity implements GoogleAp
                                 String longitude = lon.getText().toString();
                                 String accuracy = accuracyy.getText().toString();
                                 String rem = remark.getText().toString();
+                                SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+                                Date date = new Date();
                                 M_pillar_reg mpr1 = new M_pillar_reg(sharediv, sharerange, sharefb, pillarsno.getText().toString(),
                                         latitude, longitude, pillartype, pillacond, rem, imagepath1, "0",
                                         txtpatchno.getText().toString(), txtringno.getText().toString(), locationtype, sl,
-                                        pillarpaintstatus, fbname.getText().toString(), userid, point_no, "0", "0",pilshiftsts,surdir,accuracy);//+"_"+pilshiftsts,surdir,accuracy
+                                        pillarpaintstatus, fbname.getText().toString(), userid, point_no, "0", "0",pilshiftsts,surdir,accuracy,formatter.format(date));//+"_"+pilshiftsts,surdir,accuracy
 
                                 //dbHelper.open();
 
@@ -396,7 +398,7 @@ public class RegisterPointActivity extends AppCompatActivity implements GoogleAp
                                 } else {
                                     try {
                                         dbHelper.open();
-                                        dbHelper.insertPillarData(mpr1);
+                                        long a=dbHelper.insertPillarData(mpr1);
                                         dbHelper.close();
                                         Toast.makeText(getApplicationContext(), "Your Pillar registered Successfully", Toast.LENGTH_LONG).show();
                                         i = new Intent(getApplicationContext(), RegisterPointActivity.class);

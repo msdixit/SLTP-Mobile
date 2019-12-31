@@ -5,7 +5,7 @@
     <color name="colorAccent">#B9BBBD</color>
     <color name="colorBackground">#357126</color>
     <color name="colorSplashText">#FFFFFF</color>
-    <color name="colorProgressBar">#FFCE511C</color>
+    <color name="colorProgressBar">#b00020</color>
     <color name="colorTextView">#83898E</color>
     <color name="colorbutton">#022A67</color>
 
@@ -26,6 +26,7 @@
     <color name="tp">#f0272c</color>
     <color name="sp">#e68e24</color>
     <color name="profile">#4ba61b</color>
+    <color name="exportcolor">#008b00</color>
 
     <!--#057d2b-->
 

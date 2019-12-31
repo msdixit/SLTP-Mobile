@@ -65,7 +65,7 @@
         -->
 
         <CheckBox
-            android:id="@+id/chkcmv"
+            android:id="@+id/CheckMMV"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="0dp"
@@ -79,7 +79,7 @@
             />
 
         <CheckBox
-            android:id="@+id/chkmmv"
+            android:id="@+id/checkCMV"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="0dp"

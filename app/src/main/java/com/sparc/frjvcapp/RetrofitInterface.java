@@ -12,4 +12,8 @@ public interface RetrofitInterface {
     @Multipart
     @POST("/images/upload")
     Call<Response1> uploadImage(@Part MultipartBody.Part image);
+
+    @Multipart
+    @POST("/dgpsimages/upload")
+    Call<Response1> uploadDGPSImage(@Part MultipartBody.Part image);
 }

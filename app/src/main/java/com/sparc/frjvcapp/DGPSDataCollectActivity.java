@@ -22,6 +22,8 @@ import android.os.Build;
 import android.os.Environment;
 import android.os.StrictMode;
 import android.provider.MediaStore;
+import android.provider.Settings;
+import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
@@ -53,6 +55,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 import fr.ganfra.materialspinner.MaterialSpinner;
 
@@ -76,7 +79,7 @@ public class DGPSDataCollectActivity extends AppCompatActivity {
             d_frjvc_pill_no, imagepath1_F, imagepath1_B, imagepath1_I, imagepath1_O, imagepath1_T, d_check_sts;
     Integer REQUEST_CAMERA = 1, SELECT_FILE = 0;
     Map<Character, String> image_name;
-    String image1;
+    String imei;
     int clickedStatus = 0;
     DbHelper dbHelper;
     SharedPreferences shared;
@@ -187,6 +190,12 @@ public class DGPSDataCollectActivity extends AppCompatActivity {
         txtViewdiv.setText(div_name);
         txtViewran.setText(range_name);
         txtViewfb.setText(fb_name);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            imei  = getUniqueIMEIId(this);
+        }else{
+
+        }
 
         (findViewById(R.id.button_close)).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -352,7 +361,7 @@ public class DGPSDataCollectActivity extends AppCompatActivity {
     }
 
     private void SaveData() {
-        String imei = getUniqueIMEIId(this);
+
         if (edttxtpillarno.getText().toString() == "" || edttxtpillarno.getText().toString() == "0") {
             Toast.makeText(this, "Serial Number can not ne blank or Zero", Toast.LENGTH_LONG).show();
         } else if (spinner_duration.equals("Select Duration")) {
@@ -393,7 +402,6 @@ public class DGPSDataCollectActivity extends AppCompatActivity {
                             @Override
                             public void onClick(DialogInterface arg0, int arg1) {
                                 int sl = Integer.parseInt(edttxtpillarno.getText().toString());
-
                                 String jobID = edtJobID.getText().toString();
                                 SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
                                 Date date = new Date();
@@ -499,19 +507,28 @@ public class DGPSDataCollectActivity extends AppCompatActivity {
     }
 
     public static String getUniqueIMEIId(Context context) {
-        try {
-            /*TelephonyManager telephonyManager = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
-            String imei = telephonyManager.getDeviceId();
-            Log.e("imei", "=" + imei);
+        String imei="";
+       /* try {
+            TelephonyManager telephonyManager = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
+            if (ActivityCompat.checkSelfPermission(context, android.Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    imei = telephonyManager.getImei();
+                }else{
+                    imei=telephonyManager.getDeviceId();
+                }
+            }
+            *//*Log.e("imei", "=" + imei);
             if (imei != null && !imei.isEmpty()) {
                 return imei;
             } else {
-                return android.os.Build.SERIAL;
-            }*/
+                return Build.SERIAL;
+            }*//*
         } catch (Exception e) {
             e.printStackTrace();
-        }
-        return "not_found";
+        }*/
+        String android_id = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID);
+        String uniqueID = UUID.randomUUID().toString();
+        return imei;
     }
 
     private void reset() {

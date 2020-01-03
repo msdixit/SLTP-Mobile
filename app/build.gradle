@@ -6,9 +6,10 @@ android {
         applicationId "com.sparc.frjvcapp"
         minSdkVersion 21
         targetSdkVersion 28
-        versionCode 22
-        versionName "5.8"
+        versionCode 23
+        versionName "5.9"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        ndk.abiFilters 'armeabi-v7a', 'arm64-v8a', 'x86' ,'x86_64'
 
     }
 

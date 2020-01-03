@@ -416,7 +416,7 @@ public class DbHelper {
                 contentValues.put("u_id", mpr.getU_id());
                 contentValues.put("pic_status", mpr.getPic_status());
                 contentValues.put("pic_name", mpr.getPic_name());
-                contentValues.put("pic_view", mpr.getPic_view().toString());
+                contentValues.put("pic_view", mpr.getPic_view());
                 id = mDb.insert(m_fb_dgps_survey_pill_pic, null, contentValues);
                 mDb.setTransactionSuccessful();
             } catch (Exception ee) {

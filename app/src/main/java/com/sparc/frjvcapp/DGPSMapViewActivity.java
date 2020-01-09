@@ -384,11 +384,13 @@ public class DGPSMapViewActivity extends AppCompatActivity implements OnMapReady
                 String[] array_long= a[1].split(":");
                 String[] array_status= a[2].split(":");
                 String[] array_file= a[3].split(":");
+                String[] array_o_id= a[4].split(":");
                 String pillar_no=p[1];
                 String lat = array_lat[1];
                 String lon = array_long[1];
                 int status = Integer.parseInt(array_status[1]);
                 int file=Integer.parseInt(array_file[1]);
+                String o_id=array_o_id[1];
 
                 if(status==0&&file==0)
                 {
@@ -399,6 +401,7 @@ public class DGPSMapViewActivity extends AppCompatActivity implements OnMapReady
                     intent1.putExtra("pill_no", pillar_no);
                     intent1.putExtra("id", "DGPSMap");
                     intent1.putExtra("kml_status", kmlstatus);
+                    intent1.putExtra("old_id", o_id);
                     startActivity(intent1);
                 }
                 else if(status==1&&file==0)
@@ -410,6 +413,7 @@ public class DGPSMapViewActivity extends AppCompatActivity implements OnMapReady
                     intent1.putExtra("pill_no", pillar_no);
                     intent1.putExtra("id", "DGPSMap");
                     intent1.putExtra("kml_status", kmlstatus);
+                    intent1.putExtra("old_id", o_id);
                     startActivity(intent1);
                 }
             }
@@ -525,81 +529,6 @@ public class DGPSMapViewActivity extends AppCompatActivity implements OnMapReady
             });
             dialog.show();
         }
-       /* else if (id == R.id.dgpsnavigation_layer) {
-            inflater2 = getLayoutInflater();
-            alertLayout2 = inflater2.inflate(R.layout.dgps_map_layer, null, false);
-            c3 = alertLayout2.findViewById(R.id.dPillar);
-            message=alertLayout2.findViewById(R.id.dMessage);
-            if(checkSurveyData(sharefb))
-            {
-                //c5.setVisibility(View.GONE);
-            }
-            else
-            {
-                c3.setVisibility(View.GONE);
-            }
-
-            if (k == 1) {
-                c3.setChecked(true);
-            } else {
-                c3.setChecked(false);
-            }
-            c3.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-
-                    if (((CheckBox) view).isChecked()) {
-                        try {
-                            k = 1;
-                            getSurveyPointData(sharefb);
-                        }catch (Exception ee)
-                        {
-                            ee.printStackTrace();
-                        }finally {
-                        }
-                    } else {
-                        try{
-                            googleMap.clear();
-                        }catch (Exception ee)
-                        {
-                            ee.printStackTrace();
-                        }finally {
-                            k = 0;
-                        }
-
-
-                        // n = 0;
-                    }
-                }
-            });
-            alert2 = new AlertDialog.Builder(alertLayout2.getContext());
-            alert2.setView(alertLayout2);
-            dialog2 = alert2.create();
-            dialog2.getWindow().setGravity(Gravity.CENTER_VERTICAL);
-            headerText = alertLayout2.findViewById(R.id.name_textView);
-            dialog2.getWindow().setLayout(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
-            dialog2.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
-            headerText.setOnTouchListener(new View.OnTouchListener() {
-                @Override
-                public boolean onTouch(View v, MotionEvent event) {
-                    final int DRAWABLE_LEFT = 0;
-                    final int DRAWABLE_TOP = 1;
-                    final int DRAWABLE_RIGHT = 2;
-                    final int DRAWABLE_BOTTOM = 3;
-
-                    if (event.getAction() == MotionEvent.ACTION_UP) {
-                        if (event.getRawX() >= (headerText.getRight() - headerText.getCompoundDrawables()[DRAWABLE_RIGHT].getBounds().width())) {
-                            dialog2.dismiss();
-
-                            return true;
-                        }
-                    }
-
-                    return true;
-                }
-            });
-            dialog2.show();
-        }*/
         else {
             Intent i = new Intent(getApplicationContext(), DGPSDataCollectActivity.class);
             i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -641,6 +570,7 @@ public class DGPSMapViewActivity extends AppCompatActivity implements OnMapReady
             ArrayList<String> lon = new ArrayList<String>();
             ArrayList<String> status = new ArrayList<String>();
             ArrayList<String> file = new ArrayList<String>();
+            ArrayList<String> o_id = new ArrayList<String>();
 
             rangeKey = new HashMap<>();
             db = openOrCreateDatabase("sltp.db", MODE_PRIVATE, null);
@@ -653,13 +583,14 @@ public class DGPSMapViewActivity extends AppCompatActivity implements OnMapReady
                         lon.add(cursor.getString(cursor.getColumnIndex("m_p_long")));
                         status.add(cursor.getString(cursor.getColumnIndex("m_dgps_surv_sts")));
                         file.add(cursor.getString(cursor.getColumnIndex("m_dgps_file_sts")));
+                        o_id.add(cursor.getString(cursor.getColumnIndex("o_Id")));
                     } while (cursor.moveToNext());
                 }
                 cmvsta=true;
                 cursor.close();
                 db.close();
                 for (int j = 0; j < pillarno.size(); j++) {
-                    addSurveyPointtoMap(Double.parseDouble(lat.get(j)), Double.parseDouble(lon.get(j)), pillarno.get(j),Integer.parseInt(status.get(j)),Integer.parseInt(file.get(j)));
+                    addSurveyPointtoMap(Double.parseDouble(lat.get(j)), Double.parseDouble(lon.get(j)), pillarno.get(j),Integer.parseInt(status.get(j)),Integer.parseInt(file.get(j)),Integer.parseInt(o_id.get(j)));
                 }
             }else{
                 cmvsta=false;
@@ -669,28 +600,28 @@ public class DGPSMapViewActivity extends AppCompatActivity implements OnMapReady
             ee.printStackTrace();
         }
     }
-    private void addSurveyPointtoMap(double key, double value, String pillno,int Status,int file_sts) {
+    private void addSurveyPointtoMap(double key, double value, String pillno,int Status,int file_sts,int o_id) {
         if(Status==0 && file_sts==0)
         {
             BitmapDrawable bitmapdraw = (BitmapDrawable) getResources().getDrawable(R.drawable.yellow);
             Bitmap b = bitmapdraw.getBitmap();
             Bitmap smallMarker = Bitmap.createScaledBitmap(b, 80, 80, false);
             googleMap.addMarker(new MarkerOptions().position(
-                    new LatLng(key, value)).title("Pillar No:" + pillno).snippet("Lat:" + key +",Long:" + value+ ",Status:" +Status+",File:"+file_sts).icon(BitmapDescriptorFactory.fromBitmap(smallMarker)));
+                    new LatLng(key, value)).title("Pillar No:" + pillno).snippet("Lat:" + key +",Long:" + value+ ",Status:" +Status+",File:"+file_sts+",OldID:"+o_id).icon(BitmapDescriptorFactory.fromBitmap(smallMarker)));
         }else if(Status==1 && file_sts==0)
         {
             BitmapDrawable bitmapdraw = (BitmapDrawable) getResources().getDrawable(R.drawable.red);
             Bitmap b = bitmapdraw.getBitmap();
             Bitmap smallMarker = Bitmap.createScaledBitmap(b, 80, 80, false);
             googleMap.addMarker(new MarkerOptions().position(
-                    new LatLng(key, value)).title("Pillar No:" + pillno).snippet("Lat:" + key + ",Long:" + value+ ",Status:" +Status+",File:"+file_sts).icon(BitmapDescriptorFactory.fromBitmap(smallMarker)));
+                    new LatLng(key, value)).title("Pillar No:" + pillno).snippet("Lat:" + key + ",Long:" + value+ ",Status:" +Status+",File:"+file_sts+",OldID:"+o_id).icon(BitmapDescriptorFactory.fromBitmap(smallMarker)));
         }else if(Status==1&&file_sts==1)
         {
             BitmapDrawable bitmapdraw = (BitmapDrawable) getResources().getDrawable(R.drawable.green);
             Bitmap b = bitmapdraw.getBitmap();
             Bitmap smallMarker = Bitmap.createScaledBitmap(b, 80, 80, false);
             googleMap.addMarker(new MarkerOptions().position(
-                    new LatLng(key, value)).title("Pillar No:" + pillno).snippet("Lat:" + key + ",Long:" + value+ ",Status:" +Status+",File:"+file_sts).icon(BitmapDescriptorFactory.fromBitmap(smallMarker)));
+                    new LatLng(key, value)).title("Pillar No:" + pillno).snippet("Lat:" + key + ",Long:" + value+ ",Status:" +Status+",File:"+file_sts+",OldID:"+o_id).icon(BitmapDescriptorFactory.fromBitmap(smallMarker)));
         }
 
     }

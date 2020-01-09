@@ -81,7 +81,7 @@ public class UserProfileActivity extends AppCompatActivity implements EasyPermis
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_profile);
-        Util.scheduleJob(getApplicationContext());
+
         dbHelper = new DbHelper(this);
         design = findViewById(R.id.design);
         name = findViewById(R.id.user_profile_name);
@@ -151,42 +151,46 @@ public class UserProfileActivity extends AppCompatActivity implements EasyPermis
                 }
             }
         });
-
-        db = openOrCreateDatabase("sltp.db", MODE_PRIVATE, null);
-        Cursor cursor = db.rawQuery("select count(id) as totufb  from m_pillar_reg where uid='" + shared.getString("uemail", "0") + "' and p_sts='1' and img_status='1'", null);
-       // Cursor cursor4 = db.rawQuery("select * from m_pillar_reg where uid='" + shared.getString("uemail", "0") + "'", null);
-        Cursor cursor1 = db.rawQuery("select count(distinct r_id) as totrange from m_pillar_reg where uid='" + shared.getString("uemail", "0") + "'", null);
-        Cursor cursor2 = db.rawQuery("select count(distinct fb_id) as totfb  from m_pillar_reg where uid='" + shared.getString("uemail", "0") + "'", null);
-        Cursor cursor3 = db.rawQuery("select count(id) as totfp from m_pillar_reg where uid='" + shared.getString("uemail", "0") + "' and delete_status='0'", null);
-        cursor.moveToFirst();
-        cursor1.moveToFirst();
-        cursor2.moveToFirst();
-        cursor3.moveToFirst();
-        if (cursor.moveToFirst()) {
-            do {
-                totdiv.setText(cursor.getString(cursor.getColumnIndex("totufb")));
-            } while (cursor.moveToNext());
+        try {
+            db = openOrCreateDatabase("sltp.db", MODE_PRIVATE, null);
+            Cursor cursor = db.rawQuery("select count(id) as totufb  from m_pillar_reg where uid='" + shared.getString("uemail", "0") + "' and p_sts='1' and img_status='1'", null);
+            // Cursor cursor4 = db.rawQuery("select * from m_pillar_reg where uid='" + shared.getString("uemail", "0") + "'", null);
+            Cursor cursor1 = db.rawQuery("select count(distinct r_id) as totrange from m_pillar_reg where uid='" + shared.getString("uemail", "0") + "'", null);
+            Cursor cursor2 = db.rawQuery("select count(distinct fb_id) as totfb  from m_pillar_reg where uid='" + shared.getString("uemail", "0") + "'", null);
+            Cursor cursor3 = db.rawQuery("select count(id) as totfp from m_pillar_reg where uid='" + shared.getString("uemail", "0") + "' and delete_status='0'", null);
+            cursor.moveToFirst();
+            cursor1.moveToFirst();
+            cursor2.moveToFirst();
+            cursor3.moveToFirst();
+            if (cursor.moveToFirst()) {
+                do {
+                    totdiv.setText(cursor.getString(cursor.getColumnIndex("totufb")));
+                } while (cursor.moveToNext());
+            }
+            if (cursor1.moveToFirst()) {
+                do {
+                    totrange.setText(cursor1.getString(cursor1.getColumnIndex("totrange")));
+                } while (cursor1.moveToNext());
+            }
+            if (cursor2.moveToFirst()) {
+                do {
+                    totfb.setText(cursor2.getString(cursor2.getColumnIndex("totfb")));
+                } while (cursor2.moveToNext());
+            }
+            if (cursor3.moveToFirst()) {
+                do {
+                    totfp.setText(cursor3.getString(cursor3.getColumnIndex("totfp")));
+                } while (cursor3.moveToNext());
+            }
+            cursor.close();
+            cursor1.close();
+            cursor2.close();
+            cursor3.close();
+            db.close();
+        }catch (Exception ee)
+        {
+            ee.printStackTrace();
         }
-        if (cursor1.moveToFirst()) {
-            do {
-                totrange.setText(cursor1.getString(cursor1.getColumnIndex("totrange")));
-            } while (cursor1.moveToNext());
-        }
-        if (cursor2.moveToFirst()) {
-            do {
-                totfb.setText(cursor2.getString(cursor2.getColumnIndex("totfb")));
-            } while (cursor2.moveToNext());
-        }
-        if (cursor3.moveToFirst()) {
-            do {
-                totfp.setText(cursor3.getString(cursor3.getColumnIndex("totfp")));
-            } while (cursor3.moveToNext());
-        }
-        cursor.close();
-        cursor1.close();
-        cursor2.close();
-        cursor3.close();
-        db.close();
 
 
 
@@ -648,11 +652,11 @@ public class UserProfileActivity extends AppCompatActivity implements EasyPermis
 
     }
 
-    private void uploadImage(byte[] imageBytes, final String imgname) {
-//        progress = new ProgressDialog(UserProfileActivity.this, R.style.MyTheme);
-//        progress.setCancelable(false);
-//        progress.setProgressStyle(android.R.style.Widget_Holo_ProgressBar);
-//        progress.show();
+   /* private void uploadImage(byte[] imageBytes, final String imgname) {
+        progress = new progressdialog(userprofileactivity.this, r.style.mytheme);
+        progress.setcancelable(false);
+        progress.setprogressstyle(android.r.style.widget_holo_progressbar);
+        progress.show();
         try {
             ConnectivityManager cm = (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
             NetworkInfo nInfo = cm.getActiveNetworkInfo();
@@ -707,9 +711,8 @@ public class UserProfileActivity extends AppCompatActivity implements EasyPermis
         {
             ee.printStackTrace();
         }
-    }
-
-    public void SendImageFile() {
+    }*/
+   /* public void SendImageFile() {
         db = openOrCreateDatabase("sltp.db", MODE_PRIVATE, null);
         Cursor co = db.rawQuery("update m_pillar_reg set img_status='0' where uid='" + userid + "' and d_id='" + divid + "'", null);
         Cursor c = db.rawQuery("select * from m_pillar_reg where d_id='" + divid + "' and uid='" + userid + "' and img_status='0' ", null);
@@ -724,7 +727,7 @@ public class UserProfileActivity extends AppCompatActivity implements EasyPermis
         c.close();
         co.close();
         db.close();
-    }
+    }*/
 
     private class DownloadFile extends AsyncTask<String, String, String> {
 

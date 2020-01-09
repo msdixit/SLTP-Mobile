@@ -38,8 +38,10 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
 import java.net.URLConnection;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 
 import fr.ganfra.materialspinner.MaterialSpinner;
 
@@ -159,9 +161,12 @@ public class DGPSDataExportActivity extends AppCompatActivity {
 
                             @Override
                             public void onClick(DialogInterface arg0, int arg1) {
+                                String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+                                String d_f_name[]=txtStsFileName.getText().toString().split("\\.");//.split(".")
+                                String f_file_name=d_f_name[0]+"_"+spill_no+"_"+userid+"_"+timeStamp+"."+d_f_name[1];
                                 //Toast.makeText(getApplicationContext(),spill_no,Toast.LENGTH_LONG);
                                 //File src=new File(sfinalpath+"/"+txtStsFileName.getText().toString());
-                                new DGPSDataExportActivity.ExportPointStaticData().execute(sfinalpath + "/" + txtStsFileName.getText().toString(), spill_no, dfinalpath + "/" + txtStsFileName.getText().toString());
+                                new DGPSDataExportActivity.ExportPointStaticData().execute(sfinalpath + "/" + txtStsFileName.getText().toString(), spill_no, dfinalpath + "/" +f_file_name);
                                 //updatePillarData(spill_no);
 
                             }

@@ -75,7 +75,7 @@ public class DGPSDataCollectActivity extends AppCompatActivity {
     TextView txtViewdiv, txtViewran, txtViewfb, fbname;
     LinearLayout lh1;
     String sharediv, sharerange, sharefb, sharefbtype, sharefbname,
-            userid, jobid, div_name, range_name, fb_name, spinner_duration, spinner_segment, id, d_frjvc_lat, d_frjvc_long,
+            userid, jobid, div_name, range_name, fb_name, spinner_duration, spinner_segment, id, d_frjvc_lat, d_frjvc_long,d_old_id,
             d_frjvc_pill_no, imagepath1_F, imagepath1_B, imagepath1_I, imagepath1_O, imagepath1_T, d_check_sts;
     Integer REQUEST_CAMERA = 1, SELECT_FILE = 0;
     Map<Character, String> image_name;
@@ -86,10 +86,8 @@ public class DGPSDataCollectActivity extends AppCompatActivity {
 
     SQLiteDatabase db;
     TextView etName;
-    //ImageView refresh;
     int point_no;
     String kmlstatus;
-    //set the image
     private String mCurrentPhotoPath_F, mCurrentPhotoPath_B, mCurrentPhotoPath_I, mCurrentPhotoPath_O, mCurrentPhotoPath_T;
     private Character pic_status;
     private AlbumStorageDirFactory mAlbumStorageDirFactory = null;
@@ -115,12 +113,8 @@ public class DGPSDataCollectActivity extends AppCompatActivity {
         }
         dbHelper = new DbHelper(getApplicationContext());
         //Matterial Spinner
-        /*pointtype=findViewById(R.id.pointtype);*/
+
         bpduration = findViewById(R.id.bpduration);
-        /* dpSegment = findViewById(R.id.dpSegment);*/
-       /* gtremark=findViewById(R.id.gtremark);
-        gtduration=findViewById(R.id.gtduration);
-        fraobservpoint=findViewById(R.id.fraobservpoint);*/
 
         //EditText
         edttxtpillarno = findViewById(R.id.edttxtpillarno);
@@ -129,9 +123,6 @@ public class DGPSDataCollectActivity extends AppCompatActivity {
         edttxtringno = findViewById(R.id.edttxtringno);
         edtJobID = findViewById(R.id.edtJobID);
         edtdpillno = findViewById(R.id.edtdpillno);
-        /* fraoverview=findViewById(R.id.fraoverview);*/
-       /* edttxtrtxlat=findViewById(R.id.edttxtrtxlat);
-        edttxtrtxlong=findViewById(R.id.edttxtrtxlong);*/
         edtForestoffnm = findViewById(R.id.edtForestoffnm);
 
         //Image View
@@ -151,12 +142,8 @@ public class DGPSDataCollectActivity extends AppCompatActivity {
         txtViewran = findViewById(R.id.txtViewran);
         txtViewfb = findViewById(R.id.txtViewfb);
         fbname = findViewById(R.id.fbname);
-        /*  txtViewusername=findViewById(R.id.txtViewusername);*/
 
-        //Layout
         lh1 = findViewById(R.id.lh1);
-        /*  lh2=findViewById(R.id.lh2);*/
-        /* lh3=findViewById(R.id.lh3);*/
 
         shared = getApplicationContext().getSharedPreferences(data, MODE_PRIVATE);
         sharediv = shared.getString("fbdivcode", "0");
@@ -183,9 +170,11 @@ public class DGPSDataCollectActivity extends AppCompatActivity {
         d_frjvc_lat = i.getStringExtra("lat");
         d_frjvc_long = i.getStringExtra("lon");
         d_frjvc_pill_no = i.getStringExtra("pill_no");
+        d_old_id= i.getStringExtra("old_id");
         /*  d_check_sts = i.getStringExtra("checksts");*/
         point_no = Integer.parseInt(d_frjvc_pill_no);
         edttxtpillarno.setText(String.valueOf(point_no));
+
 
         txtViewdiv.setText(div_name);
         txtViewran.setText(range_name);
@@ -411,7 +400,7 @@ public class DGPSDataCollectActivity extends AppCompatActivity {
                                         userid, formatter.format(date), txtViewdiv.getText().toString(), txtViewran.getText().toString(),
                                         txtViewfb.getText().toString(), "0", "0", "0", "",
                                         "", imagepath1_F, imagepath1_B, imagepath1_I, imagepath1_O, imagepath1_T, imei, "", "0"
-                                        , d_frjvc_lat, d_frjvc_long, edtdpillno.getText().toString());//+"_"+pilshiftsts,surdir,accuracy
+                                        , d_frjvc_lat, d_frjvc_long, edtdpillno.getText().toString(),d_old_id);//+"_"+pilshiftsts,surdir,accuracy
                                 try {
                                     dbHelper.open();
                                     long status = dbHelper.insertDGPSSurveyPillarData(mpr1);
@@ -424,7 +413,7 @@ public class DGPSDataCollectActivity extends AppCompatActivity {
                                             image_name.put('I', imagepath1_I);
                                             image_name.put('O', imagepath1_O);
                                             image_name.put('T', imagepath1_T);
-                                            long a = insertDGPSImage((HashMap<Character, String>) image_name, userid, sl);
+                                            long a = insertDGPSImage((HashMap<Character, String>) image_name, userid, Integer.parseInt(d_old_id));
                                             if (a == 5) {
                                                 ClipboardManager cm = (ClipboardManager) getApplication().getSystemService(Context.CLIPBOARD_SERVICE);
                                                 ClipData clipData = ClipData.newPlainText("JobID", jobID);

@@ -153,18 +153,34 @@ public class ChooseSurvetTypeActivity extends AppCompatActivity {
         data_sync.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-               if(checkDataForSynchronization())
+                Intent i = new Intent(getApplicationContext(), DGPSSyncMenuActivity.class);
+                SharedPreferences sharedPreferences = getSharedPreferences(data, 0);
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.clear();
+                editor.putString("fbrangecode", sharerange);
+                editor.putString("fbdivcode", sharediv);
+                editor.putString("fbcode", sharefb);
+                editor.putString("fbtype", sharefbtype);
+                editor.putString("fbname", sharefbname);
+                editor.putString("userid", userid);
+                editor.putString("jobid", jobid);
+                editor.putString("div_name", div_name);
+                editor.putString("range_name", range_name);
+                editor.putString("fb_name", fb_name);
+                editor.apply();
+                startActivity(i);
+               /*if(checkDataForSynchronization())
                {
                    BindDGPSData(sharediv,userid);
 
                }else{
                    Toast.makeText(getApplicationContext(), "You dont have any data for Synchronization", Toast.LENGTH_LONG).show();
-               }
+               }*/
             }
         });
     }
 
-    private void BindDGPSData(String divid, String userid) {
+    /*private void BindDGPSData(String divid, String userid) {
         try {
             jsonArray = new JSONArray();
             db = openOrCreateDatabase("sltp.db", MODE_PRIVATE, null);
@@ -334,7 +350,7 @@ public class ChooseSurvetTypeActivity extends AppCompatActivity {
             db.close();
         }
         return b;
-    }
+    }*/
 
     @Override
     public void onBackPressed() {
@@ -377,7 +393,7 @@ public class ChooseSurvetTypeActivity extends AppCompatActivity {
                         JSONArray jsonArray = new JSONArray(response);
                         for (int i = 0; i < jsonArray.length(); i++) {
                             JSONObject object = jsonArray.getJSONObject(i);
-                            M_dgpssurvey_pillar_data m_fb = new M_dgpssurvey_pillar_data(object.getString("latitude"), object.getString("longitude"), object.getString("pillar_no"), "", fbid, object.getString("status"),"0","0");//object.getString("point_path")
+                            M_dgpssurvey_pillar_data m_fb = new M_dgpssurvey_pillar_data(object.getString("latitude"), object.getString("longitude"), object.getString("pillar_no"), "", fbid, object.getString("status"),"0","0",object.getString("id"));//object.getString("point_path")
                             dbHelper.open();
                             dbHelper.insertdgpsSurveyedPointDataData(m_fb);
                             dbHelper.close();

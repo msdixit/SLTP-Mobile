@@ -99,12 +99,30 @@ public class ImageService extends JobService {
                 c2.close();
                 db2.close();
             }
+
+           /* Cursor c3 = db3.rawQuery("select * from m_fb_dgps_survey_pill_data where u_id='" + userid + "' and pillar_sfile_status='0' and pillar_sfile_path is not null", null);
+            int count3 = c3.getCount();
+            if (c3.getCount() >= 1) {
+                if (c3.moveToFirst()) {
+                    try {
+                        //uploadDGPSImage(Utility.setPic(c2.getString(c2.getColumnIndex("pillar_sfile_path")), c2.getString(c2.getColumnIndex("pillar_sfile_path")), "1", c2.getString(c2.getColumnIndex("pic_view")));
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+                c3.close();
+                db3.close();
+            }
+        } catch (Exception ee) {
+            ee.printStackTrace();
+        }*/
+
+
         } catch (Exception ee) {
             ee.printStackTrace();
         }
-
     }
-
     private void uploadImage(byte[] imageBytes, final String imgname, String value) {
         ConnectivityManager cm = (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo nInfo = cm.getActiveNetworkInfo();
@@ -198,15 +216,15 @@ public class ImageService extends JobService {
                                     Cursor ctemp = null;
                                     try {
                                         if (pic_view.equals("F")) {
-                                            ctemp = dbtemp.rawQuery("update m_fb_dgps_survey_pill_data set f_pic_status='1' where u_id='" + userid + "' and pic_name='" + imgname + "'", null);
+                                            ctemp = dbtemp.rawQuery("update m_fb_dgps_survey_pill_data set f_pic_status='1' where u_id='" + userid + "' and f_pic_name='" + imgname + "'", null);
                                         } else if (pic_view.equals("B")) {
-                                            ctemp = dbtemp.rawQuery("update m_fb_dgps_survey_pill_data set b_pic_status='1' where u_id='" + userid + "' and pic_name='" + imgname + "'", null);
+                                            ctemp = dbtemp.rawQuery("update m_fb_dgps_survey_pill_data set b_pic_status='1' where u_id='" + userid + "' and b_pic_name='" + imgname + "'", null);
                                         } else if (pic_view.equals("I")) {
-                                            ctemp = dbtemp.rawQuery("update m_fb_dgps_survey_pill_data set i_pic_status='1' where u_id='" + userid + "' and pic_name='" + imgname + "'", null);
+                                            ctemp = dbtemp.rawQuery("update m_fb_dgps_survey_pill_data set i_pic_status='1' where u_id='" + userid + "' and i_pic_name='" + imgname + "'", null);
                                         } else if (pic_view.equals("O")) {
-                                            ctemp = dbtemp.rawQuery("update m_fb_dgps_survey_pill_data set o_pic_status='1' where u_id='" + userid + "' and pic_name='" + imgname + "'", null);
+                                            ctemp = dbtemp.rawQuery("update m_fb_dgps_survey_pill_data set o_pic_status='1' where u_id='" + userid + "' and o_pic_name='" + imgname + "'", null);
                                         } else if (pic_view.equals("T")) {
-                                            ctemp = dbtemp.rawQuery("update m_fb_dgps_survey_pill_data set div_pic_status='1' where u_id='" + userid + "' and pic_name='" + imgname + "'", null);
+                                            ctemp = dbtemp.rawQuery("update m_fb_dgps_survey_pill_data set div_pic_status='1' where u_id='" + userid + "' and div_pic_name='" + imgname + "'", null);
                                         } else {
 
                                         }

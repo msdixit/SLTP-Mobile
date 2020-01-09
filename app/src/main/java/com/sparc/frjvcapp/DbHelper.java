@@ -170,7 +170,8 @@ public class DbHelper {
             "pillar_sfile_status TEXT,"+
             "frjvc_lat TEXT,"+
             "frjvc_long TEXT,"+
-            "d_pill_no TEXT)";
+            "d_pill_no TEXT,"+
+            "d_old_id TEXT)";
 
     private static final String CREATE_m_dgps_Survey_pill_data = "CREATE TABLE IF NOT EXISTS " + m_dgps_Survey_pill_data + "( " +
             "id INTEGER PRIMARY KEY, " +
@@ -181,7 +182,8 @@ public class DbHelper {
             "m_p_long TEXT," +
             "m_pillar_avl_sts TEXT,"+
             "m_dgps_surv_sts TEXT,"+
-            "m_dgps_file_sts TEXT)";
+            "m_dgps_file_sts TEXT,"+
+            "o_Id TEXT)";
 
     private static final String CREATE_m_fb_dgps_survey_pill_pic = "CREATE TABLE IF NOT EXISTS " + m_fb_dgps_survey_pill_pic + "( " +
             "id INTEGER PRIMARY KEY, " +
@@ -384,6 +386,7 @@ public class DbHelper {
             contentValues.put("frjvc_lat", mpr.getFrjvc_lat());
             contentValues.put("frjvc_long", mpr.getFrjvc_long());
             contentValues.put("d_pill_no", mpr.getD_pill_no());
+            contentValues.put("d_old_id", mpr.getD_old_id());
             id = mDb.insert(m_fb_dgps_survey_pill_data, null, contentValues);
             mDb.setTransactionSuccessful();
         } catch (Exception ee) {
@@ -404,6 +407,7 @@ public class DbHelper {
         contentValues.put("m_pillar_avl_sts", fb.getP_syrvey_sts());
         contentValues.put("m_dgps_surv_sts", fb.getM_dgps_surv_sts());
         contentValues.put("m_dgps_file_sts", fb.getM_dgps_file_sts());
+        contentValues.put("o_Id", fb.getO_Id());
         long id = mDb.insert(m_dgps_Survey_pill_data, null, contentValues);
         return id;
     }

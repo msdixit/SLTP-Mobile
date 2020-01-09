@@ -28,7 +28,7 @@ import android.widget.ImageButton;
 import android.widget.Toast;
 
 
-import org.osmdroid.api.IGeoPoint;
+/*import org.osmdroid.api.IGeoPoint;
 import org.osmdroid.config.Configuration;
 import org.osmdroid.tileprovider.MapTileProviderBasic;
 import org.osmdroid.tileprovider.tilesource.ITileSource;
@@ -50,7 +50,7 @@ import org.osmdroid.wms.WMSEndpoint;
 
 import org.osmdroid.wms.WMSLayer;
 import org.osmdroid.wms.WMSParser;
-import org.osmdroid.wms.WMSTileSource;
+import org.osmdroid.wms.WMSTileSource;*/
 
 import android.preference.PreferenceManager;
 
@@ -60,8 +60,8 @@ import java.net.URL;
 import java.net.URLConnection;
 
 
-public class MapViewerActivity extends AppCompatActivity implements LocationListener {
-    MapView map = null;
+public class MapViewerActivity extends AppCompatActivity{
+    /*MapView map = null;
     private static final int MULTIPLE_PERMISSION_REQUEST_CODE = 4;
     private MapView mapView;
     private Location currentLocation;
@@ -72,7 +72,7 @@ public class MapViewerActivity extends AppCompatActivity implements LocationList
     private RotationGestureOverlay mRotationGestureOverlay;
     protected ImageButton btCenterMap;
     private LocationManager lm;
-    WMSEndpoint cap;
+    WMSEndpoint cap;*/
     AlertDialog show = null;
     AlertDialog layerPicker = null;
     AlertDialog alertDialog = null;
@@ -82,7 +82,7 @@ public class MapViewerActivity extends AppCompatActivity implements LocationList
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map_viewer);
         //BottomNavigationView bottomView = findViewById(R.id.navigationView);
-        Context ctx = this;
+        /*Context ctx = this;
         Configuration.getInstance().load(ctx, PreferenceManager.getDefaultSharedPreferences(ctx));
         final DisplayMetrics dm = ctx.getResources().getDisplayMetrics();
 
@@ -132,16 +132,16 @@ public class MapViewerActivity extends AppCompatActivity implements LocationList
         mMinimapOverlay.setWidth(dm.widthPixels / 5);
         mMinimapOverlay.setHeight(dm.heightPixels / 5);
         mapView.getOverlays().add(this.mMinimapOverlay);
-        downloadAndParse();
+        downloadAndParse();*/
     }
 
-    private void downloadAndParse() {
+    /*private void downloadAndParse() {
 
         String[] serverURL = {"http://203.129.207.132:8080/geoserver/CDLTP_Rourkela_Vector/wms?"};
         WMSTileSource wmsTileSource = new WMSTileSource("OGC:WMS", serverURL , "CDLTP_Rourkela_Vector%3ARourkela_fb_boundary_cmv", "1.1.0", "EPSG:32654", "", 256);
         mapView.setTileSource(wmsTileSource);
 
-        /*new Thread(new Runnable() {
+        *//*new Thread(new Runnable() {
             @Override
             public void run() {
                 boolean ok = false;
@@ -184,7 +184,7 @@ public class MapViewerActivity extends AppCompatActivity implements LocationList
             }
 
 
-        }).start();*/
+        }).start();*//*
     }
 
     private void showErrorMessage(final Exception root) {
@@ -421,7 +421,7 @@ public class MapViewerActivity extends AppCompatActivity implements LocationList
     @Override
     public void onProviderDisabled(String provider) {
 
-    }
+    }*/
 
 
 }

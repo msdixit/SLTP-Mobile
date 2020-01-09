@@ -30,6 +30,7 @@ public class MainContainerActivity extends AppCompatActivity {
         DataCollector=findViewById(R.id.mis_imageView);
         MapViewer=findViewById(R.id.gis_imageView);
         DGPSSurvey=findViewById(R.id.dgps_imageview);
+        Util.scheduleJob(getApplicationContext());
         for (int id: head) {
             headlist.add(id);
         }

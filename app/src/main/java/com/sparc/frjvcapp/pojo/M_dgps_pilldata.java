@@ -224,6 +224,16 @@ public class M_dgps_pilldata {
     private String pillar_sfile_path;
     private String pillar_sfile_status;
 
+    public String getD_old_id() {
+        return d_old_id;
+    }
+
+    public void setD_old_id(String d_old_id) {
+        this.d_old_id = d_old_id;
+    }
+
+    private String d_old_id;
+
     public String getDevice_imei_no() {
         return device_imei_no;
     }
@@ -339,7 +349,8 @@ public class M_dgps_pilldata {
                            String patch_no,String ring_no, String forest_person, String surveyor_name, String survey_time, String div_name,
                            String range_name, String fb_name, String sync_status, String ack_status, String delete_status,
                            String survey_segment,String completion_sts, String f_pic_name, String b_pic_name,
-                           String i_pic_name, String o_pic_name, String div_pic_name,String device_imei_no,String pillar_sfile_path,String pillar_sfile_status,String frjvc_lat,String frjvc_long,String d_pill_no) {
+                           String i_pic_name, String o_pic_name, String div_pic_name,String device_imei_no,
+                           String pillar_sfile_path,String pillar_sfile_status,String frjvc_lat,String frjvc_long,String d_pill_no,String d_old_id) {
         this.d_id = d_id;
         this.r_id = r_id;
         this.fb_id = fb_id;
@@ -376,6 +387,7 @@ public class M_dgps_pilldata {
         this.frjvc_lat=frjvc_lat;
         this.frjvc_long=frjvc_long;
         this.d_pill_no=d_pill_no;
+        this.d_old_id=d_old_id;
     }
 
 

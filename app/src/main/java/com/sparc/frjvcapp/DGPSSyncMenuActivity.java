@@ -234,7 +234,6 @@ public class DGPSSyncMenuActivity extends AppCompatActivity {
 
     public boolean zipFileAtPath(String sourcePath, String toLocation) {
         final int BUFFER = 2048;
-
         File sourceFile = new File(sourcePath);
         try {
             BufferedInputStream origin = null;

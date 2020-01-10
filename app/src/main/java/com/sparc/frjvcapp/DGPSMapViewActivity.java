@@ -65,8 +65,7 @@ import java.util.HashMap;
 public class DGPSMapViewActivity extends AppCompatActivity implements OnMapReadyCallback,
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
-        LocationListener, GoogleMap.OnMarkerClickListener, GoogleMap.OnCameraIdleListener, GoogleMap.OnCameraMoveListener, GoogleMap.OnCameraChangeListener, BottomNavigationView.OnNavigationItemSelectedListener
-{
+        LocationListener, GoogleMap.OnMarkerClickListener, GoogleMap.OnCameraIdleListener, GoogleMap.OnCameraMoveListener, GoogleMap.OnCameraChangeListener, BottomNavigationView.OnNavigationItemSelectedListener {
 
     public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
     public static final String data = "data";
@@ -88,7 +87,7 @@ public class DGPSMapViewActivity extends AppCompatActivity implements OnMapReady
     MapScaleView scaleView;
     private GoogleMap googleMap;
     private LatLng latLng, destination;
-    String sharediv, sharerange, sharefb, sharefbtype,userid, jobid, div_name, range_name, fb_name;
+    String sharediv, sharerange, sharefb, sharefbtype, userid, jobid, div_name, range_name, fb_name;
     private String serverKey = "AIzaSyB-VJ5Dc0Wf-AzmvNlwd48GuzwBN25s8JQ";
     public static int baseMapMenuPos = 0;
     public static LayoutInflater inflater1, inflater2;
@@ -133,6 +132,7 @@ public class DGPSMapViewActivity extends AppCompatActivity implements OnMapReady
             checkLocationPermission();
         }
     }
+
     public boolean checkLocationPermission() {
         if (ContextCompat.checkSelfPermission(this,
                 Manifest.permission.ACCESS_FINE_LOCATION)
@@ -157,6 +157,7 @@ public class DGPSMapViewActivity extends AppCompatActivity implements OnMapReady
             return true;
         }
     }
+
     @Override
     public void onRequestPermissionsResult(int requestCode,
                                            String[] permissions, int[] grantResults) {
@@ -192,7 +193,8 @@ public class DGPSMapViewActivity extends AppCompatActivity implements OnMapReady
     }
 
     @Override
-    public void onConnected(@Nullable Bundle bundle) { mLocationRequest = new LocationRequest();
+    public void onConnected(@Nullable Bundle bundle) {
+        mLocationRequest = new LocationRequest();
         mLocationRequest.setInterval(10000);
         mLocationRequest.setFastestInterval(10000);
         mLocationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
@@ -230,9 +232,9 @@ public class DGPSMapViewActivity extends AppCompatActivity implements OnMapReady
             }
             //Place current location marker
             latLng = new LatLng(location.getLatitude(), location.getLongitude());
-            markerOptions = new MarkerOptions();
+           /* markerOptions = new MarkerOptions();
             markerOptions.position(latLng);
-            mCurrLocationMarker = googleMap.addMarker(markerOptions);
+            mCurrLocationMarker = googleMap.addMarker(markerOptions);*/
 
 
             if (destination != null) {
@@ -255,18 +257,19 @@ public class DGPSMapViewActivity extends AppCompatActivity implements OnMapReady
         // Map part for both offline
         else {
             //fbtn.setVisibility(View.GONE);
-            LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+            /*LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
             markerOptions = new MarkerOptions();
             markerOptions.position(latLng);
             if (mCurrLocationMarker != null) {
                 mCurrLocationMarker.remove();
-            }
+            }*/
 
-            mCurrLocationMarker = googleMap.addMarker(markerOptions);
+            /*mCurrLocationMarker = googleMap.addMarker(markerOptions);*/
 
         }
 
     }
+
     private void moveCamera(LatLng latLng, float zoom) {
         googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoom));
     }
@@ -298,6 +301,7 @@ public class DGPSMapViewActivity extends AppCompatActivity implements OnMapReady
         }
         return true;
     }
+
     @Override
     public void onBackPressed() {
         Intent i = new Intent(getApplicationContext(), ChooseSurvetTypeActivity.class);
@@ -306,6 +310,7 @@ public class DGPSMapViewActivity extends AppCompatActivity implements OnMapReady
         startActivity(i);
 
     }
+
     @Override
     public void onMapReady(GoogleMap googleMap1) {
         googleMap = googleMap1;
@@ -332,11 +337,10 @@ public class DGPSMapViewActivity extends AppCompatActivity implements OnMapReady
                     googleMap.setMyLocationEnabled(true);
                     googleMap.getUiSettings().setMyLocationButtonEnabled(false);
                     GoogleMap finalGoogleMap = googleMap;
-                    if(checkSurveyData(sharefb))
-                    {
+                    if (checkSurveyData(sharefb)) {
                         googleMap.clear();
                         getSurveyPointData(sharefb);
-                    }else {
+                    } else {
 
                     }
                   /* googleMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
@@ -360,11 +364,10 @@ public class DGPSMapViewActivity extends AppCompatActivity implements OnMapReady
                     googleMap.setMyLocationEnabled(true);
                     TileProvider coordTileProvider = new DGPSMapViewActivity.CoordTileProvider(this.getApplicationContext());
                     googleMap1.addTileOverlay(new TileOverlayOptions().tileProvider(coordTileProvider));
-                    if(checkSurveyData(sharefb))
-                    {
+                    if (checkSurveyData(sharefb)) {
                         googleMap.clear();
                         getSurveyPointData(sharefb);
-                    }else {
+                    } else {
 
                     }
                 }
@@ -379,21 +382,20 @@ public class DGPSMapViewActivity extends AppCompatActivity implements OnMapReady
             public void onInfoWindowClick(Marker marker) {
 
                 String[] a = marker.getSnippet().split(",");
-                String[] p=marker.getTitle().split(":");
-                String[] array_lat= a[0].split(":");
-                String[] array_long= a[1].split(":");
-                String[] array_status= a[2].split(":");
-                String[] array_file= a[3].split(":");
-                String[] array_o_id= a[4].split(":");
-                String pillar_no=p[1];
+                String[] p = marker.getTitle().split(":");
+                String[] array_lat = a[0].split(":");
+                String[] array_long = a[1].split(":");
+                String[] array_status = a[2].split(":");
+                String[] array_file = a[3].split(":");
+                String[] array_o_id = a[4].split(":");
+                String pillar_no = p[1];
                 String lat = array_lat[1];
                 String lon = array_long[1];
                 int status = Integer.parseInt(array_status[1]);
-                int file=Integer.parseInt(array_file[1]);
-                String o_id=array_o_id[1];
+                int file = Integer.parseInt(array_file[1]);
+                String o_id = array_o_id[1];
 
-                if(status==0&&file==0)
-                {
+                if (status == 0 && file == 0) {
                     Intent intent1 = new Intent(getApplicationContext(), DGPSDataCollectActivity.class);
                     intent1.putExtra("lat", lat);
                     intent1.putExtra("lon", lon);
@@ -403,9 +405,7 @@ public class DGPSMapViewActivity extends AppCompatActivity implements OnMapReady
                     intent1.putExtra("kml_status", kmlstatus);
                     intent1.putExtra("old_id", o_id);
                     startActivity(intent1);
-                }
-                else if(status==1&&file==0)
-                {
+                } else if (status == 1 && file == 0) {
                     Intent intent1 = new Intent(getApplicationContext(), DGPSViewPillarDetailActivity.class);
                     intent1.putExtra("lat", lat);
                     intent1.putExtra("lon", lon);
@@ -496,8 +496,7 @@ public class DGPSMapViewActivity extends AppCompatActivity implements OnMapReady
                 }
             });
             popupMenu.show();
-        }
-        else if (id == R.id.dgpsnavigation_legend) {
+        } else if (id == R.id.dgpsnavigation_legend) {
             inflater1 = getLayoutInflater();
             alertLayout = inflater1.inflate(R.layout.dgps_map_legend, null);
             alert = new AlertDialog.Builder(alertLayout.getContext());
@@ -528,8 +527,7 @@ public class DGPSMapViewActivity extends AppCompatActivity implements OnMapReady
                 }
             });
             dialog.show();
-        }
-        else {
+        } else {
             Intent i = new Intent(getApplicationContext(), DGPSDataCollectActivity.class);
             i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             i.putExtra("id", "ListMap");
@@ -539,18 +537,17 @@ public class DGPSMapViewActivity extends AppCompatActivity implements OnMapReady
         }
         return false;
     }
+
     private boolean checkSurveyData(String fbid) {
         try {
             dbHelper.open();
             rangeKey = new HashMap<>();
             db = openOrCreateDatabase("sltp.db", MODE_PRIVATE, null);
             Cursor cursor = db.rawQuery("select m_p_lat,m_p_long,m_fb_pillar_no from m_dgps_Survey_pill_data where m_fb_id='" + fbid + "' order by m_fb_pillar_no", null);
-            if(cursor.getCount()>0)
-            {
-                cmvsta=true;
-            }
-            else {
-                cmvsta=false;
+            if (cursor.getCount() > 0) {
+                cmvsta = true;
+            } else {
+                cmvsta = false;
             }
             cursor.close();
             db.close();
@@ -561,8 +558,8 @@ public class DGPSMapViewActivity extends AppCompatActivity implements OnMapReady
         }
         return cmvsta;
     }
-    private void getSurveyPointData(String fbid)
-    {
+
+    private void getSurveyPointData(String fbid) {
         try {
             dbHelper.open();
             ArrayList<String> pillarno = new ArrayList<String>();
@@ -575,7 +572,7 @@ public class DGPSMapViewActivity extends AppCompatActivity implements OnMapReady
             rangeKey = new HashMap<>();
             db = openOrCreateDatabase("sltp.db", MODE_PRIVATE, null);
             Cursor cursor = db.rawQuery("select * from m_dgps_Survey_pill_data where m_fb_id='" + fbid + "' order by m_fb_pillar_no", null);
-            if(cursor.getCount()>0) {
+            if (cursor.getCount() > 0) {
                 if (cursor.moveToFirst()) {
                     do {
                         pillarno.add(cursor.getString(cursor.getColumnIndex("m_fb_pillar_no")));
@@ -586,42 +583,40 @@ public class DGPSMapViewActivity extends AppCompatActivity implements OnMapReady
                         o_id.add(cursor.getString(cursor.getColumnIndex("o_Id")));
                     } while (cursor.moveToNext());
                 }
-                cmvsta=true;
+                cmvsta = true;
                 cursor.close();
                 db.close();
                 for (int j = 0; j < pillarno.size(); j++) {
-                    addSurveyPointtoMap(Double.parseDouble(lat.get(j)), Double.parseDouble(lon.get(j)), pillarno.get(j),Integer.parseInt(status.get(j)),Integer.parseInt(file.get(j)),Integer.parseInt(o_id.get(j)));
+                    addSurveyPointtoMap(Double.parseDouble(lat.get(j)), Double.parseDouble(lon.get(j)), pillarno.get(j), Integer.parseInt(status.get(j)), Integer.parseInt(file.get(j)), Integer.parseInt(o_id.get(j)));
                 }
-            }else{
-                cmvsta=false;
+            } else {
+                cmvsta = false;
             }
             //dbHelper.close();
         } catch (Exception ee) {
             ee.printStackTrace();
         }
     }
-    private void addSurveyPointtoMap(double key, double value, String pillno,int Status,int file_sts,int o_id) {
-        if(Status==0 && file_sts==0)
-        {
+
+    private void addSurveyPointtoMap(double key, double value, String pillno, int Status, int file_sts, int o_id) {
+        if (Status == 0 && file_sts == 0) {
             BitmapDrawable bitmapdraw = (BitmapDrawable) getResources().getDrawable(R.drawable.yellow);
             Bitmap b = bitmapdraw.getBitmap();
             Bitmap smallMarker = Bitmap.createScaledBitmap(b, 80, 80, false);
             googleMap.addMarker(new MarkerOptions().position(
-                    new LatLng(key, value)).title("Pillar No:" + pillno).snippet("Lat:" + key +",Long:" + value+ ",Status:" +Status+",File:"+file_sts+",OldID:"+o_id).icon(BitmapDescriptorFactory.fromBitmap(smallMarker)));
-        }else if(Status==1 && file_sts==0)
-        {
+                    new LatLng(key, value)).title("Pillar No:" + pillno).snippet("Lat:" + key + ",Long:" + value + ",Status:" + Status + ",File:" + file_sts + ",OldID:" + o_id).icon(BitmapDescriptorFactory.fromBitmap(smallMarker)));
+        } else if (Status == 1 && file_sts == 0) {
             BitmapDrawable bitmapdraw = (BitmapDrawable) getResources().getDrawable(R.drawable.red);
             Bitmap b = bitmapdraw.getBitmap();
             Bitmap smallMarker = Bitmap.createScaledBitmap(b, 80, 80, false);
             googleMap.addMarker(new MarkerOptions().position(
-                    new LatLng(key, value)).title("Pillar No:" + pillno).snippet("Lat:" + key + ",Long:" + value+ ",Status:" +Status+",File:"+file_sts+",OldID:"+o_id).icon(BitmapDescriptorFactory.fromBitmap(smallMarker)));
-        }else if(Status==1&&file_sts==1)
-        {
+                    new LatLng(key, value)).title("Pillar No:" + pillno).snippet("Lat:" + key + ",Long:" + value + ",Status:" + Status + ",File:" + file_sts + ",OldID:" + o_id).icon(BitmapDescriptorFactory.fromBitmap(smallMarker)));
+        } else if (Status == 1 && file_sts == 1) {
             BitmapDrawable bitmapdraw = (BitmapDrawable) getResources().getDrawable(R.drawable.green);
             Bitmap b = bitmapdraw.getBitmap();
             Bitmap smallMarker = Bitmap.createScaledBitmap(b, 80, 80, false);
             googleMap.addMarker(new MarkerOptions().position(
-                    new LatLng(key, value)).title("Pillar No:" + pillno).snippet("Lat:" + key + ",Long:" + value+ ",Status:" +Status+",File:"+file_sts+",OldID:"+o_id).icon(BitmapDescriptorFactory.fromBitmap(smallMarker)));
+                    new LatLng(key, value)).title("Pillar No:" + pillno).snippet("Lat:" + key + ",Long:" + value + ",Status:" + Status + ",File:" + file_sts + ",OldID:" + o_id).icon(BitmapDescriptorFactory.fromBitmap(smallMarker)));
         }
 
     }

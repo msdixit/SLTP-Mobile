@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg"
+    tools:context=".DGPSDataTaggMenuActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:weightSum="4">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="150dp"
+            android:orientation="vertical"
+            android:layout_weight="1"
+            android:weightSum="1">
+
+            <TextView
+                android:layout_marginTop="40dp"
+                android:layout_weight=".5"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Tagging of Static and RTX data for"
+                android:textAlignment="center"
+                android:textColor="@color/colorBackground"
+                android:textSize="25sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_weight=".5"
+                android:id="@+id/dgpsfbName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAlignment="center"
+                android:textColor="@color/colorBackground"
+                android:textSize="25sp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginLeft="10dp"
+            android:orientation="horizontal"
+            android:layout_weight="1"
+            android:weightSum="1">
+
+            <ImageView
+                android:id="@+id/data_point_dwld"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginRight="5dp"
+                android:layout_below="@+id/name_textView"
+                android:layout_weight=".5"
+                android:elevation="5dp"
+                android:background="@drawable/tag_rtx"
+                android:clickable="true" />
+
+            <ImageView
+                android:id="@+id/dataview"
+                android:layout_width="0dp"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:layout_height="match_parent"
+                android:layout_below="@+id/mapview"
+                android:layout_weight=".5"
+                android:background="@drawable/tag_static"
+                android:clickable="true" />
+
+
+
+        </LinearLayout>
+    </LinearLayout>
+
+</RelativeLayout>

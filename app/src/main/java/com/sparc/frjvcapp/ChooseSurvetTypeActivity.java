@@ -101,7 +101,7 @@ public class ChooseSurvetTypeActivity extends AppCompatActivity {
         data_export.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent i = new Intent(getApplicationContext(), DGPSDataExportActivity.class);
+                Intent i = new Intent(getApplicationContext(), DGPSDataTaggMenuActivity.class);
                 SharedPreferences sharedPreferences = getSharedPreferences(data, 0);
                 SharedPreferences.Editor editor = sharedPreferences.edit();
                 editor.clear();

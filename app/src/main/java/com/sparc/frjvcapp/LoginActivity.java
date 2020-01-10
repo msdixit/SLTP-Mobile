@@ -105,8 +105,8 @@ public class LoginActivity extends AppCompatActivity {
     private SQLiteDatabase mDb;
     ArrayList<Integer> headlist = new ArrayList<>();
     ArrayList<Integer> subheadlist = new ArrayList<>();
-    int[] head=new int[]{1, 2, 3,12};
-    int[] subhead=new int[]{4,5,6,7,10,11};
+    int[] head = new int[]{1, 2, 3, 12};
+    int[] subhead = new int[]{4, 5, 6, 7, 10, 11};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -146,10 +146,10 @@ public class LoginActivity extends AppCompatActivity {
         login = findViewById(R.id.loginButton);
         // txtemail.setText("ROU202");
         //txtpassword.setText("jpzr5943EQ");
-        for (int id: head) {
+        for (int id : head) {
             headlist.add(id);
         }
-        for (int id: subhead) {
+        for (int id : subhead) {
             subheadlist.add(id);
         }
 
@@ -291,7 +291,7 @@ public class LoginActivity extends AppCompatActivity {
             RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
             String URL = "http://odishaforestlandsurvey.in/api/values/auth/" + txtemail.getText().toString() + "/" + pass;
             //http://odishaforestlandsurvey.in/api/values/auth/
-            progressDialog = new ProgressDialog(this , R.style.MyAlertDialogStyle);
+            progressDialog = new ProgressDialog(this, R.style.MyAlertDialogStyle);
             progressDialog.setMessage("Please wait...You are logging in to GFLO");
             progressDialog.show();
             //progressDialog = ProgressDialog.show(LoginActivity.this, "", "Please wait...You are logging in to GFLO", false);
@@ -311,12 +311,11 @@ public class LoginActivity extends AppCompatActivity {
                             editor.putString("upass", txtpassword.getText().toString());
                             editor.putString("uname", jsonobject.getString("chrv_name"));
                             editor.putString("upos", jsonobject.getString("chrv_designation_nm"));
-                            if(Integer.parseInt(jsonobject.getString("circle_id"))==0)
-                            {
+                            if (Integer.parseInt(jsonobject.getString("circle_id")) == 0) {
                                 editor.putString("ucir", "");
-                                editor.putString("udivid","");
+                                editor.putString("udivid", "");
                                 editor.putString("udivname", "");
-                            }else{
+                            } else {
                                 editor.putString("ucir", jsonobject.getString("chrv_circle_nm"));
                                 editor.putString("udivid", jsonobject.getString("div_id"));
                                 editor.putString("udivname", jsonobject.getString("chrv_division_nm"));
@@ -325,31 +324,11 @@ public class LoginActivity extends AppCompatActivity {
                             editor.putString("uid", jsonobject.getString("chrv_email"));
                             editor.putString("userdivid", jsonobject.getString("desig_id"));
                             editor.apply();
-                            if(subheadlist.contains(Integer.parseInt(jsonobject.getString("desig_id"))))
-                            {
+                            if (subheadlist.contains(Integer.parseInt(jsonobject.getString("desig_id")))) {
                                 //editor.putString("userdivid", jsonobject.getString("chrv_division_nm"));
                                 insertrangeData(jsonobject.getString("div_id"));
                             }
                             startActivity(intent);
-
-                            /*Intent intent = new Intent(getApplicationContext(), UserProfileActivity.class);
-                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                            SharedPreferences sharedPreferences = getSharedPreferences(userlogin, 0);
-                            SharedPreferences.Editor editor = sharedPreferences.edit();
-                            editor.clear();
-                            editor.putString("uemail", txtemail.getText().toString());
-                            editor.putString("upass", txtpassword.getText().toString());
-                            editor.putString("uname", jsonobject.getString("chrv_name"));
-                            editor.putString("upos", jsonobject.getString("chrv_designation_nm"));
-                            editor.putString("ucir", jsonobject.getString("chrv_circle_nm"));
-                            editor.putString("uid", jsonobject.getString("chrv_email"));
-                            editor.putString("udivid", jsonobject.getString("div_id"));
-                            editor.putString("udivname", jsonobject.getString("chrv_division_nm"));
-                            //editor.putString("userid", jsonobject.getString("div_id"));
-
-                            editor.commit();
-                            insertrangeData(jsonobject.getString("div_id"));
-                            startActivity(intent);*/
                         }
                     } else {
                         progressDialog.dismiss();
@@ -441,7 +420,7 @@ public class LoginActivity extends AppCompatActivity {
                         for (int i = 0; i < jsonArray.length(); i++) {
                             JSONObject object = jsonArray.getJSONObject(i);
 
-                            M_fb m_fb = new M_fb(object.getString("fb"), object.getString("fid"), object.getString("rid"), div_id, object.getString("fb_type"), object.getString("cmv_path"), object.getString("mmv_path"),"");//object.getString("point_path")
+                            M_fb m_fb = new M_fb(object.getString("fb"), object.getString("fid"), object.getString("rid"), div_id, object.getString("fb_type"), object.getString("cmv_path"), object.getString("mmv_path"), "");//object.getString("point_path")
                             dbHelper.open();
                             dbHelper.inserFBData(m_fb);
                             dbHelper.close();

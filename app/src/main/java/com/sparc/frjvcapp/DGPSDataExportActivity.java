@@ -144,8 +144,6 @@ public class DGPSDataExportActivity extends AppCompatActivity {
                     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                         spill_no = (String) parent.getItemAtPosition(position);
                         if (!spill_no.equals("Select Pillar No")) {
-                            //CheckPillarStatus(locationtype);
-
                         }
                     }
 
@@ -154,8 +152,6 @@ public class DGPSDataExportActivity extends AppCompatActivity {
 
                     }
                 });
-
-                //alertDialogBuilder.setView(customLayout);
                 alertDialogBuilder.setPositiveButton("OK",
                         new DialogInterface.OnClickListener() {
 
@@ -164,10 +160,7 @@ public class DGPSDataExportActivity extends AppCompatActivity {
                                 String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
                                 String d_f_name[]=txtStsFileName.getText().toString().split("\\.");//.split(".")
                                 String f_file_name=d_f_name[0]+"_"+spill_no+"_"+userid+"_"+timeStamp+"."+d_f_name[1];
-                                //Toast.makeText(getApplicationContext(),spill_no,Toast.LENGTH_LONG);
-                                //File src=new File(sfinalpath+"/"+txtStsFileName.getText().toString());
                                 new DGPSDataExportActivity.ExportPointStaticData().execute(sfinalpath + "/" + txtStsFileName.getText().toString(), spill_no, dfinalpath + "/" +f_file_name);
-                                //updatePillarData(spill_no);
 
                             }
                         });

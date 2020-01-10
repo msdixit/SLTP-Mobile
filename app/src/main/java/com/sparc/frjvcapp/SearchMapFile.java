@@ -121,12 +121,13 @@ public class SearchMapFile extends AppCompatActivity {
             }
         });
 
-
+        //Select forest block event
         fb.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 fbValue = (String) parent.getItemAtPosition(position);
-                fbid = fbKey.get(fbValue.substring(0, fbValue.lastIndexOf(" ")));
+               /* String s=fbValue.substring(0, fbValue.lastIndexOf(" "));*/
+                fbid = fbKey.get(fbValue);
                 if (!fbValue.equals("Select Forest Block")) {
                     //componentMaster();
                     getForestType(rangeCode, divid, fbid);
@@ -461,66 +462,6 @@ public class SearchMapFile extends AppCompatActivity {
         }
         return status;
     }
-
-    /*private int checkOtherKMLData() {
-        int status = 0;
-        try {
-            dbHelper.open();
-            String path = GetFilePath();
-
-            for (int i = 0; i < master.length; i++) {
-                if (!master[i].equals("null")) {
-
-                    File f = new File(path + "/" + master[i]);
-                    if (i == 0) {
-                        if (f.exists()) {
-                            state = true;
-                        } else {
-                            state = false;
-                        }
-                    } else if (i == 1) {
-                        if (f.exists()) {
-                            circle = true;
-                        } else {
-                            circle = false;
-                        }
-                    } else if (i == 2) {
-                        if (f.exists()) {
-                            ran = true;
-                        } else {
-                            ran = false;
-                        }
-                    } else {
-                        if (f.exists()) {
-                            div = true;
-                        } else {
-                            div = false;
-                        }
-                    }
-                    status = 1;
-                } else {
-                    if (i == 0) {
-                        state = false;
-                    } else if (i == 1) {
-                        circle = false;
-                    } else if (i == 2) {
-                        div = false;
-                    } else {
-                        ran = false;
-                    }
-                    status = 2;
-                }
-                //progressDialog1.dismiss();
-
-            }
-
-            dbHelper.close();
-        } catch (Exception ee) {
-            ee.printStackTrace();
-        }
-        return status;
-    }*/
-
     private void DeleteRestoreData() {
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
         final View customLayout = getLayoutInflater().inflate(R.layout.download_custom_layout, null);
@@ -832,8 +773,7 @@ public class SearchMapFile extends AppCompatActivity {
         if (cursor.moveToFirst()) {
             do {
                 fbName.add(cursor.getString(cursor.getColumnIndex("m_fb_name")) + " " + cursor.getString(cursor.getColumnIndex("fb_type")));
-                fbKey.put(cursor.getString(cursor.getColumnIndex("m_fb_name")),
-                        cursor.getString(cursor.getColumnIndex("m_fb_id")));
+                fbKey.put(cursor.getString(cursor.getColumnIndex("m_fb_name"))+ " " + cursor.getString(cursor.getColumnIndex("fb_type")),cursor.getString(cursor.getColumnIndex("m_fb_id")));
 
 
             } while (cursor.moveToNext());

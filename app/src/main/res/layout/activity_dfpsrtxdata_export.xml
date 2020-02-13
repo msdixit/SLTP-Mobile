@@ -1,9 +1,101 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".DFPSRTXDataExportActivity">
+    tools:context=".DGPSDataExportActivity"
+    android:orientation="vertical"
+    android:weightSum="1">
 
-</android.support.constraint.ConstraintLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight=".1"
+        android:weightSum="1"
+        android:orientation="horizontal"
+        android:background="@color/colorBackground"
+        android:elevation="5dp"
+        >
+        <!--  <ImageView
+              android:layout_width="0dp"
+              android:layout_height="match_parent"
+              android:layout_weight=".2"
+              android:padding="15sp"
+              android:src="@drawable/ic_insert_drive_file_black_24dp"/>-->
+
+        <TextView
+            android:id="@+id/txtStsFileName"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight=".8"
+            android:textSize="25sp"
+            android:background="@color/colorBackground"
+            android:textColor="@color/offwhite"
+            android:gravity="center|left"
+            android:paddingLeft="10dp"/>
+
+        <ImageView
+            android:id="@+id/img_download"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:background="@color/colorBackground"
+            android:src="@drawable/ic_get_app_black_24dp"
+            android:padding="10sp"
+            android:layout_weight=".2"/>
+
+    </LinearLayout>
+    <!-- <LinearLayout
+         android:layout_width="match_parent"
+         android:layout_height="0dp"
+         android:layout_weight=".1"
+         android:weightSum="5"
+         android:orientation="horizontal"
+         android:outlineSpotShadowColor="@color/colorBackground"
+         >
+         <TextView
+             android:layout_width="0dp"
+             android:layout_height="match_parent"
+             android:layout_weight=".5"
+             android:text="Sl"
+             android:textSize="15sp"
+             android:textColor="@color/offwhite"
+             android:background="@color/colorBackground"
+             android:gravity="center|left"
+             android:paddingLeft="10dp"/>
+
+         <TextView
+             android:layout_width="0dp"
+             android:layout_height="match_parent"
+             android:layout_weight="4"
+             android:background="@color/colorBackground"
+             android:gravity="center|left"
+             android:paddingLeft="10dp"
+             android:text="File Name"
+             android:textColor="@color/offwhite"
+             android:textSize="15sp" />
+
+         <TextView
+             android:layout_width="0dp"
+             android:layout_height="match_parent"
+             android:layout_weight=".5"
+             android:text="Sts"
+             android:textSize="15sp"
+             android:textColor="@color/offwhite"
+             android:background="@color/colorBackground"
+             android:gravity="center|left"
+             android:paddingLeft="10dp"/>
+     </LinearLayout>-->
+
+   <!-- <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight=".9"
+        >
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/dgpsrecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </LinearLayout>-->
+
+</LinearLayout>

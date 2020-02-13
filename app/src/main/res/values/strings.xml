@@ -5,6 +5,7 @@
     <string name="welcome_back">Geo-referencing of Forest Land,Odisha</string>
     <string name="forgot">Forgot Password?</string>
     <string name="login">Login</string>
+    <string name="getMacAddress">My Mac Address?</string>
     <string name="email">User ID</string>
     <string name="password">Password</string>
     <string name="iplink">http://odishaforestlandsurvey.in</string>

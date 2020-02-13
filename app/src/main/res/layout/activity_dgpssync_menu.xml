@@ -270,7 +270,7 @@
                     android:layout_weight=".5"
                     android:fontFamily="@font/abeezee"
                     android:gravity="center|top"
-                    android:text="Total Folder"
+                    android:text="Static File"
                     android:textColor="@color/color1"
                     android:textSize="18dp"
                     android:textStyle="normal" />
@@ -310,7 +310,7 @@
                     android:layout_weight=".5"
                     android:fontFamily="@font/abeezee"
                     android:gravity="center|top"
-                    android:text="Sync Folder"
+                    android:text="Synced Static File"
                     android:textColor="@color/color1"
                     android:textSize="18dp"
                     android:textStyle="normal" />
@@ -362,7 +362,7 @@
                     android:layout_weight=".5"
                     android:fontFamily="@font/abeezee"
                     android:gravity="center|top"
-                    android:text="Total Attendance"
+                    android:text="RTX File"
                     android:textColor="@color/color1"
                     android:textSize="18dp"
                     android:textStyle="normal" />
@@ -402,7 +402,7 @@
                     android:layout_weight=".5"
                     android:fontFamily="@font/abeezee"
                     android:gravity="center|top"
-                    android:text="Sync Attendance"
+                    android:text="Synced RTX File"
                     android:textColor="@color/color1"
                     android:textSize="18dp"
                     android:textStyle="normal" />

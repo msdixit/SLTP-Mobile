@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        android:background="@color/exportcolor">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_centerInParent="true"
+            android:textAlignment="center"
+            android:text="Choose Forest Block Name"
+            android:textColor="@color/offwhite"
+            android:textSize="25dp"
+            />
+
+    </RelativeLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <fr.ganfra.materialspinner.MaterialSpinner
+            android:id="@+id/fb_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5sp"
+            android:layout_marginLeft="5sp"
+            android:layout_marginRight="5sp"
+            android:layout_marginBottom="5sp"
+            app:ms_alignLabels="false"
+            app:ms_arrowColor="@color/color1"
+            app:ms_arrowSize="14dp"
+            app:ms_baseColor="@color/color1"
+            app:ms_dropDownHintView="@layout/dropdown_hint_item_layout"
+            app:ms_enableErrorLabel="false"
+            app:ms_enableFloatingLabel="true"
+            app:ms_errorColor="@color/red"
+            app:ms_floatingLabelColor="@color/color1"
+            app:ms_floatingLabelText="Duration"
+            app:ms_highlightColor="@color/color1"
+            app:ms_hint="Select Forest Block"
+            app:ms_hintTextSize="15sp"
+            app:ms_hintColor="@color/color1"
+            app:ms_hintView="@layout/hint_item_layout"
+            app:ms_multiline="false"
+            app:ms_thickness="0.5dp" />
+
+    </LinearLayout>
+
+</LinearLayout>

@@ -121,6 +121,16 @@
             android:textColor="@color/white"
             android:textSize="16sp" />
 
+      <!--  <Button
+            android:id="@+id/getMacAddress"
+            android:layout_width="match_parent"
+            android:layout_height="55dp"
+            android:layout_marginBottom="5dp"
+            android:background="@drawable/button_drawable"
+            android:text="@string/getMacAddress"
+            android:textAllCaps="false"
+            android:textColor="@color/white"
+            android:textSize="16sp" />-->
         <TextView
             android:id="@+id/skipTextView"
             android:layout_width="match_parent"

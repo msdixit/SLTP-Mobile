@@ -26,6 +26,7 @@ import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.HttpHeaderParser;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.sparc.frjvcapp.config.AllApi;
 import com.sparc.frjvcapp.pojo.M_dgpssurvey_pillar_data;
 import com.sparc.frjvcapp.pojo.M_survey_pillar_data;
 
@@ -382,7 +383,7 @@ public class ChooseSurvetTypeActivity extends AppCompatActivity {
     private void getDataForSurveyPoints(String fbid) {
         try {
             RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
-            String URL = "http://14.98.253.212/sltp/api/values/getPillarPointDetails/" + fbid;
+            String URL = AllApi.F_D_FB_PILL_DATA_API + fbid;
             progressDialog = new ProgressDialog(this , R.style.MyAlertDialogStyle);
             progressDialog.setMessage("Please wait...Your Point data is downloading");
             progressDialog.show();

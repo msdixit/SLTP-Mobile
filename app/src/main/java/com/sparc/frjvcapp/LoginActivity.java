@@ -4,6 +4,7 @@ import android.Manifest;
 import android.animation.Animator;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -15,8 +16,11 @@ import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TextInputEditText;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewPropertyAnimator;
@@ -24,6 +28,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -35,6 +40,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.sparc.frjvcapp.config.AllApi;
 import com.sparc.frjvcapp.pojo.M_fb;
 import com.sparc.frjvcapp.pojo.M_range;
 
@@ -51,6 +57,7 @@ import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 
 import retrofit2.http.HTTP;
 
@@ -95,11 +102,11 @@ public class LoginActivity extends AppCompatActivity {
     ArrayList<String> mmv_list;
     Context context;
     private ImageView bookIconImageView;
-    private TextView bookITextView;
+    private TextView bookITextView, skipTextView;
     private ProgressBar loadingProgressBar;
     private RelativeLayout rootView, afterAnimationView;
     private TextInputEditText txtemail, txtpassword;
-    private Button login;
+    private Button login, getMacAddress;
     private String password;
     private DbHelper.DatabaseHelper mDbHelper;
     private SQLiteDatabase mDb;
@@ -107,6 +114,7 @@ public class LoginActivity extends AppCompatActivity {
     ArrayList<Integer> subheadlist = new ArrayList<>();
     int[] head = new int[]{1, 2, 3, 12};
     int[] subhead = new int[]{4, 5, 6, 7, 10, 11};
+    TelephonyManager telephonyManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -144,6 +152,14 @@ public class LoginActivity extends AppCompatActivity {
         txtemail = findViewById(R.id.emailEditText);
         txtpassword = findViewById(R.id.passwordEditText);
         login = findViewById(R.id.loginButton);
+        skipTextView = findViewById(R.id.skipTextView);
+        String mac = getMyMacAddress();
+        if (mac != "") {
+            skipTextView.setText(mac);
+        }else{
+            skipTextView.setText("");
+        }
+        /*skipTextView=findViewById(R.id.skipTextView);*/
         // txtemail.setText("ROU202");
         //txtpassword.setText("jpzr5943EQ");
         for (int id : head) {
@@ -189,270 +205,283 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
-    //Permission methods
-    private boolean hasPermissions() {
-        int res = 0;
-        //string array of permissions,
-        String[] permissions = new String[]{
-                android.Manifest.permission.ACCESS_FINE_LOCATION,
-                android.Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.INTERNET,
-                Manifest.permission.ACCESS_NETWORK_STATE, Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE};
+            private String getMyMacAddress() {
+                String macAddress = "";
+                telephonyManager = (TelephonyManager) getSystemService(this.TELEPHONY_SERVICE);
+                if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
+                    ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_PHONE_STATE}, 101);
+                    macAddress = "";
+                } else {
+                    macAddress =
+                            android.provider.Settings.Secure.getString(this.getApplicationContext().getContentResolver(), "android_id");
 
-        for (String perms : permissions) {
-            res = checkCallingOrSelfPermission(perms);
-            if (!(res == PackageManager.PERMISSION_GRANTED)) {
+                }
+                return macAddress;
+            }
+
+            //Permission methods
+            private boolean hasPermissions() {
+                int res = 0;
+                //string array of permissions,
+                String[] permissions = new String[]{
+                        android.Manifest.permission.ACCESS_FINE_LOCATION,
+                        android.Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.INTERNET,
+                        Manifest.permission.ACCESS_NETWORK_STATE, Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE};
+
+                for (String perms : permissions) {
+                    res = checkCallingOrSelfPermission(perms);
+                    if (!(res == PackageManager.PERMISSION_GRANTED)) {
+                        return false;
+                    }
+                }
+                return true;
+            }
+
+            private void requestPerms() {
+                String[] permissions = new String[]{
+                        android.Manifest.permission.ACCESS_FINE_LOCATION,
+                        android.Manifest.permission.ACCESS_COARSE_LOCATION,
+                        Manifest.permission.INTERNET,
+                        Manifest.permission.ACCESS_NETWORK_STATE,
+                        Manifest.permission.CAMERA,
+                        Manifest.permission.READ_EXTERNAL_STORAGE,
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE
+
+                };
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    requestPermissions(permissions, 1);
+                }
+            }
+
+            @Override
+            public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+                super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+                boolean allowed = true;
+
+                switch (requestCode) {
+                    case 1:
+
+                        for (int res : grantResults) {
+                            // if user granted all permissions.
+                            allowed = allowed && (res == PackageManager.PERMISSION_GRANTED);
+                        }
+
+                        break;
+                    default:
+                        // if user not granted permissions.
+                        allowed = false;
+                        break;
+                }
+
+                if (allowed) {
+
+                } else {
+                    Toast.makeText(this, "Application will not work if you dined the permission", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            private void initViews() {
+                bookIconImageView = findViewById(R.id.bookIconImageView);
+                bookITextView = findViewById(R.id.bookITextView);
+                loadingProgressBar = findViewById(R.id.loadingProgressBar);
+                rootView = findViewById(R.id.rootView);
+                afterAnimationView = findViewById(R.id.afterAnimationView);
+            }
+
+            private void startAnimation() {
+                ViewPropertyAnimator viewPropertyAnimator = bookIconImageView.animate();
+                //viewPropertyAnimator.x(50f);
+                viewPropertyAnimator.y(100f);
+                viewPropertyAnimator.setDuration(1000);
+                viewPropertyAnimator.setListener(new Animator.AnimatorListener() {
+                    @Override
+                    public void onAnimationStart(Animator animation) {
+
+                    }
+
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        afterAnimationView.setVisibility(VISIBLE);
+                    }
+
+                    @Override
+                    public void onAnimationCancel(Animator animation) {
+
+                    }
+
+                    @Override
+                    public void onAnimationRepeat(Animator animation) {
+
+                    }
+                });
+            }
+
+            private boolean login_auth(String pass) {
+                try {
+                    RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
+                    String URL = AllApi.LOG_IN_API + txtemail.getText().toString() + "/" + pass;
+                    progressDialog = new ProgressDialog(this, R.style.MyAlertDialogStyle);
+                    progressDialog.setMessage("Please wait...You are logging in to GFLO");
+                    progressDialog.show();
+                    //progressDialog = ProgressDialog.show(LoginActivity.this, "", "Please wait...You are logging in to GFLO", false);
+                    StringRequest stringRequest = new StringRequest(Request.Method.POST, URL, response -> {
+                        try {
+                            JSONArray arr = new JSONArray(response);
+                            if (arr.length() > 0) {
+                                for (int i = 0; i < arr.length(); i++) {
+                                    progressDialog.dismiss();
+                                    JSONObject jsonobject = arr.getJSONObject(i);
+                                    Intent intent = new Intent(getApplicationContext(), MainContainerActivity.class);
+                                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                    SharedPreferences sharedPreferences = getSharedPreferences(userlogin, 0);
+                                    SharedPreferences.Editor editor = sharedPreferences.edit();
+                                    editor.clear();
+                                    editor.putString("uemail", txtemail.getText().toString());
+                                    editor.putString("upass", txtpassword.getText().toString());
+                                    editor.putString("uname", jsonobject.getString("chrv_name"));
+                                    editor.putString("upos", jsonobject.getString("chrv_designation_nm"));
+                                    if (Integer.parseInt(jsonobject.getString("circle_id")) == 0) {
+                                        editor.putString("ucir", "");
+                                        editor.putString("udivid", "");
+                                        editor.putString("udivname", "");
+                                    } else {
+                                        editor.putString("ucir", jsonobject.getString("chrv_circle_nm"));
+                                        editor.putString("udivid", jsonobject.getString("div_id"));
+                                        editor.putString("udivname", jsonobject.getString("chrv_division_nm"));
+                                    }
+
+                                    editor.putString("uid", jsonobject.getString("chrv_email"));
+                                    editor.putString("userdivid", jsonobject.getString("desig_id"));
+                                    editor.apply();
+                                    if (subheadlist.contains(Integer.parseInt(jsonobject.getString("desig_id")))) {
+                                        //editor.putString("userdivid", jsonobject.getString("chrv_division_nm"));
+                                        insertrangeData(jsonobject.getString("div_id"));
+                                    }
+                                    startActivity(intent);
+                                }
+                            } else {
+                                progressDialog.dismiss();
+                                Toast.makeText(LoginActivity.this, "Invalid Login", Toast.LENGTH_SHORT).show();
+                            }
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                            progressDialog.dismiss();
+                            Toast.makeText(LoginActivity.this, "Invalid Login", Toast.LENGTH_SHORT).show();
+                        }
+                    }, new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            try {
+                                final int httpStatusCode = error.networkResponse.statusCode;
+                                if (httpStatusCode == 400) {
+                                    Toast.makeText(LoginActivity.this, "Invalid User or Password", Toast.LENGTH_LONG).show();
+                                    progressDialog.dismiss();
+                                }
+                            } catch (Exception ee) {
+                                ee.printStackTrace();
+                            }
+                        }
+                    }) {
+                        @Override
+                        public String getBodyContentType() {
+                            return "application/json; charset=utf-8";
+                        }
+                    };
+
+                    requestQueue.add(stringRequest);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
                 return false;
             }
-        }
-        return true;
-    }
 
-    private void requestPerms() {
-        String[] permissions = new String[]{
-                android.Manifest.permission.ACCESS_FINE_LOCATION,
-                android.Manifest.permission.ACCESS_COARSE_LOCATION,
-                Manifest.permission.INTERNET,
-                Manifest.permission.ACCESS_NETWORK_STATE,
-                Manifest.permission.CAMERA,
-                Manifest.permission.READ_EXTERNAL_STORAGE,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE
-
-        };
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            requestPermissions(permissions, 1);
-        }
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        boolean allowed = true;
-
-        switch (requestCode) {
-            case 1:
-
-                for (int res : grantResults) {
-                    // if user granted all permissions.
-                    allowed = allowed && (res == PackageManager.PERMISSION_GRANTED);
-                }
-
-                break;
-            default:
-                // if user not granted permissions.
-                allowed = false;
-                break;
-        }
-
-        if (allowed) {
-
-        } else {
-            Toast.makeText(this, "Application will not work if you dined the permission", Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    private void initViews() {
-        bookIconImageView = findViewById(R.id.bookIconImageView);
-        bookITextView = findViewById(R.id.bookITextView);
-        loadingProgressBar = findViewById(R.id.loadingProgressBar);
-        rootView = findViewById(R.id.rootView);
-        afterAnimationView = findViewById(R.id.afterAnimationView);
-    }
-
-    private void startAnimation() {
-        ViewPropertyAnimator viewPropertyAnimator = bookIconImageView.animate();
-        //viewPropertyAnimator.x(50f);
-        viewPropertyAnimator.y(100f);
-        viewPropertyAnimator.setDuration(1000);
-        viewPropertyAnimator.setListener(new Animator.AnimatorListener() {
-            @Override
-            public void onAnimationStart(Animator animation) {
-
-            }
-
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                afterAnimationView.setVisibility(VISIBLE);
-            }
-
-            @Override
-            public void onAnimationCancel(Animator animation) {
-
-            }
-
-            @Override
-            public void onAnimationRepeat(Animator animation) {
-
-            }
-        });
-    }
-
-    private boolean login_auth(String pass) {
-        try {
-            RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
-            String URL = "http://odishaforestlandsurvey.in/api/values/auth/" + txtemail.getText().toString() + "/" + pass;
-            //http://odishaforestlandsurvey.in/api/values/auth/
-            progressDialog = new ProgressDialog(this, R.style.MyAlertDialogStyle);
-            progressDialog.setMessage("Please wait...You are logging in to GFLO");
-            progressDialog.show();
-            //progressDialog = ProgressDialog.show(LoginActivity.this, "", "Please wait...You are logging in to GFLO", false);
-            StringRequest stringRequest = new StringRequest(Request.Method.POST, URL, response -> {
+            private void insertrangeData(final String div_id) {
                 try {
-                    JSONArray arr = new JSONArray(response);
-                    if (arr.length() > 0) {
-                        for (int i = 0; i < arr.length(); i++) {
-                            progressDialog.dismiss();
-                            JSONObject jsonobject = arr.getJSONObject(i);
-                            Intent intent = new Intent(getApplicationContext(), MainContainerActivity.class);
-                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                            SharedPreferences sharedPreferences = getSharedPreferences(userlogin, 0);
-                            SharedPreferences.Editor editor = sharedPreferences.edit();
-                            editor.clear();
-                            editor.putString("uemail", txtemail.getText().toString());
-                            editor.putString("upass", txtpassword.getText().toString());
-                            editor.putString("uname", jsonobject.getString("chrv_name"));
-                            editor.putString("upos", jsonobject.getString("chrv_designation_nm"));
-                            if (Integer.parseInt(jsonobject.getString("circle_id")) == 0) {
-                                editor.putString("ucir", "");
-                                editor.putString("udivid", "");
-                                editor.putString("udivname", "");
-                            } else {
-                                editor.putString("ucir", jsonobject.getString("chrv_circle_nm"));
-                                editor.putString("udivid", jsonobject.getString("div_id"));
-                                editor.putString("udivname", jsonobject.getString("chrv_division_nm"));
-                            }
+                    RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
+                    String URL = AllApi.F_D_RANGE_DATA_API + div_id;
+                    StringRequest stringRequest = new StringRequest(Request.Method.GET, URL, new Response.Listener<String>() {
+                        @Override
+                        public void onResponse(String response) {
+                            try {
+                                JSONArray jsonArray = new JSONArray(response);
+                                for (int i = 0; i < jsonArray.length(); i++) {
+                                    JSONObject object = jsonArray.getJSONObject(i);
+                                    M_range m_range = new M_range(object.getString("range"), object.getString("id"), div_id);
+                                    dbHelper.open();
+                                    dbHelper.insertRangeData(m_range);
+                                    dbHelper.close();
 
-                            editor.putString("uid", jsonobject.getString("chrv_email"));
-                            editor.putString("userdivid", jsonobject.getString("desig_id"));
-                            editor.apply();
-                            if (subheadlist.contains(Integer.parseInt(jsonobject.getString("desig_id")))) {
-                                //editor.putString("userdivid", jsonobject.getString("chrv_division_nm"));
-                                insertrangeData(jsonobject.getString("div_id"));
+                                }
+                                inserfbdata(div_id);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                                Toast.makeText(getApplicationContext(), "This division doesn't have any range", Toast.LENGTH_SHORT).show();
                             }
-                            startActivity(intent);
                         }
-                    } else {
-                        progressDialog.dismiss();
-                        Toast.makeText(LoginActivity.this, "Invalid Login", Toast.LENGTH_SHORT).show();
-                    }
+                    }, new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            Toast.makeText(getApplicationContext(), "Server Error Try Again", Toast.LENGTH_SHORT).show();
+                        }
+                    }) {
+                        @Override
+                        public String getBodyContentType() {
+                            return "application/json; charset=utf-8";
+                        }
+                    };
 
-                } catch (JSONException e) {
+                    requestQueue.add(stringRequest);
+                } catch (Exception e) {
                     e.printStackTrace();
-                    progressDialog.dismiss();
-                    Toast.makeText(LoginActivity.this, "Invalid Login", Toast.LENGTH_SHORT).show();
                 }
-            }, new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    try {
-                        final int httpStatusCode = error.networkResponse.statusCode;
-                        if (httpStatusCode == 400) {
-                            Toast.makeText(LoginActivity.this, "Invalid User or Password", Toast.LENGTH_LONG).show();
-                            progressDialog.dismiss();
+            }
+
+            private void inserfbdata(final String div_id) {
+                try {
+                    RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
+                    String URL = AllApi.F_D_FB_DATA_API + div_id;
+                    StringRequest stringRequest = new StringRequest(Request.Method.GET, URL, new Response.Listener<String>() {
+                        @Override
+                        public void onResponse(String response) {
+                            try {
+                                JSONArray jsonArray = new JSONArray(response);
+                                for (int i = 0; i < jsonArray.length(); i++) {
+                                    JSONObject object = jsonArray.getJSONObject(i);
+
+                                    M_fb m_fb = new M_fb(object.getString("fb"), object.getString("fid"), object.getString("rid"), div_id, object.getString("fb_type"), object.getString("cmv_path"), object.getString("mmv_path"), "");//object.getString("point_path")
+                                    dbHelper.open();
+                                    dbHelper.inserFBData(m_fb);
+                                    dbHelper.close();
+
+                                }
+                                //inserfbdata(div_id);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                                Toast.makeText(getApplicationContext(), "you have no points.", Toast.LENGTH_SHORT).show();
+                            }
                         }
-                    } catch (Exception ee) {
-                        ee.printStackTrace();
-                    }
-                }
-            }) {
-                @Override
-                public String getBodyContentType() {
-                    return "application/json; charset=utf-8";
-                }
-            };
-
-            requestQueue.add(stringRequest);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return false;
-    }
-
-    private void insertrangeData(final String div_id) {
-        try {
-            RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
-            String URL = "http://odishaforestlandsurvey.in/api/values/range/" + div_id;
-            StringRequest stringRequest = new StringRequest(Request.Method.GET, URL, new Response.Listener<String>() {
-                @Override
-                public void onResponse(String response) {
-                    try {
-                        JSONArray jsonArray = new JSONArray(response);
-                        for (int i = 0; i < jsonArray.length(); i++) {
-                            JSONObject object = jsonArray.getJSONObject(i);
-                            M_range m_range = new M_range(object.getString("range"), object.getString("id"), div_id);
-                            dbHelper.open();
-                            dbHelper.insertRangeData(m_range);
-                            dbHelper.close();
-
+                    }, new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            Toast.makeText(getApplicationContext(), "Server Error Try Again", Toast.LENGTH_SHORT).show();
                         }
-                        inserfbdata(div_id);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        Toast.makeText(getApplicationContext(), "This division doesn't have any range", Toast.LENGTH_SHORT).show();
-                    }
-                }
-            }, new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    Toast.makeText(getApplicationContext(), "Server Error Try Again", Toast.LENGTH_SHORT).show();
-                }
-            }) {
-                @Override
-                public String getBodyContentType() {
-                    return "application/json; charset=utf-8";
-                }
-            };
-
-            requestQueue.add(stringRequest);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void inserfbdata(final String div_id) {
-        try {
-            RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
-            String URL = "http://odishaforestlandsurvey.in/api/values/fb/" + div_id;
-            StringRequest stringRequest = new StringRequest(Request.Method.GET, URL, new Response.Listener<String>() {
-                @Override
-                public void onResponse(String response) {
-                    try {
-                        JSONArray jsonArray = new JSONArray(response);
-                        for (int i = 0; i < jsonArray.length(); i++) {
-                            JSONObject object = jsonArray.getJSONObject(i);
-
-                            M_fb m_fb = new M_fb(object.getString("fb"), object.getString("fid"), object.getString("rid"), div_id, object.getString("fb_type"), object.getString("cmv_path"), object.getString("mmv_path"), "");//object.getString("point_path")
-                            dbHelper.open();
-                            dbHelper.inserFBData(m_fb);
-                            dbHelper.close();
-
+                    }) {
+                        @Override
+                        public String getBodyContentType() {
+                            return "application/json; charset=utf-8";
                         }
-                        //inserfbdata(div_id);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        Toast.makeText(getApplicationContext(), "you have no points.", Toast.LENGTH_SHORT).show();
-                    }
-                }
-            }, new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    Toast.makeText(getApplicationContext(), "Server Error Try Again", Toast.LENGTH_SHORT).show();
-                }
-            }) {
-                @Override
-                public String getBodyContentType() {
-                    return "application/json; charset=utf-8";
-                }
-            };
+                    };
 
-            requestQueue.add(stringRequest);
-        } catch (Exception e) {
-            e.printStackTrace();
+                    requestQueue.add(stringRequest);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+            }
+
+            @Override
+            public void onBackPressed() {
+                finish();
+            }
         }
-
-    }
-
-    @Override
-    public void onBackPressed() {
-        finish();
-    }
-}

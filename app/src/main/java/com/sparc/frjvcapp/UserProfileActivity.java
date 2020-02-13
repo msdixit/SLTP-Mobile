@@ -32,6 +32,7 @@ import com.android.volley.toolbox.HttpHeaderParser;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.gson.Gson;
+import com.sparc.frjvcapp.config.AllApi;
 import com.sparc.frjvcapp.pojo.Response1;
 
 import org.json.JSONArray;
@@ -74,7 +75,6 @@ public class UserProfileActivity extends AppCompatActivity implements EasyPermis
     boolean doubleBackToExitPressedOnce = false;
     ImageView logout;
     private Button record, sync;
-    private String url = "http://odishaforestlandsurvey.in/kml/";
     private DbHelper.DatabaseHelper mDbHelper;
 
     @Override
@@ -215,7 +215,7 @@ public class UserProfileActivity extends AppCompatActivity implements EasyPermis
         //Download the file once permission is granted
         //url = editTextUrl.getText().toString();
         //new DownloadFile().execute(url);
-        getCMVData();
+        getCMVMMVData();
     }
 
     @Override
@@ -223,13 +223,13 @@ public class UserProfileActivity extends AppCompatActivity implements EasyPermis
         // Log.d(TAG, "Permission has been denied");
     }
 
-    public void getCMVData() {
+    public void getCMVMMVData() {
         try {
             dbHelper.open();
             ArrayList<String> mfb = dbHelper.getCMVMMVFiles(divid);
             for (int i = 0; i < mfb.size(); i++) {
 
-                new DownloadFile().execute(url + mfb.get(i));
+                new DownloadFile().execute(AllApi.F_KML_API + mfb.get(i));
 
             }
             dbHelper.close();
@@ -417,7 +417,7 @@ public class UserProfileActivity extends AppCompatActivity implements EasyPermis
                     fp_data = new JSONObject();
                     fp_data.put("fpdata", jsonArray);
                     RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
-                    String URL = "http://odishaforestlandsurvey.in/api/values/addpillar";
+                    String URL = AllApi.F_UDT_PILL_DATA;
                     requestQueue.getCache().remove(URL);
                     final String requestBody = fp_data.toString();
                     StringRequest stringRequest = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
@@ -500,7 +500,7 @@ public class UserProfileActivity extends AppCompatActivity implements EasyPermis
                     fp_data = new JSONObject();
                     fp_data.put("fpdata", jsonArray);
                     RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
-                    String URL = "http://odishaforestlandsurvey.in/api/values/confirmpillar";
+                    String URL = AllApi.F_CFM_UDT_PILL_DATA;
                     requestQueue.getCache().remove(URL);
                     final String requestBody = fp_data.toString();
                     StringRequest stringRequest = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
@@ -579,7 +579,7 @@ public class UserProfileActivity extends AppCompatActivity implements EasyPermis
                     fp_data = new JSONObject();
                     fp_data.put("sfpdata", jsonArray);
                     RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
-                    String URL = "http://odishaforestlandsurvey.in/api/values/addshiftpillar";
+                    String URL = AllApi.F_SFT_FRJVC_PILL_DATA;
                     requestQueue.getCache().remove(URL);
                     final String requestBody = fp_data.toString();
                     StringRequest stringRequest = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {

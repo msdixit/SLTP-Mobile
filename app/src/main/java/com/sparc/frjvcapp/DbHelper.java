@@ -35,6 +35,7 @@ public class DbHelper {
     private static final String m_fb_dgps_survey_pill_data = "m_fb_dgps_survey_pill_data";
     private static final String m_fb_dgps_survey_pill_pic = "m_fb_dgps_survey_pill_pic";
 
+
     private static final int DATABASE_VERSION = 1;
 
     private static final String CREATE_m_range_Table = "CREATE TABLE IF NOT EXISTS " + m_range + "( " +
@@ -157,21 +158,24 @@ public class DbHelper {
             "fb_name TEXT," +
             "sync_status TEXT," +
             "ack_status TEXT," +
-            "delete_status TEXT,"+
-            "survey_segment TEXT,"+
-            "completion_sts TEXT,"+
+            "delete_status TEXT," +
+            "survey_segment TEXT," +
+            "completion_sts TEXT," +
             "f_pic_name TEXT," +
             "b_pic_name TEXT," +
             "i_pic_name TEXT," +
             "o_pic_name TEXT," +
-            "div_pic_name TEXT,"+
-            "device_imei_no TEXT,"+
-            "pillar_sfile_path TEXT,"+
-            "pillar_sfile_status TEXT,"+
-            "frjvc_lat TEXT,"+
-            "frjvc_long TEXT,"+
-            "d_pill_no TEXT,"+
-            "d_old_id TEXT)";
+            "div_pic_name TEXT," +
+            "device_imei_no TEXT," +
+            "pillar_sfile_path TEXT," +
+            "pillar_sfile_status TEXT," +
+            "frjvc_lat TEXT," +
+            "frjvc_long TEXT," +
+            "d_pill_no TEXT," +
+            "d_old_id TEXT," +
+            "pillar_rfile_path TEXT," +
+            "pillar_rfile_status TEXT," +
+            "completion_status TEXT)";
 
     private static final String CREATE_m_dgps_Survey_pill_data = "CREATE TABLE IF NOT EXISTS " + m_dgps_Survey_pill_data + "( " +
             "id INTEGER PRIMARY KEY, " +
@@ -180,9 +184,9 @@ public class DbHelper {
             "m_fb_pillar_no TEXT," +
             "m_p_lat TEXT," +
             "m_p_long TEXT," +
-            "m_pillar_avl_sts TEXT,"+
-            "m_dgps_surv_sts TEXT,"+
-            "m_dgps_file_sts TEXT,"+
+            "m_pillar_avl_sts TEXT," +
+            "m_dgps_surv_sts TEXT," +
+            "m_dgps_file_sts TEXT," +
             "o_Id TEXT)";
 
     private static final String CREATE_m_fb_dgps_survey_pill_pic = "CREATE TABLE IF NOT EXISTS " + m_fb_dgps_survey_pill_pic + "( " +
@@ -190,8 +194,9 @@ public class DbHelper {
             "pic_pill_no TEXT, " +
             "u_id TEXT, " +
             "pic_status TEXT," +
-            "pic_name TEXT,"+
+            "pic_name TEXT," +
             "pic_view TEXT)";
+
 
     private final Context mCtx;
     private DatabaseHelper mDbHelper;
@@ -216,29 +221,40 @@ public class DbHelper {
     public void close() {
         mDbHelper.close();
     }
+
     public long insertRangeData(M_range range) {
-        ContentValues contentValues = new ContentValues();
-        contentValues.put("r_name", range.getR_name());
-        contentValues.put("r_id", range.getR_id());
-        contentValues.put("d_id", range.getD_id());
-
-
-        long id = mDb.insert(m_range, null, contentValues);
+        long id = 0;
+        try {
+            ContentValues contentValues = new ContentValues();
+            contentValues.put("r_name", range.getR_name());
+            contentValues.put("r_id", range.getR_id());
+            contentValues.put("d_id", range.getD_id());
+            id = mDb.insert(m_range, null, contentValues);
+        } catch (Exception ee) {
+            ee.printStackTrace();
+        }
         return id;
     }
+
     public long inserFBData(M_fb fb) {
-        ContentValues contentValues = new ContentValues();
-        contentValues.put("m_fb_id", fb.getFb_id());
-        contentValues.put("m_fb_name", fb.getFb_name());
-        contentValues.put("m_fb_range_id", fb.getFb_range_id());
-        contentValues.put("div_id", fb.getDiv_id());
-        contentValues.put("fb_type", fb.getFb_type());
-        contentValues.put("m_fb_mmv_path", fb.getFb_mmv_path());
-        contentValues.put("m_fb_cmv_path", fb.getFb_cmv_path());
-        contentValues.put("m_fb_updated_pillar_kml", fb.getM_fb_updated_pillar_kml());
-        long id = mDb.insert(m_fb, null, contentValues);
+        long id = 0;
+        try {
+            ContentValues contentValues = new ContentValues();
+            contentValues.put("m_fb_id", fb.getFb_id());
+            contentValues.put("m_fb_name", fb.getFb_name());
+            contentValues.put("m_fb_range_id", fb.getFb_range_id());
+            contentValues.put("div_id", fb.getDiv_id());
+            contentValues.put("fb_type", fb.getFb_type());
+            contentValues.put("m_fb_mmv_path", fb.getFb_mmv_path());
+            contentValues.put("m_fb_cmv_path", fb.getFb_cmv_path());
+            contentValues.put("m_fb_updated_pillar_kml", fb.getM_fb_updated_pillar_kml());
+            id = mDb.insert(m_fb, null, contentValues);
+        } catch (Exception ee) {
+            ee.printStackTrace();
+        }
         return id;
     }
+
     public long insertPillarData(M_pillar_reg mpr) {
         long id = 0;
         try {
@@ -267,7 +283,7 @@ public class DbHelper {
             contentValues.put("shifting_status", mpr.getShifting_status());
             contentValues.put("surv_direction", mpr.getSurv_direction());
             contentValues.put("p_accuracy", mpr.getAccuracy());
-            contentValues.put("survey_dt",mpr.getSurvey_dt());
+            contentValues.put("survey_dt", mpr.getSurvey_dt());
 
             id = mDb.insert(m_pillar_reg, null, contentValues);
 
@@ -276,6 +292,7 @@ public class DbHelper {
         }
         return id;
     }
+
     public long insertSurveyPillarData(m_fb_survey_data mpr) {
         long id = 0;
         try {
@@ -315,36 +332,47 @@ public class DbHelper {
         }
         return id;
     }
+
     public long insertSurveyedPointDataData(M_survey_pillar_data fb) {
-
-        ContentValues contentValues = new ContentValues();
-        contentValues.put("m_fb_id", fb.getFb_id());
-        contentValues.put("m_fb_name", fb.getFb_name());
-        contentValues.put("m_fb_pillar_no", fb.getPillar_no());
-        contentValues.put("m_p_lat", fb.getP_lat());
-        contentValues.put("m_p_long", fb.getP_long());
-        contentValues.put("m_pillar_avl_sts", fb.getP_syrvey_sts());
-        long id = mDb.insert(m_fb_Survey_pill_data, null, contentValues);
+        long id = 0;
+        try {
+            ContentValues contentValues = new ContentValues();
+            contentValues.put("m_fb_id", fb.getFb_id());
+            contentValues.put("m_fb_name", fb.getFb_name());
+            contentValues.put("m_fb_pillar_no", fb.getPillar_no());
+            contentValues.put("m_p_lat", fb.getP_lat());
+            contentValues.put("m_p_long", fb.getP_long());
+            contentValues.put("m_pillar_avl_sts", fb.getP_syrvey_sts());
+            id = mDb.insert(m_fb_Survey_pill_data, null, contentValues);
+        } catch (Exception ee) {
+            ee.printStackTrace();
+        }
         return id;
     }
+
     public long insertShiftingPillarData(M_shifting_pillar_details mspd) {
-        ContentValues contentValues = new ContentValues();
+        long id = 0;
+        try {
+            ContentValues contentValues = new ContentValues();
 
-        contentValues.put("s_lat", mspd.getP_lat());
-        contentValues.put("s_long", mspd.getP_long());
-        contentValues.put("s_rmk", mspd.getP_rmk());
-        contentValues.put("s_pic", mspd.getP_pic());
-        contentValues.put("simg_status", mspd.getImg_status());
-        contentValues.put("fb_name", mspd.getFb_name());
-        contentValues.put("uid", mspd.getUid());
-        contentValues.put("fb_id", mspd.getFb_id());
-        contentValues.put("p_no", mspd.getP_no());
-        contentValues.put("sync_status", mspd.getSync_status());
-        contentValues.put("sdelete_status", mspd.getDelete_status());
-
-        long id = mDb.insert(m_shifting_pillar_reg, null, contentValues);
+            contentValues.put("s_lat", mspd.getP_lat());
+            contentValues.put("s_long", mspd.getP_long());
+            contentValues.put("s_rmk", mspd.getP_rmk());
+            contentValues.put("s_pic", mspd.getP_pic());
+            contentValues.put("simg_status", mspd.getImg_status());
+            contentValues.put("fb_name", mspd.getFb_name());
+            contentValues.put("uid", mspd.getUid());
+            contentValues.put("fb_id", mspd.getFb_id());
+            contentValues.put("p_no", mspd.getP_no());
+            contentValues.put("sync_status", mspd.getSync_status());
+            contentValues.put("sdelete_status", mspd.getDelete_status());
+            id = mDb.insert(m_shifting_pillar_reg, null, contentValues);
+        } catch (Exception ee) {
+            ee.printStackTrace();
+        }
         return id;
     }
+
     public long insertDGPSSurveyPillarData(M_dgps_pilldata mpr) {
         long id = 0;
         mDb.beginTransaction();
@@ -387,47 +415,56 @@ public class DbHelper {
             contentValues.put("frjvc_long", mpr.getFrjvc_long());
             contentValues.put("d_pill_no", mpr.getD_pill_no());
             contentValues.put("d_old_id", mpr.getD_old_id());
+            contentValues.put("pillar_rfile_path", mpr.getPillar_rfile_path());
+            contentValues.put("pillar_rfile_status", mpr.getPillar_rfile_status());
+            contentValues.put("completion_status", mpr.getCompletion_status());
             id = mDb.insert(m_fb_dgps_survey_pill_data, null, contentValues);
             mDb.setTransactionSuccessful();
         } catch (Exception ee) {
             ee.printStackTrace();
-        }finally {
+        } finally {
             mDb.endTransaction();
         }
         return id;
     }
-    public long insertdgpsSurveyedPointDataData(M_dgpssurvey_pillar_data fb) {
 
-        ContentValues contentValues = new ContentValues();
-        contentValues.put("m_fb_id", fb.getFb_id());
-        contentValues.put("m_fb_name", fb.getFb_name());
-        contentValues.put("m_fb_pillar_no", fb.getPillar_no());
-        contentValues.put("m_p_lat", fb.getP_lat());
-        contentValues.put("m_p_long", fb.getP_long());
-        contentValues.put("m_pillar_avl_sts", fb.getP_syrvey_sts());
-        contentValues.put("m_dgps_surv_sts", fb.getM_dgps_surv_sts());
-        contentValues.put("m_dgps_file_sts", fb.getM_dgps_file_sts());
-        contentValues.put("o_Id", fb.getO_Id());
-        long id = mDb.insert(m_dgps_Survey_pill_data, null, contentValues);
+    public long insertdgpsSurveyedPointDataData(M_dgpssurvey_pillar_data fb) {
+        long id = 0;
+        try {
+            ContentValues contentValues = new ContentValues();
+            contentValues.put("m_fb_id", fb.getFb_id());
+            contentValues.put("m_fb_name", fb.getFb_name());
+            contentValues.put("m_fb_pillar_no", fb.getPillar_no());
+            contentValues.put("m_p_lat", fb.getP_lat());
+            contentValues.put("m_p_long", fb.getP_long());
+            contentValues.put("m_pillar_avl_sts", fb.getP_syrvey_sts());
+            contentValues.put("m_dgps_surv_sts", fb.getM_dgps_surv_sts());
+            contentValues.put("m_dgps_file_sts", fb.getM_dgps_file_sts());
+            contentValues.put("o_Id", fb.getO_Id());
+            id = mDb.insert(m_dgps_Survey_pill_data, null, contentValues);
+        } catch (Exception ee) {
+            ee.printStackTrace();
+        }
         return id;
     }
+
     public long insertDGPSSurveyPillarPic(M_dgps_pill_pic mpr) {
         long id = 0;
         mDb.beginTransaction();
-            try {
-                ContentValues contentValues = new ContentValues();
-                contentValues.put("pic_pill_no", mpr.getPic_pill_no());
-                contentValues.put("u_id", mpr.getU_id());
-                contentValues.put("pic_status", mpr.getPic_status());
-                contentValues.put("pic_name", mpr.getPic_name());
-                contentValues.put("pic_view", mpr.getPic_view());
-                id = mDb.insert(m_fb_dgps_survey_pill_pic, null, contentValues);
-                mDb.setTransactionSuccessful();
-            } catch (Exception ee) {
-                ee.printStackTrace();
-            } finally {
-                mDb.endTransaction();
-            }
+        try {
+            ContentValues contentValues = new ContentValues();
+            contentValues.put("pic_pill_no", mpr.getPic_pill_no());
+            contentValues.put("u_id", mpr.getU_id());
+            contentValues.put("pic_status", mpr.getPic_status());
+            contentValues.put("pic_name", mpr.getPic_name());
+            contentValues.put("pic_view", mpr.getPic_view());
+            id = mDb.insert(m_fb_dgps_survey_pill_pic, null, contentValues);
+            mDb.setTransactionSuccessful();
+        } catch (Exception ee) {
+            ee.printStackTrace();
+        } finally {
+            mDb.endTransaction();
+        }
         return id;
     }
 
@@ -440,6 +477,7 @@ public class DbHelper {
             array_list.add(res.getString(res.getColumnIndex("r_name")));
             res.moveToNext();
         }
+        res.close();
         return array_list;
     }
 
@@ -455,51 +493,72 @@ public class DbHelper {
     }
 
     public ArrayList getCMVMMVFiles(String divid, String rid, String fid) {
-        ArrayList<String> array_list = new ArrayList<String>();
-        //mDb.rawQuery("update m_fb set m_fb_cmv_path='cmv_1_1_AN1_1.kml' where m_fb_cmv_path IS NOT NULL and m_fb_cmv_path<>''",null);
-        Cursor res = mDb.rawQuery("select m_fb_cmv_path,m_fb_mmv_path from m_fb where m_fb_range_id='" + rid + "' and div_id='" + divid + "' and m_fb_id='" + fid + "'", null);
-        res.moveToFirst();
-        while (res.isAfterLast() == false) {
-            array_list.add(res.getString(res.getColumnIndex("m_fb_cmv_path")));
-            array_list.add(res.getString(res.getColumnIndex("m_fb_mmv_path")));
-            res.moveToNext();
+        ArrayList<String> array_list = null;
+        try {
+            array_list = new ArrayList<String>();
+            //mDb.rawQuery("update m_fb set m_fb_cmv_path='cmv_1_1_AN1_1.kml' where m_fb_cmv_path IS NOT NULL and m_fb_cmv_path<>''",null);
+            Cursor res = mDb.rawQuery("select m_fb_cmv_path,m_fb_mmv_path from m_fb where m_fb_range_id='" + rid + "' and div_id='" + divid + "' and m_fb_id='" + fid + "'", null);
+            res.moveToFirst();
+            while (res.isAfterLast() == false) {
+                array_list.add(res.getString(res.getColumnIndex("m_fb_cmv_path")));
+                array_list.add(res.getString(res.getColumnIndex("m_fb_mmv_path")));
+                res.moveToNext();
+            }
+            res.close();
+        } catch (Exception ee) {
+            ee.printStackTrace();
         }
         return array_list;
     }
 
     public ArrayList getCMVFiles(String divid, String rid, String fid) {
         ArrayList<String> array_list = new ArrayList<String>();
-        //mDb.rawQuery("update m_fb set m_fb_cmv_path='cmv_1_1_AN1_1.kml' where m_fb_cmv_path IS NOT NULL and m_fb_cmv_path<>''",null);
-        Cursor res = mDb.rawQuery("select m_fb_cmv_path from m_fb where m_fb_range_id='" + rid + "' and div_id='" + divid + "' and m_fb_id='" + fid + "'", null);
-        res.moveToFirst();
-        while (res.isAfterLast() == false) {
-            array_list.add(res.getString(res.getColumnIndex("m_fb_cmv_path")));
-            res.moveToNext();
+        try {
+            //mDb.rawQuery("update m_fb set m_fb_cmv_path='cmv_1_1_AN1_1.kml' where m_fb_cmv_path IS NOT NULL and m_fb_cmv_path<>''",null);
+            Cursor res = mDb.rawQuery("select m_fb_cmv_path from m_fb where m_fb_range_id='" + rid + "' and div_id='" + divid + "' and m_fb_id='" + fid + "'", null);
+            res.moveToFirst();
+            while (res.isAfterLast() == false) {
+                array_list.add(res.getString(res.getColumnIndex("m_fb_cmv_path")));
+                res.moveToNext();
+            }
+            res.close();
+        } catch (Exception ee) {
+            ee.printStackTrace();
         }
         return array_list;
     }
 
     public ArrayList getMMVFiles(String divid, String rid, String fid) {
         ArrayList<String> array_list = new ArrayList<String>();
-        //mDb.rawQuery("update m_fb set m_fb_cmv_path='cmv_1_1_AN1_1.kml' where m_fb_cmv_path IS NOT NULL and m_fb_cmv_path<>''",null);
-        Cursor res = mDb.rawQuery("select m_fb_mmv_path from m_fb where m_fb_range_id='" + rid + "' and div_id='" + divid + "' and m_fb_id='" + fid + "'", null);
-        res.moveToFirst();
-        while (res.isAfterLast() == false) {
-            array_list.add(res.getString(res.getColumnIndex("m_fb_mmv_path")));
-            res.moveToNext();
+        try {
+            //mDb.rawQuery("update m_fb set m_fb_cmv_path='cmv_1_1_AN1_1.kml' where m_fb_cmv_path IS NOT NULL and m_fb_cmv_path<>''",null);
+            Cursor res = mDb.rawQuery("select m_fb_mmv_path from m_fb where m_fb_range_id='" + rid + "' and div_id='" + divid + "' and m_fb_id='" + fid + "'", null);
+            res.moveToFirst();
+            while (res.isAfterLast() == false) {
+                array_list.add(res.getString(res.getColumnIndex("m_fb_mmv_path")));
+                res.moveToNext();
+            }
+            res.close();
+        } catch (Exception ee) {
+            ee.printStackTrace();
         }
         return array_list;
     }
 
     public ArrayList getCMVMMVFiles(String divid) {
         ArrayList<String> array_list = new ArrayList<String>();
-        //mDb.rawQuery("update m_fb set m_fb_cmv_path='cmv_1_1_AN1_1.kml' where m_fb_cmv_path IS NOT NULL and m_fb_cmv_path<>''",null);
-        Cursor res = mDb.rawQuery("select m_fb_cmv_path,m_fb_mmv_path from m_fb where div_id='" + divid + "'", null);
-        res.moveToFirst();
-        while (res.isAfterLast() == false) {
-            array_list.add(res.getString(res.getColumnIndex("m_fb_cmv_path")));
-            array_list.add(res.getString(res.getColumnIndex("m_fb_mmv_path")));
-            res.moveToNext();
+        try {
+            //mDb.rawQuery("update m_fb set m_fb_cmv_path='cmv_1_1_AN1_1.kml' where m_fb_cmv_path IS NOT NULL and m_fb_cmv_path<>''",null);
+            Cursor res = mDb.rawQuery("select m_fb_cmv_path,m_fb_mmv_path from m_fb where div_id='" + divid + "'", null);
+            res.moveToFirst();
+            while (res.isAfterLast() == false) {
+                array_list.add(res.getString(res.getColumnIndex("m_fb_cmv_path")));
+                array_list.add(res.getString(res.getColumnIndex("m_fb_mmv_path")));
+                res.moveToNext();
+            }
+            res.close();
+        } catch (Exception ee) {
+            ee.printStackTrace();
         }
         return array_list;
     }
@@ -507,68 +566,98 @@ public class DbHelper {
     public int getPillarData(String fb_id) {
         ArrayList<String> array_list = new ArrayList<String>();
         int slno = 0;
-        //mDb.rawQuery("update m_fb set m_fb_cmv_path='cmv_1_1_AN1_1.kml' where m_fb_cmv_path IS NOT NULL and m_fb_cmv_path<>''",null);COALESCE(MAX(p_no),0)+1 as slno
-        Cursor res = mDbHelper.getReadableDatabase().rawQuery("select COALESCE(MAX(point_no),0)+1 as slno from m_pillar_reg where fb_id='" + fb_id + "'", null);
-        if (res == null) {
-            slno = 1;
-        } else {
-            res.moveToFirst();
-            while (res.isAfterLast() == false) {
-                slno = res.getInt(res.getColumnIndex("slno"));
-                res.moveToNext();
-            }           //slno=array_list[0];
+        try {
+            //mDb.rawQuery("update m_fb set m_fb_cmv_path='cmv_1_1_AN1_1.kml' where m_fb_cmv_path IS NOT NULL and m_fb_cmv_path<>''",null);COALESCE(MAX(p_no),0)+1 as slno
+            Cursor res = mDbHelper.getReadableDatabase().rawQuery("select COALESCE(MAX(point_no),0)+1 as slno from m_pillar_reg where fb_id='" + fb_id + "'", null);
+            if (res == null) {
+                slno = 1;
+            } else {
+                res.moveToFirst();
+                while (res.isAfterLast() == false) {
+                    slno = res.getInt(res.getColumnIndex("slno"));
+                    res.moveToNext();
+                }
+                res.close();
+                //slno=array_list[0];
+            }
+        } catch (Exception ee) {
+            ee.printStackTrace();
         }
         return slno;
     }
 
     public ArrayList getCMVFilesForDownload(String divid, String rid, String fid) {
         ArrayList<String> array_list = new ArrayList<String>();
-        //mDb.rawQuery("update m_fb set m_fb_cmv_path='cmv_1_1_AN1_1.kml' where m_fb_cmv_path IS NOT NULL and m_fb_cmv_path<>''",null);
-        Cursor res = mDb.rawQuery("select m_fb_cmv_path from m_fb where m_fb_range_id='" + rid + "' and div_id='" + divid + "' and m_fb_id='" + fid + "'", null);
-        res.moveToFirst();
-        while (res.isAfterLast() == false) {
-            array_list.add(res.getString(res.getColumnIndex("m_fb_cmv_path")));
-            res.moveToNext();
+        try {
+            //mDb.rawQuery("update m_fb set m_fb_cmv_path='cmv_1_1_AN1_1.kml' where m_fb_cmv_path IS NOT NULL and m_fb_cmv_path<>''",null);
+            Cursor res = mDb.rawQuery("select m_fb_cmv_path from m_fb where m_fb_range_id='" + rid + "' and div_id='" + divid + "' and m_fb_id='" + fid + "'", null);
+            res.moveToFirst();
+            while (res.isAfterLast() == false) {
+                array_list.add(res.getString(res.getColumnIndex("m_fb_cmv_path")));
+                res.moveToNext();
+            }
+            res.close();
+        } catch (Exception ee) {
+            ee.printStackTrace();
         }
         return array_list;
     }
 
     public ArrayList getMMVFilesForDownload(String divid, String rid, String fid) {
         ArrayList<String> array_list = new ArrayList<String>();
-        //mDb.rawQuery("update m_fb set m_fb_cmv_path='cmv_1_1_AN1_1.kml' where m_fb_cmv_path IS NOT NULL and m_fb_cmv_path<>''",null);
-        Cursor res = mDb.rawQuery("select m_fb_mmv_path from m_fb where m_fb_range_id='" + rid + "' and div_id='" + divid + "' and m_fb_id='" + fid + "'", null);
-        res.moveToFirst();
-        while (res.isAfterLast() == false) {
-            array_list.add(res.getString(res.getColumnIndex("m_fb_mmv_path")));
-            res.moveToNext();
+        try {
+            //mDb.rawQuery("update m_fb set m_fb_cmv_path='cmv_1_1_AN1_1.kml' where m_fb_cmv_path IS NOT NULL and m_fb_cmv_path<>''",null);
+            Cursor res = mDb.rawQuery("select m_fb_mmv_path from m_fb where m_fb_range_id='" + rid + "' and div_id='" + divid + "' and m_fb_id='" + fid + "'", null);
+            res.moveToFirst();
+            while (res.isAfterLast() == false) {
+                array_list.add(res.getString(res.getColumnIndex("m_fb_mmv_path")));
+                res.moveToNext();
+            }
+            res.close();
+        }catch (Exception ee)
+        {
+            ee.printStackTrace();
         }
         return array_list;
     }
 
     public ArrayList getUpdatedPillarPointFiles(String divid, String rid, String fid) {
         ArrayList<String> array_list = new ArrayList<String>();
-        //mDb.rawQuery("update m_fb set m_fb_cmv_path='cmv_1_1_AN1_1.kml' where m_fb_cmv_path IS NOT NULL and m_fb_cmv_path<>''",null);
-        Cursor res = mDb.rawQuery("select m_fb_updated_pillar_kml from m_fb where m_fb_range_id='" + rid + "' and div_id='" + divid + "' and m_fb_id='" + fid + "'", null);
-        res.moveToFirst();
-        while (res.isAfterLast() == false) {
-            array_list.add(res.getString(res.getColumnIndex("m_fb_updated_pillar_kml")));
-            res.moveToNext();
+        try {
+            //mDb.rawQuery("update m_fb set m_fb_cmv_path='cmv_1_1_AN1_1.kml' where m_fb_cmv_path IS NOT NULL and m_fb_cmv_path<>''",null);
+            Cursor res = mDb.rawQuery("select m_fb_updated_pillar_kml from m_fb where m_fb_range_id='" + rid + "' and div_id='" + divid + "' and m_fb_id='" + fid + "'", null);
+            res.moveToFirst();
+            while (res.isAfterLast() == false) {
+                array_list.add(res.getString(res.getColumnIndex("m_fb_updated_pillar_kml")));
+                res.moveToNext();
+            }
+            res.close();
+        }catch (Exception ee)
+        {
+            ee.printStackTrace();
         }
         return array_list;
     }
+
     public int getDGPSPillarData(String fb_id) {
         ArrayList<String> array_list = new ArrayList<String>();
         int slno = 0;
-        //mDb.rawQuery("update m_fb set m_fb_cmv_path='cmv_1_1_AN1_1.kml' where m_fb_cmv_path IS NOT NULL and m_fb_cmv_path<>''",null);COALESCE(MAX(p_no),0)+1 as slno
-        Cursor res = mDbHelper.getReadableDatabase().rawQuery("select COALESCE(MAX(pill_no),0)+1 as slno from m_fb_dgps_survey_pill_data where fb_id='" + fb_id + "'", null);
-        if (res == null) {
-            slno = 1;
-        } else {
-            res.moveToFirst();
-            while (res.isAfterLast() == false) {
-                slno = res.getInt(res.getColumnIndex("slno"));
-                res.moveToNext();
-            }           //slno=array_list[0];
+        try {
+            //mDb.rawQuery("update m_fb set m_fb_cmv_path='cmv_1_1_AN1_1.kml' where m_fb_cmv_path IS NOT NULL and m_fb_cmv_path<>''",null);COALESCE(MAX(p_no),0)+1 as slno
+            Cursor res = mDbHelper.getReadableDatabase().rawQuery("select COALESCE(MAX(pill_no),0)+1 as slno from m_fb_dgps_survey_pill_data where fb_id='" + fb_id + "'", null);
+            if (res == null) {
+                slno = 1;
+            } else {
+                res.moveToFirst();
+                while (res.isAfterLast() == false) {
+                    slno = res.getInt(res.getColumnIndex("slno"));
+                    res.moveToNext();
+                }
+                res.close();//slno=array_list[0];
+            }
+        }catch (Exception ee)
+        {
+            ee.printStackTrace();
         }
         return slno;
     }
@@ -577,6 +666,7 @@ public class DbHelper {
         DatabaseHelper(Context context) {
             super(context, DATABASE_NAME, null, DATABASE_VERSION);
         }
+
         @Override
         public void onOpen(SQLiteDatabase db) {
             super.onOpen(db);
@@ -585,11 +675,13 @@ public class DbHelper {
                 db.execSQL("PRAGMA foreign_keys=ON;");
             }
         }
+
         @Override
         public void onConfigure(SQLiteDatabase db) {
             super.onConfigure(db);
             db.setForeignKeyConstraintsEnabled(true);
         }
+
         public void onCreate(SQLiteDatabase db) {
             db.execSQL(CREATE_m_range_Table);
             db.execSQL(CREATE_m_fb_Table);

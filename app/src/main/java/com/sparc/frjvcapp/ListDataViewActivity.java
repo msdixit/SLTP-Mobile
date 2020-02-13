@@ -28,6 +28,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.sparc.frjvcapp.Adapter.DataViewAdapter;
+import com.sparc.frjvcapp.config.AllApi;
 import com.sparc.frjvcapp.pojo.DataViewDetails;
 
 import org.json.JSONArray;
@@ -229,7 +230,7 @@ public class ListDataViewActivity extends AppCompatActivity implements View.OnCl
     private boolean returnSyncData(String fid, String uid) {
         try {
             RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
-            String URL = "http://odishaforestlandsurvey.in/api/values/getpillardetails/" + fid + "/" + uid;
+            String URL = AllApi.F_PILL_PIC_SYNC_DATA_VIEW + fid + "/" + uid;
             StringRequest stringRequest = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
                 @Override
                 public void onResponse(String response) {

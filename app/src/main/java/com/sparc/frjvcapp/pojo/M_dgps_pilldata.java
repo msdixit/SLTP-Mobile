@@ -223,6 +223,26 @@ public class M_dgps_pilldata {
     private String device_imei_no;
     private String pillar_sfile_path;
     private String pillar_sfile_status;
+    private String completion_status;
+
+    public String getPillar_rfile_path() {
+        return pillar_rfile_path;
+    }
+
+    public void setPillar_rfile_path(String pillar_rfile_path) {
+        this.pillar_rfile_path = pillar_rfile_path;
+    }
+
+    public String getPillar_rfile_status() {
+        return pillar_rfile_status;
+    }
+
+    public void setPillar_rfile_status(String pillar_rfile_status) {
+        this.pillar_rfile_status = pillar_rfile_status;
+    }
+
+    private String pillar_rfile_path;
+    private String pillar_rfile_status;
 
     public String getD_old_id() {
         return d_old_id;
@@ -350,7 +370,8 @@ public class M_dgps_pilldata {
                            String range_name, String fb_name, String sync_status, String ack_status, String delete_status,
                            String survey_segment,String completion_sts, String f_pic_name, String b_pic_name,
                            String i_pic_name, String o_pic_name, String div_pic_name,String device_imei_no,
-                           String pillar_sfile_path,String pillar_sfile_status,String frjvc_lat,String frjvc_long,String d_pill_no,String d_old_id) {
+                           String pillar_sfile_path,String pillar_sfile_status,String frjvc_lat,String frjvc_long,
+                           String d_pill_no,String d_old_id,String pillar_rfile_path,String pillar_rfile_status,String completion_status) {
         this.d_id = d_id;
         this.r_id = r_id;
         this.fb_id = fb_id;
@@ -388,8 +409,17 @@ public class M_dgps_pilldata {
         this.frjvc_long=frjvc_long;
         this.d_pill_no=d_pill_no;
         this.d_old_id=d_old_id;
+        this.pillar_rfile_path=pillar_rfile_path;
+        this.pillar_rfile_status=pillar_rfile_status;
+        this.completion_status=completion_status;
     }
 
 
+    public String getCompletion_status() {
+        return completion_status;
+    }
 
+    public void setCompletion_status(String completion_status) {
+        this.completion_status = completion_status;
+    }
 }

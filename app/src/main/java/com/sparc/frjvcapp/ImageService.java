@@ -14,6 +14,7 @@ import android.widget.Toast;
 import com.android.volley.Response;
 import com.firebase.jobdispatcher.JobService;
 import com.google.gson.Gson;
+import com.sparc.frjvcapp.config.AllApi;
 import com.sparc.frjvcapp.pojo.Response1;
 
 import java.io.IOException;
@@ -30,7 +31,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class ImageService extends JobService {
     public static final String userlogin = "userlogin";
-    SQLiteDatabase db, db1, db2,db3;
+    SQLiteDatabase db, db1, db2, db3;
     String divid, userid;
 
     @Override
@@ -99,36 +100,17 @@ public class ImageService extends JobService {
                 c2.close();
                 db2.close();
             }
-
-           /* Cursor c3 = db3.rawQuery("select * from m_fb_dgps_survey_pill_data where u_id='" + userid + "' and pillar_sfile_status='0' and pillar_sfile_path is not null", null);
-            int count3 = c3.getCount();
-            if (c3.getCount() >= 1) {
-                if (c3.moveToFirst()) {
-                    try {
-                        //uploadDGPSImage(Utility.setPic(c2.getString(c2.getColumnIndex("pillar_sfile_path")), c2.getString(c2.getColumnIndex("pillar_sfile_path")), "1", c2.getString(c2.getColumnIndex("pic_view")));
-
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-                c3.close();
-                db3.close();
-            }
-        } catch (Exception ee) {
-            ee.printStackTrace();
-        }*/
-
-
         } catch (Exception ee) {
             ee.printStackTrace();
         }
     }
+
     private void uploadImage(byte[] imageBytes, final String imgname, String value) {
         ConnectivityManager cm = (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo nInfo = cm.getActiveNetworkInfo();
         if (nInfo != null && nInfo.isAvailable() && nInfo.isConnected()) {
             Retrofit retrofit = new Retrofit.Builder()
-                    .baseUrl("http://203.129.207.130:5067/")
+                    .baseUrl(AllApi.F_PILL_PIC_NODE_SERVICE)
                     .addConverterFactory(GsonConverterFactory.create())
                     .build();
             RetrofitInterface retrofitInterface = retrofit.create(RetrofitInterface.class);
@@ -136,7 +118,6 @@ public class ImageService extends JobService {
             MultipartBody.Part body = null;
             body = MultipartBody.Part.createFormData("image", imgname, requestFile);
             Call<Response1> call = retrofitInterface.uploadImage(body);
-            // mProgressBar.setVisibility(View.VISIBLE);
             call.enqueue(new Callback<Response1>() {
                 @Override
                 public void onResponse(Call<Response1> call, retrofit2.Response<Response1> response) {
@@ -164,7 +145,6 @@ public class ImageService extends JobService {
                         } catch (Exception ee) {
                             ee.printStackTrace();
                         }
-                        //Toast.makeText(ImageService.this, "done", Toast.LENGTH_SHORT).show();
                     } else {
                         ResponseBody errorBody = response.errorBody();
                         Gson gson = new Gson();
@@ -178,10 +158,6 @@ public class ImageService extends JobService {
 
                 @Override
                 public void onFailure(Call<Response1> call, Throwable t) {
-//                    db = openOrCreateDatabase("sltp.db", MODE_PRIVATE, null);
-//                    Cursor c = db.rawQuery("update m_pillar_reg set img_status='0' where uid='" + userid + "' and d_id='" + divid + "' and p_pic='" + imgname + "'", null);
-//                    c.close();
-//                    db.close();
                 }
 
             });
@@ -189,12 +165,13 @@ public class ImageService extends JobService {
             Toast.makeText(ImageService.this, "Internet Connection is Not Available", Toast.LENGTH_LONG).show();
         }
     }
+
     private void uploadDGPSImage(byte[] imageBytes, final String imgname, String value, String pic_view) {
         ConnectivityManager cm = (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo nInfo = cm.getActiveNetworkInfo();
         if (nInfo != null && nInfo.isAvailable() && nInfo.isConnected()) {
             Retrofit retrofit = new Retrofit.Builder()
-                    .baseUrl("http://14.98.253.212:5067/")
+                    .baseUrl(AllApi.DGPS_PILL_PIC_NODE_SERVICE)
                     .addConverterFactory(GsonConverterFactory.create())
                     .build();
             RetrofitInterface retrofitInterface = retrofit.create(RetrofitInterface.class);
@@ -231,8 +208,8 @@ public class ImageService extends JobService {
                                         if (ctemp.getCount() >= 0) {
                                             Toast.makeText(ImageService.this, "Data Updated", Toast.LENGTH_SHORT).show();
                                         }
-                                    ctemp.close();
-                                    dbtemp.close();
+                                        ctemp.close();
+                                        dbtemp.close();
                                     } catch (Exception ee) {
 
                                     } finally {
@@ -246,16 +223,7 @@ public class ImageService extends JobService {
                                 ee.printStackTrace();
                             }
                         } else {
-                            /*db = openOrCreateDatabase("sltp.db", MODE_PRIVATE, null);
-                            Cursor c = db.rawQuery("update m_shifting_pillar_reg set simg_status='1' where uid='" + userid + "' and s_pic='" + imgname + "'", null);
-                            if (c.getCount() >= 0) {
-                                Response1 responseBody = response.body();
-                                Toast.makeText(ImageService.this, responseBody.getPath(), Toast.LENGTH_SHORT).show();
-                            }
-                            c.close();
-                            db.close();*/
                         }
-                        //Toast.makeText(ImageService.this, "done", Toast.LENGTH_SHORT).show();
                     } else {
                         ResponseBody errorBody = response.errorBody();
                         Gson gson = new Gson();
@@ -269,10 +237,6 @@ public class ImageService extends JobService {
 
                 @Override
                 public void onFailure(Call<Response1> call, Throwable t) {
-//                    db = openOrCreateDatabase("sltp.db", MODE_PRIVATE, null);
-//                    Cursor c = db.rawQuery("update m_pillar_reg set img_status='0' where uid='" + userid + "' and d_id='" + divid + "' and p_pic='" + imgname + "'", null);
-//                    c.close();
-//                    db.close();
                 }
 
             });

@@ -335,7 +335,7 @@ public class ListMapActivity extends AppCompatActivity implements OnMapReadyCall
             latLng = new LatLng(location.getLatitude(), location.getLongitude());
             markerOptions = new MarkerOptions();
             markerOptions.position(latLng);
-            mCurrLocationMarker = googleMap.addMarker(markerOptions);
+           /* mCurrLocationMarker = googleMap.addMarker(markerOptions);*/
 
 
             if (destination != null) {
@@ -441,7 +441,7 @@ public class ListMapActivity extends AppCompatActivity implements OnMapReadyCall
                     buildGoogleApiClient();
                     googleMap.setMyLocationEnabled(true);
                     googleMap.getUiSettings().setMyLocationButtonEnabled(false);
-                    googleMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+                    /*googleMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
                         @Override
                         public void onMapClick(LatLng dest) {
                             MarkerOptions marker = new MarkerOptions().position(
@@ -456,7 +456,7 @@ public class ListMapActivity extends AppCompatActivity implements OnMapReadyCall
 
                             }
                         }
-                    });
+                    });*/
                 } else {
                     buildGoogleApiClient();
                     googleMap.setMyLocationEnabled(true);
@@ -952,8 +952,8 @@ public class ListMapActivity extends AppCompatActivity implements OnMapReadyCall
             }
             if(checkCMVData()==false && checkMMVData()==false)
             {
-                c5.setVisibility(View.GONE);
                 c4.setVisibility(View.GONE);
+                c5.setVisibility(View.GONE);
                 message.setText("CMV and MMV KML File not available for this FB.Please contact your lab co-ordinator");
             }
             if(checkSurveyData(fbid))

@@ -400,7 +400,7 @@ public class DGPSDataCollectActivity extends AppCompatActivity {
                                         userid, formatter.format(date), txtViewdiv.getText().toString(), txtViewran.getText().toString(),
                                         txtViewfb.getText().toString(), "0", "0", "0", "",
                                         "", imagepath1_F, imagepath1_B, imagepath1_I, imagepath1_O, imagepath1_T, imei, "", "0"
-                                        , d_frjvc_lat, d_frjvc_long, edtdpillno.getText().toString(),d_old_id);//+"_"+pilshiftsts,surdir,accuracy
+                                        , d_frjvc_lat, d_frjvc_long, edtdpillno.getText().toString(),d_old_id,"","0","0");//+"_"+pilshiftsts,surdir,accuracy
                                 try {
                                     dbHelper.open();
                                     long status = dbHelper.insertDGPSSurveyPillarData(mpr1);

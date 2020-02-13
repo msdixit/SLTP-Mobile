@@ -965,5 +965,12 @@ public class RegisterPointActivity extends AppCompatActivity implements GoogleAp
             // You can add here other case statements according to your requirement.
         }
     }
+    @Override
+    public void onBackPressed() {
+        Intent i = new Intent(getApplicationContext(), ListMapActivity.class);
+        i.setFlags(i.FLAG_ACTIVITY_NEW_TASK | i.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(i);
+
+    }
 
 }

@@ -23,6 +23,8 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.sparc.frjvcapp.config.AllApi;
+
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -56,7 +58,7 @@ public class SearchMapFile extends AppCompatActivity {
     boolean cmvsta1, mmvsta1, cmvavls1, mmvavls1, state, circle, ran, div;
     ProgressDialog progressDialog1;
     ArrayAdapter<String> divadapter;
-    private String url = "http://odishaforestlandsurvey.in/kml/";
+
     String master[] = {"State_Boundary.kml", "Circle_Boundary.kml", "Range_Boundary.kml", "Division_Boundary.kml"};
 
     @Override
@@ -656,7 +658,7 @@ public class SearchMapFile extends AppCompatActivity {
         try {
             if (!filename.equals("null")) {
 
-                new SearchMapFile.DownloadFile().execute(url + filename);
+                new SearchMapFile.DownloadFile().execute(AllApi.F_KML_API + filename);
             } else {
                 AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
                 alertDialogBuilder.setMessage("CMV/MMV file for this fb is not available....");
@@ -690,7 +692,7 @@ public class SearchMapFile extends AppCompatActivity {
         try {
             if (!filename.equals("null")) {
 
-                new SearchMapFile.DownloadPointFile().execute(url + filename);
+                new SearchMapFile.DownloadPointFile().execute(AllApi.F_KML_API + filename);
             } else {
                 AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
                 alertDialogBuilder.setMessage("Point KML file for this fb is not available....");

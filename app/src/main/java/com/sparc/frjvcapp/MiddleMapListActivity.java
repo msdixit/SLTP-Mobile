@@ -1,5 +1,6 @@
 package com.sparc.frjvcapp;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
@@ -16,6 +17,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.sparc.frjvcapp.config.AllApi;
 import com.sparc.frjvcapp.pojo.M_fb;
 import com.sparc.frjvcapp.pojo.M_survey_pillar_data;
 
@@ -45,6 +47,7 @@ public class MiddleMapListActivity extends AppCompatActivity {
     String divid, rangeid, fbid, userid, kmlstatus;
     JSONArray jsonArray = new JSONArray();
     JSONObject fp_data = new JSONObject();
+    ProgressDialog progressDialog;
 
     // = new JSONObject();
     @Override
@@ -97,9 +100,9 @@ public class MiddleMapListActivity extends AppCompatActivity {
         download.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(CheckDataAvalability(fbid)) {
-                getDataForSurveyPoints(fbid);
-                }else{
+                if (CheckDataAvalability(fbid)) {
+                    getDataForSurveyPoints(fbid);
+                } else {
 
                 }
             }
@@ -108,24 +111,37 @@ public class MiddleMapListActivity extends AppCompatActivity {
 
     private void getDataForSurveyPoints(String fbid) {
         try {
+
             RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
-            String URL = "http://14.98.253.212/sltp/api/values/getPillarPointDetails/" + fbid;
+            String URL = AllApi.F_DOWND_FRJVC_SRV_POINT_API + fbid;
+            progressDialog = new ProgressDialog(this, R.style.MyAlertDialogStyle);
+            progressDialog.setMessage("Please wait...Your pillar data is being downloaded");
+            progressDialog.show();
             StringRequest stringRequest = new StringRequest(Request.Method.GET, URL, new Response.Listener<String>() {
                 @Override
                 public void onResponse(String response) {
+                    long _id=0;
                     try {
                         JSONArray jsonArray = new JSONArray(response);
                         for (int i = 0; i < jsonArray.length(); i++) {
                             JSONObject object = jsonArray.getJSONObject(i);
                             M_survey_pillar_data m_fb = new M_survey_pillar_data(object.getString("latitude"), object.getString("longitude"), object.getString("pillar_no"), "", fbid, object.getString("status"));//object.getString("point_path")
-                                dbHelper.open();
-                                dbHelper.insertSurveyedPointDataData(m_fb);
-                                dbHelper.close();
-                                Toast.makeText(getApplicationContext(), "The Survey Point Data is downloaded.", Toast.LENGTH_SHORT).show();
+                            dbHelper.open();
+                            _id=dbHelper.insertSurveyedPointDataData(m_fb);
+                            dbHelper.close();
+                        }
+                        if(_id>0)
+                        {
+                            progressDialog.dismiss();
+                            Toast.makeText(getApplicationContext(), "Data downloading completed", Toast.LENGTH_SHORT).show();
+                        }else {
+                            progressDialog.dismiss();
+                            Toast.makeText(getApplicationContext(), "Oops!There is an issue while downloading the data", Toast.LENGTH_SHORT).show();
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
-                        Toast.makeText(getApplicationContext(), "you have no points.", Toast.LENGTH_SHORT).show();
+                        progressDialog.dismiss();
+                        Toast.makeText(getApplicationContext(), "Oops!There is an issue while downloading the data", Toast.LENGTH_SHORT).show();
                     }
                 }
             }, new Response.ErrorListener() {
@@ -148,19 +164,18 @@ public class MiddleMapListActivity extends AppCompatActivity {
 
     private boolean CheckDataAvalability(String fbid) {
         db = openOrCreateDatabase("sltp.db", MODE_PRIVATE, null);
-        boolean b=false;
-        Cursor cursor = db.rawQuery("select * from m_fb_Survey_pill_data where m_fb_id='"+fbid+"'", null);
+        boolean b = false;
+        Cursor cursor = db.rawQuery("select * from m_fb_Survey_pill_data where m_fb_id='" + fbid + "'", null);
         try {
             if (cursor.getCount() > 0) {
-                db.execSQL("delete from m_fb_Survey_pill_data where m_fb_id='"+fbid+"'");
+                db.execSQL("delete from m_fb_Survey_pill_data where m_fb_id='" + fbid + "'");
                 b = true;
             } else {
                 b = true;
             }
-        }catch (Exception ee)
-        {
+        } catch (Exception ee) {
             ee.printStackTrace();
-        }finally {
+        } finally {
             cursor.close();
             db.close();
         }
@@ -170,7 +185,6 @@ public class MiddleMapListActivity extends AppCompatActivity {
 
     private void getDataforExcel(String divid, String rangeid, String fbid, String userid) {
         db = openOrCreateDatabase("sltp.db", MODE_PRIVATE, null);
-
         Cursor cursor = db.rawQuery("select * from m_pillar_reg where uid='" + userid + "' and d_id='" + divid + "' and r_id='" + rangeid + "' and fb_id='" + fbid + "' order by id", null);
         if (cursor.getCount() > 0) {
             String fileName = divid + rangeid + fbid + userid + ".xls";
@@ -264,7 +278,6 @@ public class MiddleMapListActivity extends AppCompatActivity {
         }
         cursor.close();
         db.close();
-        //sendDatatoServer(jsonArray);
     }
 
     @Override

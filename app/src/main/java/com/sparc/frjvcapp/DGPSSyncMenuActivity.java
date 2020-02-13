@@ -31,6 +31,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.sparc.frjvcapp.config.AllApi;
 import com.sparc.frjvcapp.pojo.M_Dgps_Sync_Data;
 import com.sparc.frjvcapp.pojo.M_dgps_pill_pic;
 import com.sparc.frjvcapp.pojo.M_fb;
@@ -112,8 +113,7 @@ public class DGPSSyncMenuActivity extends AppCompatActivity {
 
 
         Retrofit retrofit = new Retrofit.Builder()
-                //.baseUrl("http://203.129.207.130:5062/")
-                .baseUrl("http://14.98.253.212/")
+                .baseUrl(AllApi.BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
@@ -156,6 +156,21 @@ public class DGPSSyncMenuActivity extends AppCompatActivity {
                     } else {
                         Toast.makeText(getApplicationContext(), "All files are synced", Toast.LENGTH_LONG).show();
                     }
+                    if (checkRTXFileStatus(userid, sharediv)) {
+                        String sfile = Environment.getExternalStorageDirectory().toString();
+                        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+                        String spath = "/RTXData";
+                        String zipPath = "/RtxData" + "_" + timeStamp + ".zip";
+                        sfinalpath = sfile + spath;
+                        dfinalpath = sfile + zipPath;
+
+                        zipFileAtPath(sfinalpath, dfinalpath);
+                        Toast.makeText(getApplicationContext(), "Zip Completed", Toast.LENGTH_LONG).show();
+                        File file = new File(dfinalpath);
+                        ZipRTXFolder(file);
+                    } else {
+                        Toast.makeText(getApplicationContext(), "All files are synced", Toast.LENGTH_LONG).show();
+                    }
                 }
             }
         });
@@ -164,7 +179,26 @@ public class DGPSSyncMenuActivity extends AppCompatActivity {
     private boolean checkFileStatus(String userid, String sharefb) {
         db = openOrCreateDatabase("sltp.db", MODE_PRIVATE, null);
         boolean b = false;
-        Cursor cursor = db.rawQuery("select * from m_fb_dgps_survey_pill_data where u_id='" + userid + "' and d_id='" + sharefb + "' and pillar_sfile_path is not null and pillar_sfile_status='1' order by pill_no", null);
+        Cursor cursor = db.rawQuery("select * from m_fb_dgps_survey_pill_data where u_id='" + userid + "' and d_id='" + sharediv + "' and pillar_sfile_path is not null and pillar_sfile_status='1' order by pill_no", null);
+        try {
+            if (cursor.getCount() > 0) {
+                b = true;
+            } else {
+                b = false;
+            }
+        } catch (Exception ee) {
+            ee.printStackTrace();
+        } finally {
+            cursor.close();
+            db.close();
+        }
+        return b;
+    }
+
+    private boolean checkRTXFileStatus(String userid, String sharefb) {
+        db = openOrCreateDatabase("sltp.db", MODE_PRIVATE, null);
+        boolean b = false;
+        Cursor cursor = db.rawQuery("select distinct fb_name from m_fb_dgps_survey_pill_data where u_id='" + userid + "' and d_id='" + sharediv + "' and pillar_rfile_path is not null and pillar_rfile_status='1'", null);
         try {
             if (cursor.getCount() > 0) {
                 b = true;
@@ -182,9 +216,68 @@ public class DGPSSyncMenuActivity extends AppCompatActivity {
 
     private void ZipFolder(File file) {
         RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), file);
-
         MultipartBody.Part multipartBody = MultipartBody.Part.createFormData("file", file.getName(), requestFile);
         Call<Object> responseBodyCall = jsonPlaceHolderApi.sendDataWithFile(Integer.parseInt(sharefb), multipartBody);
+        responseBodyCall.enqueue(new Callback<Object>() {
+            @Override
+            public void onResponse(Call<Object> call, retrofit2.Response<Object> response) {
+                try {
+                    if (response.isSuccessful()) {
+                        if (new Gson().toJson(response.body()) == null) {
+                            if (response.code() == 409) {
+                                Toast.makeText(getApplicationContext(), "File already exist", Toast.LENGTH_LONG).show();
+                            } else {
+                                Toast.makeText(getApplicationContext(), "Internal server error", Toast.LENGTH_LONG).show();
+                            }
+                        } else {
+                            try {
+                                String j_array = new Gson().toJson(response.body());
+                                JsonObject jobj = (JsonObject) new JsonParser().parse(j_array);
+                                JsonArray arr = (JsonArray) jobj.get("fileStatus");
+                                for (int i = 0; i < arr.size(); i++) {
+                                    JsonObject obj = (JsonObject) arr.get(i);
+                                    try {
+                                        db = openOrCreateDatabase("sltp.db", MODE_PRIVATE, null);
+                                        String path = "%" + obj.get("chrv_statusName").getAsString();
+                                        Cursor c = db.rawQuery("update m_fb_dgps_survey_pill_data set pillar_sfile_status='2' where pillar_sfile_path like '" + path + "'", null);
+                                        if (c.getCount() >= 0) {
+                                            if (file.delete()) {
+                                                Toast.makeText(DGPSSyncMenuActivity.this, "Data Synchronization successfully completed", Toast.LENGTH_SHORT).show();
+                                            }
+                                        }
+                                        c.close();
+                                        db.close();
+                                    } catch (Exception ee) {
+                                        ee.printStackTrace();
+                                    } finally {
+
+                                    }
+                                }
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            } finally {
+                            }
+                        }
+                    } else {
+                        Toast.makeText(getApplicationContext(), response.errorBody().toString(), Toast.LENGTH_SHORT).show();
+                    }
+                } catch (Exception ee) {
+                    ee.printStackTrace();
+                } finally {
+
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Object> call, Throwable t) {
+            }
+        });
+    }
+
+    private void ZipRTXFolder(File file) {
+        RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), file);
+        MultipartBody.Part multipartBody = MultipartBody.Part.createFormData("file", file.getName(), requestFile);
+        Call<Object> responseBodyCall = jsonPlaceHolderApi.sendRTXDataWithFile(Integer.parseInt(sharefb), multipartBody);
         responseBodyCall.enqueue(new Callback<Object>() {
             @Override
             public void onResponse(Call<Object> call, retrofit2.Response<Object> response) {
@@ -205,9 +298,11 @@ public class DGPSSyncMenuActivity extends AppCompatActivity {
                                 try {
                                     db = openOrCreateDatabase("sltp.db", MODE_PRIVATE, null);
                                     String path = "%" + obj.get("chrv_statusName").getAsString();
-                                    Cursor c = db.rawQuery("update m_fb_dgps_survey_pill_data set pillar_sfile_status='2' where pillar_sfile_path='" + path + "'", null);
+                                    Cursor c = db.rawQuery("update m_fb_dgps_survey_pill_data set pillar_rfile_status='2' where pillar_rfile_path like '" + path + "'", null);
                                     if (c.getCount() >= 0) {
-                                        Toast.makeText(DGPSSyncMenuActivity.this, "Data Synchronization successfully completed", Toast.LENGTH_SHORT).show();
+                                        if (file.delete()) {
+                                            Toast.makeText(DGPSSyncMenuActivity.this, "Data Synchronization successfully completed", Toast.LENGTH_SHORT).show();
+                                        }
                                     }
                                     c.close();
                                     db.close();
@@ -226,6 +321,7 @@ public class DGPSSyncMenuActivity extends AppCompatActivity {
                     Toast.makeText(getApplicationContext(), response.errorBody().toString(), Toast.LENGTH_SHORT).show();
                 }
             }
+
             @Override
             public void onFailure(Call<Object> call, Throwable t) {
             }
@@ -328,7 +424,11 @@ public class DGPSSyncMenuActivity extends AppCompatActivity {
             Cursor cursor3 = db.rawQuery("select count(id) as totsyncpic from m_fb_dgps_survey_pill_pic where u_id='" + userid + "' and pic_status='1'", null);
 
             Cursor cursor4 = db.rawQuery("select count(id) as totfile from m_fb_dgps_survey_pill_data where u_id='" + userid + "'", null);
-            Cursor cursor5 = db.rawQuery("select count(id) as totsyncfile from m_fb_dgps_survey_pill_data where u_id='" + userid + "' and pillar_sfile_status='2' ", null);
+            Cursor cursor5 = db.rawQuery("select count(id) as totsyncfile from m_fb_dgps_survey_pill_data where u_id='" + userid + "' and pillar_sfile_status='2'", null);
+
+            Cursor cursor6 = db.rawQuery("select count(distinct fb_name) as totrfile from m_fb_dgps_survey_pill_data where u_id='" + userid + "' and d_id='" + sharediv + "'", null);
+            Cursor cursor7 = db.rawQuery("select count(distinct fb_name) as totrsyncfile from m_fb_dgps_survey_pill_data where u_id='" + userid + "' and d_id='" + sharediv + "' and pillar_rfile_path is not null and pillar_rfile_status='2'", null);
+
 
             cursor.moveToFirst();
             cursor1.moveToFirst();
@@ -336,6 +436,8 @@ public class DGPSSyncMenuActivity extends AppCompatActivity {
             cursor3.moveToFirst();
             cursor4.moveToFirst();
             cursor5.moveToFirst();
+            cursor6.moveToFirst();
+            cursor7.moveToFirst();
 
             if (cursor.moveToFirst()) {
                 do {
@@ -367,12 +469,24 @@ public class DGPSSyncMenuActivity extends AppCompatActivity {
                     syncfolder.setText(cursor5.getString(cursor5.getColumnIndex("totsyncfile")));
                 } while (cursor5.moveToNext());
             }
+            if (cursor6.moveToFirst()) {
+                do {
+                    totsign.setText(cursor6.getString(cursor6.getColumnIndex("totrfile")));
+                } while (cursor6.moveToNext());
+            }
+            if (cursor7.moveToFirst()) {
+                do {
+                    syncattendance.setText(cursor7.getString(cursor7.getColumnIndex("totrsyncfile")));
+                } while (cursor7.moveToNext());
+            }
             cursor.close();
             cursor1.close();
             cursor2.close();
             cursor3.close();
             cursor4.close();
             cursor5.close();
+            cursor6.close();
+            cursor7.close();
             db.close();
         } catch (Exception ee) {
             ee.printStackTrace();
@@ -430,13 +544,15 @@ public class DGPSSyncMenuActivity extends AppCompatActivity {
                             json.put("frjvc_long", cursor.getString(cursor.getColumnIndex("frjvc_long")));
                             json.put("d_pill_no", cursor.getString(cursor.getColumnIndex("d_pill_no")));
                             json.put("d_old_id", cursor.getString(cursor.getColumnIndex("d_old_id")));
+                            json.put("pillar_rfile_path", cursor.getString(cursor.getColumnIndex("pillar_rfile_path")));
+                            json.put("pillar_rfile_status", cursor.getString(cursor.getColumnIndex("pillar_rfile_status")));
+                            json.put("completion_status", cursor.getString(cursor.getColumnIndex("completion_status")));
                             jsonArray.put(json);
                         } catch (Exception ee) {
                             ee.printStackTrace();
                         }
 
                     } while (cursor.moveToNext());
-
                 }
                 sendDatatoServer(jsonArray);
             } else {
@@ -461,7 +577,7 @@ public class DGPSSyncMenuActivity extends AppCompatActivity {
                     fp_data = new JSONObject();
                     fp_data.put("fpdata", jsonArray);
                     RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
-                    String URL = "http://14.98.253.212/sltp/api/values/adddgpspillar";
+                    String URL = AllApi.DGPS_D_FB_PILL_DATA_API;
                     requestQueue.getCache().remove(URL);
                     final String requestBody = fp_data.toString();
                     StringRequest stringRequest = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {

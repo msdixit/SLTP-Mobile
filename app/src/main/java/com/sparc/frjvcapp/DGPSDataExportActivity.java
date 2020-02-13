@@ -157,9 +157,8 @@ public class DGPSDataExportActivity extends AppCompatActivity {
 
                             @Override
                             public void onClick(DialogInterface arg0, int arg1) {
-                                String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
                                 String d_f_name[]=txtStsFileName.getText().toString().split("\\.");//.split(".")
-                                String f_file_name=d_f_name[0]+"_"+spill_no+"_"+userid+"_"+timeStamp+"."+d_f_name[1];
+                                String f_file_name=d_f_name[0]+"_"+spill_no+"."+d_f_name[1];
                                 new DGPSDataExportActivity.ExportPointStaticData().execute(sfinalpath + "/" + txtStsFileName.getText().toString(), spill_no, dfinalpath + "/" +f_file_name);
 
                             }

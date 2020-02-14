@@ -34,6 +34,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -47,6 +48,7 @@ import com.sparc.frjvcapp.pojo.M_range;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.json.JSONStringer;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -56,7 +58,9 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import retrofit2.http.HTTP;
@@ -115,6 +119,7 @@ public class LoginActivity extends AppCompatActivity {
     int[] head = new int[]{1, 2, 3, 12};
     int[] subhead = new int[]{4, 5, 6, 7, 10, 11};
     TelephonyManager telephonyManager;
+    String _token;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -153,12 +158,12 @@ public class LoginActivity extends AppCompatActivity {
         txtpassword = findViewById(R.id.passwordEditText);
         login = findViewById(R.id.loginButton);
         skipTextView = findViewById(R.id.skipTextView);
-        String mac = getMyMacAddress();
+        /*String mac = getMyMacAddress();
         if (mac != "") {
             skipTextView.setText(mac);
         }else{
             skipTextView.setText("");
-        }
+        }*/
         /*skipTextView=findViewById(R.id.skipTextView);*/
         // txtemail.setText("ROU202");
         //txtpassword.setText("jpzr5943EQ");
@@ -326,7 +331,11 @@ public class LoginActivity extends AppCompatActivity {
                     //progressDialog = ProgressDialog.show(LoginActivity.this, "", "Please wait...You are logging in to GFLO", false);
                     StringRequest stringRequest = new StringRequest(Request.Method.POST, URL, response -> {
                         try {
-                            JSONArray arr = new JSONArray(response);
+                            JSONObject obj = new JSONObject(response);
+                            JSONArray arr = obj.getJSONArray("info");
+                            _token = obj.getString("token");
+                            Toast.makeText(this,"hsh",Toast.LENGTH_SHORT);
+                           // JSONArray arr = new JSONArray(response);
                             if (arr.length() > 0) {
                                 for (int i = 0; i < arr.length(); i++) {
                                     progressDialog.dismiss();
@@ -352,6 +361,7 @@ public class LoginActivity extends AppCompatActivity {
 
                                     editor.putString("uid", jsonobject.getString("chrv_email"));
                                     editor.putString("userdivid", jsonobject.getString("desig_id"));
+                                    editor.putString("token",_token);
                                     editor.apply();
                                     if (subheadlist.contains(Integer.parseInt(jsonobject.getString("desig_id")))) {
                                         //editor.putString("userdivid", jsonobject.getString("chrv_division_nm"));
@@ -359,11 +369,11 @@ public class LoginActivity extends AppCompatActivity {
                                     }
                                     startActivity(intent);
                                 }
+
                             } else {
                                 progressDialog.dismiss();
                                 Toast.makeText(LoginActivity.this, "Invalid Login", Toast.LENGTH_SHORT).show();
                             }
-
                         } catch (JSONException e) {
                             e.printStackTrace();
                             progressDialog.dismiss();
@@ -411,7 +421,6 @@ public class LoginActivity extends AppCompatActivity {
                                     dbHelper.open();
                                     dbHelper.insertRangeData(m_range);
                                     dbHelper.close();
-
                                 }
                                 inserfbdata(div_id);
                             } catch (Exception e) {
@@ -425,6 +434,13 @@ public class LoginActivity extends AppCompatActivity {
                             Toast.makeText(getApplicationContext(), "Server Error Try Again", Toast.LENGTH_SHORT).show();
                         }
                     }) {
+                        @Override
+                        public Map<String, String> getHeaders() throws AuthFailureError {
+                            Map<String, String> params = new HashMap<String, String>();
+                            params.put("Content-Type", "application/json; charset=UTF-8");
+                            params.put("Authorization", "Bearer "+_token);
+                            return params;
+                        }
                         @Override
                         public String getBodyContentType() {
                             return "application/json; charset=utf-8";
@@ -448,7 +464,6 @@ public class LoginActivity extends AppCompatActivity {
                                 JSONArray jsonArray = new JSONArray(response);
                                 for (int i = 0; i < jsonArray.length(); i++) {
                                     JSONObject object = jsonArray.getJSONObject(i);
-
                                     M_fb m_fb = new M_fb(object.getString("fb"), object.getString("fid"), object.getString("rid"), div_id, object.getString("fb_type"), object.getString("cmv_path"), object.getString("mmv_path"), "");//object.getString("point_path")
                                     dbHelper.open();
                                     dbHelper.inserFBData(m_fb);
@@ -467,6 +482,13 @@ public class LoginActivity extends AppCompatActivity {
                             Toast.makeText(getApplicationContext(), "Server Error Try Again", Toast.LENGTH_SHORT).show();
                         }
                     }) {
+                        @Override
+                        public Map<String, String> getHeaders() throws AuthFailureError {
+                            Map<String, String> params = new HashMap<String, String>();
+                            params.put("Content-Type", "application/json; charset=UTF-8");
+                            params.put("Authorization", "Bearer "+_token);
+                            return params;
+                        }
                         @Override
                         public String getBodyContentType() {
                             return "application/json; charset=utf-8";

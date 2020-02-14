@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -26,7 +27,9 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
 import jxl.Workbook;
 import jxl.WorkbookSettings;
@@ -44,7 +47,7 @@ public class MiddleMapListActivity extends AppCompatActivity {
     ImageView data_view, map_view, sync, download;
     SQLiteDatabase db;
     DbHelper dbHelper;
-    String divid, rangeid, fbid, userid, kmlstatus;
+    String divid, rangeid, fbid, userid, kmlstatus,_token;;
     JSONArray jsonArray = new JSONArray();
     JSONObject fp_data = new JSONObject();
     ProgressDialog progressDialog;
@@ -62,6 +65,7 @@ public class MiddleMapListActivity extends AppCompatActivity {
 
         SharedPreferences login = getApplicationContext().getSharedPreferences(userlogin, MODE_PRIVATE);
         userid = login.getString("uemail", "0");
+        _token=login.getString("token","0");
         String cmv_path, mmv_path;
         dbHelper = new DbHelper(this);
 
@@ -150,6 +154,13 @@ public class MiddleMapListActivity extends AppCompatActivity {
                     Toast.makeText(getApplicationContext(), "Server Error Try Again", Toast.LENGTH_SHORT).show();
                 }
             }) {
+                @Override
+                public Map<String, String> getHeaders() throws AuthFailureError {
+                    Map<String, String> params = new HashMap<String, String>();
+                    params.put("Content-Type", "application/json; charset=UTF-8");
+                    params.put("Authorization", "Bearer "+_token);
+                    return params;
+                }
                 @Override
                 public String getBodyContentType() {
                     return "application/json; charset=utf-8";

@@ -29,6 +29,7 @@ import com.sparc.frjvcapp.pojo.M_dgps_pilldata;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
 import fr.ganfra.materialspinner.MaterialSpinner;
@@ -51,7 +52,7 @@ public class DGPSViewPillarDetailActivity extends AppCompatActivity {
     LinearLayout lh1;
     String sharediv, sharerange, sharefb, sharefbtype, sharefbname,
             userid, jobid, div_name, range_name, fb_name, spinner_duration, spinner_segment, id, d_frjvc_lat, d_frjvc_long,
-            d_frjvc_pill_no, imagepath1_F, imagepath1_B, imagepath1_I, imagepath1_O, imagepath1_T, d_check_sts;
+            d_frjvc_pill_no, imagepath1_F, imagepath1_B, imagepath1_I, imagepath1_O, imagepath1_T, d_check_sts, _startTime, _endTime;
     Integer REQUEST_CAMERA = 1, SELECT_FILE = 0;
     String image1;
     int clickedStatus = 0;
@@ -69,6 +70,9 @@ public class DGPSViewPillarDetailActivity extends AppCompatActivity {
     int targetW;
     int targetH;
     private String imagepath1;
+    int timecheck = 0;
+    SimpleDateFormat _startDateFormat, _endDateFormat;
+    long _min, _second;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -526,8 +530,16 @@ public class DGPSViewPillarDetailActivity extends AppCompatActivity {
                                     public void onClick(DialogInterface arg0, int arg1) {
                                         int sl = Integer.parseInt(edttxtpillarno.getText().toString());
                                         String jobID = edtJobID.getText().toString();
-                                        if(UpdatePillarSurveyTime(userid,d_frjvc_lat,d_frjvc_long)) {
+                                        if (UpdatePillarSurveyTime(userid, d_frjvc_lat, d_frjvc_long)) {
                                             try {
+                                                //Calculate Start Time
+                                                timecheck = 1;
+                                                Calendar c = Calendar.getInstance();
+                                                System.out.println("Current time =&gt; " + c.getTime());
+                                                _startDateFormat = new SimpleDateFormat("hh:mm:ss");
+                                                _startTime = _startDateFormat.format(c.getTime());
+
+                                                //Intent to Survey Mobile application for Survey
                                                 ClipboardManager cm = (ClipboardManager) getApplication().getSystemService(Context.CLIPBOARD_SERVICE);
                                                 ClipData clipData = ClipData.newPlainText("JobID", jobID);
                                                 cm.setPrimaryClip(clipData);
@@ -545,7 +557,7 @@ public class DGPSViewPillarDetailActivity extends AppCompatActivity {
                                                     dbHelper.close();
                                                 }
                                             }
-                                        }else {
+                                        } else {
 
                                         }
                                     }
@@ -579,15 +591,51 @@ public class DGPSViewPillarDetailActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        //Calculate and storage of RTX time for Report generation
+        if (timecheck != 0) {
+            try {
+                Calendar c = Calendar.getInstance();
+                System.out.println("Current time =&gt; " + c.getTime());
+                _endDateFormat = new SimpleDateFormat("hh:mm:ss");
+                _endTime = _endDateFormat.format(c.getTime());
+                java.text.DateFormat df = new java.text.SimpleDateFormat("hh:mm:ss");
+                java.util.Date date1 = df.parse(_startTime);
+                java.util.Date date2 = df.parse(_endTime);
+                long diff = date2.getTime() - date1.getTime();
+                _min = diff / (60 * 1000) % 60;
+                _second = diff / 1000 % 60;
+                if ((_min >= 4 && _second >= 30) || (_min >= 14 && _second >= 30)) {
+                    _min += 1;
+                }
+                db = openOrCreateDatabase("sltp.db", MODE_PRIVATE, null);
+                Cursor cursor = db.rawQuery("update m_fb_dgps_survey_pill_data set rtx_survey_min='" + _min + "',rtx_survey_second='" + _second + "' where u_id='" + userid + "' and pill_no='" + edttxtpillarno.getText().toString() + "' and frjvc_lat='" + d_frjvc_lat + "' and frjvc_long='" + d_frjvc_long + "'", null);
+                if (cursor.getCount() >= 0) {
+                    Toast.makeText(this, "Observation time has been updated to this pillar..", Toast.LENGTH_SHORT).show();
+                }
+                cursor.close();
+                db.close();
+            } catch (Exception ee) {
+                ee.printStackTrace();
+            } finally {
+                timecheck = 0;
+            }
+        }
+        //point_no = getSLNO(sharefb);
+        //edttxtpillarno.setText(String.valueOf(point_no));
+    }
+
     private boolean UpdatePillarSurveyTime(String userid, String d_frjvc_lat, String d_frjvc_long) {
-        boolean b=false;
+        boolean b = false;
         try {
             db = openOrCreateDatabase("sltp.db", MODE_PRIVATE, null);
             SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
             Date date = new Date();
             Cursor c = db.rawQuery("update m_fb_dgps_survey_pill_data set survey_time='" + formatter.format(date) + "' where frjvc_lat='" + d_frjvc_lat + "' and frjvc_long='" + d_frjvc_long + "' and u_id='" + userid + "'", null);
             if (c.getCount() >= 0) {
-                b=true;
+                b = true;
             }
             c.close();
             db.close();

@@ -52,6 +52,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -61,6 +62,7 @@ import fr.ganfra.materialspinner.MaterialSpinner;
 
 public class DGPSDataCollectActivity extends AppCompatActivity {
     public static final String data = "data";
+    public static final String _staticTime = "statictime";
     private static final int ACTION_TAKE_PHOTO_B = 1;
     private static final String JPEG_FILE_PREFIX = "IMG_";
     private static final String PNG_FILE_SUFFIX = ".jpg";
@@ -76,14 +78,13 @@ public class DGPSDataCollectActivity extends AppCompatActivity {
     LinearLayout lh1;
     String sharediv, sharerange, sharefb, sharefbtype, sharefbname,
             userid, jobid, div_name, range_name, fb_name, spinner_duration, spinner_segment, id, d_frjvc_lat, d_frjvc_long,d_old_id,
-            d_frjvc_pill_no, imagepath1_F, imagepath1_B, imagepath1_I, imagepath1_O, imagepath1_T, d_check_sts;
+            d_frjvc_pill_no, imagepath1_F, imagepath1_B, imagepath1_I, imagepath1_O, imagepath1_T, d_check_sts,_startTime,_endTime;
     Integer REQUEST_CAMERA = 1, SELECT_FILE = 0;
     Map<Character, String> image_name;
     String imei;
-    int clickedStatus = 0;
+    int clickedStatus,timecheck = 0;
     DbHelper dbHelper;
     SharedPreferences shared;
-
     SQLiteDatabase db;
     TextView etName;
     int point_no;
@@ -91,6 +92,10 @@ public class DGPSDataCollectActivity extends AppCompatActivity {
     private String mCurrentPhotoPath_F, mCurrentPhotoPath_B, mCurrentPhotoPath_I, mCurrentPhotoPath_O, mCurrentPhotoPath_T;
     private Character pic_status;
     private AlbumStorageDirFactory mAlbumStorageDirFactory = null;
+    SimpleDateFormat _startDateFormat,_endDateFormat;
+    long _min,_second;
+    TelephonyManager telephonyManager;
+    //Ti
 
     public static Bitmap rotateImage(Bitmap source, float angle) {
         Matrix matrix = new Matrix();
@@ -296,7 +301,7 @@ public class DGPSDataCollectActivity extends AppCompatActivity {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 spinner_duration = (String) parent.getItemAtPosition(position);
-                if (!spinner_duration.equals("Select Duration")) {
+                if (!spinner_duration.equals("Select Direction")) {
                     //CheckPillarStatus(locationtype);
 
                 }
@@ -331,6 +336,48 @@ public class DGPSDataCollectActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        //Calculate and storage of RTX time for Report generation
+        if(timecheck!=0)
+        {
+            try {
+                Calendar c = Calendar.getInstance();
+                System.out.println("Current time =&gt; " + c.getTime());
+                _endDateFormat = new SimpleDateFormat("hh:mm:ss");
+                _endTime = _endDateFormat.format(c.getTime());
+                java.text.DateFormat df = new java.text.SimpleDateFormat("hh:mm:ss");
+                java.util.Date date1 = df.parse(_startTime);
+                java.util.Date date2 = df.parse(_endTime);
+                long diff = date2.getTime() - date1.getTime();
+                _min= diff / (60 * 1000) % 60;
+                _second = diff / 1000 % 60;
+                if((_min>=4 && _second>=30)||(_min>=14 &&_second>=30))
+                {
+                    _min+=1;
+
+                }
+                db = openOrCreateDatabase("sltp.db", MODE_PRIVATE, null);
+                Cursor cursor = db.rawQuery("update m_fb_dgps_survey_pill_data set rtx_survey_min='"+_min+"',rtx_survey_second='"+_second+"' where u_id='" + userid + "' and pill_no='" + d_frjvc_pill_no + "' and frjvc_lat='"+d_frjvc_lat+"' and frjvc_long='"+d_frjvc_long+"'", null);
+                if (cursor.getCount() >= 0) {
+                    Toast.makeText(this, "Observation time has been updated to this pillar..", Toast.LENGTH_SHORT).show();
+                }
+                cursor.close();
+                db.close();
+
+                /*SharedPreferences sharedPreferences = getSharedPreferences(_startTime, 0);
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.clear();
+                editor.putString("_min", String.valueOf(_min));
+                editor.putString("_second", String.valueOf(_second));*/
+
+
+            }catch (Exception ee)
+            {
+                ee.printStackTrace();
+            }
+            finally {
+                timecheck=0;
+            }
+        }
         //point_no = getSLNO(sharefb);
         //edttxtpillarno.setText(String.valueOf(point_no));
     }
@@ -399,8 +446,8 @@ public class DGPSDataCollectActivity extends AppCompatActivity {
                                         edttxtpatchno.getText().toString(), edttxtringno.getText().toString(), edtForestoffnm.getText().toString(),
                                         userid, formatter.format(date), txtViewdiv.getText().toString(), txtViewran.getText().toString(),
                                         txtViewfb.getText().toString(), "0", "0", "0", "",
-                                        "", imagepath1_F, imagepath1_B, imagepath1_I, imagepath1_O, imagepath1_T, imei, "", "0"
-                                        , d_frjvc_lat, d_frjvc_long, edtdpillno.getText().toString(),d_old_id,"","0","0");//+"_"+pilshiftsts,surdir,accuracy
+                                        "", imagepath1_F, imagepath1_B, imagepath1_I, imagepath1_O, imagepath1_T, getMyMacAddress(), "", "0"
+                                        , d_frjvc_lat, d_frjvc_long, edtdpillno.getText().toString(),d_old_id,"","0","0","","");//+"_"+pilshiftsts,surdir,accuracy
                                 try {
                                     dbHelper.open();
                                     long status = dbHelper.insertDGPSSurveyPillarData(mpr1);
@@ -420,6 +467,11 @@ public class DGPSDataCollectActivity extends AppCompatActivity {
                                                 cm.setPrimaryClip(clipData);
                                                 Intent launchIntent = getPackageManager().getLaunchIntentForPackage("SurveyMobile.Droid");
                                                 if (launchIntent != null) {
+                                                    timecheck=1;
+                                                    Calendar c = Calendar.getInstance();
+                                                    System.out.println("Current time =&gt; "+c.getTime());
+                                                    _startDateFormat = new SimpleDateFormat("hh:mm:ss");
+                                                    _startTime = _startDateFormat.format(c.getTime());
                                                     // finishAffinity();
                                                     reset();
                                                     startActivity(launchIntent);
@@ -457,9 +509,22 @@ public class DGPSDataCollectActivity extends AppCompatActivity {
                 AlertDialog alertDialog = alertDialogBuilder.create();
                 alertDialog.show();
             }
+
         }
     }
+    private String getMyMacAddress() {
+        String macAddress = "";
+        telephonyManager = (TelephonyManager) getSystemService(this.TELEPHONY_SERVICE);
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_PHONE_STATE}, 101);
+            macAddress = "";
+        } else {
+            macAddress =
+                    android.provider.Settings.Secure.getString(this.getApplicationContext().getContentResolver(), "android_id");
 
+        }
+        return macAddress;
+    }
     private int insertDGPSImage(HashMap<Character, String> image_name, String userid, int sl) {
         long status = 0;
         int count = 0;

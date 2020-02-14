@@ -175,7 +175,9 @@ public class DbHelper {
             "d_old_id TEXT," +
             "pillar_rfile_path TEXT," +
             "pillar_rfile_status TEXT," +
-            "completion_status TEXT)";
+            "completion_status TEXT,"+
+            "rtx_survey_min TEXT,"+
+            "rtx_survey_second TEXT)";
 
     private static final String CREATE_m_dgps_Survey_pill_data = "CREATE TABLE IF NOT EXISTS " + m_dgps_Survey_pill_data + "( " +
             "id INTEGER PRIMARY KEY, " +
@@ -418,6 +420,8 @@ public class DbHelper {
             contentValues.put("pillar_rfile_path", mpr.getPillar_rfile_path());
             contentValues.put("pillar_rfile_status", mpr.getPillar_rfile_status());
             contentValues.put("completion_status", mpr.getCompletion_status());
+            contentValues.put("rtx_survey_min", mpr.getRtx_min());
+            contentValues.put("rtx_survey_second", mpr.getRtx_sec());
             id = mDb.insert(m_fb_dgps_survey_pill_data, null, contentValues);
             mDb.setTransactionSuccessful();
         } catch (Exception ee) {

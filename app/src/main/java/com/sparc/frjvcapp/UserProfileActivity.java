@@ -49,7 +49,9 @@ import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -63,11 +65,12 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class UserProfileActivity extends AppCompatActivity implements EasyPermissions.PermissionCallbacks {
     public static final String userlogin = "coltlogin";
+    public static final String token = "userlogin";
     private static final int WRITE_REQUEST_CODE = 300;
     private static final String TAG = UserProfileActivity.class.getSimpleName();
     TextView name, design, email, circle, division, totdiv, totrange, totfb, totfp;
     DbHelper dbHelper;
-    String divid, userid, path;
+    String divid, userid, path,_token;
     SQLiteDatabase db;
     JSONArray jsonArray;
     JSONObject fp_data;
@@ -76,6 +79,7 @@ public class UserProfileActivity extends AppCompatActivity implements EasyPermis
     ImageView logout;
     private Button record, sync;
     private DbHelper.DatabaseHelper mDbHelper;
+    SharedPreferences shared,_shareToken;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -105,6 +109,9 @@ public class UserProfileActivity extends AppCompatActivity implements EasyPermis
         division.setText(shared.getString("udivname", "0"));
         divid = shared.getString("udivid", "0");
         userid = shared.getString("uemail", "0");
+
+        _shareToken = getSharedPreferences(token, MODE_PRIVATE);
+        _token=_shareToken.getString("token","0");
 
         record.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -448,6 +455,13 @@ public class UserProfileActivity extends AppCompatActivity implements EasyPermis
                         }
                     }) {
                         @Override
+                        public Map<String, String> getHeaders() throws AuthFailureError {
+                            Map<String, String> params = new HashMap<String, String>();
+                            params.put("Content-Type", "application/json; charset=UTF-8");
+                            params.put("Authorization", "Bearer "+_token);
+                            return params;
+                        }
+                        @Override
                         public String getBodyContentType() {
                             return "application/json; charset=utf-8";
                         }
@@ -527,6 +541,13 @@ public class UserProfileActivity extends AppCompatActivity implements EasyPermis
                         }
                     }) {
                         @Override
+                        public Map<String, String> getHeaders() throws AuthFailureError {
+                            Map<String, String> params = new HashMap<String, String>();
+                            params.put("Content-Type", "application/json; charset=UTF-8");
+                            params.put("Authorization", "Bearer "+_token);
+                            return params;
+                        }
+                        @Override
                         public String getBodyContentType() {
                             return "application/json; charset=utf-8";
                         }
@@ -601,6 +622,13 @@ public class UserProfileActivity extends AppCompatActivity implements EasyPermis
 
                         }
                     }) {
+                        @Override
+                        public Map<String, String> getHeaders() throws AuthFailureError {
+                            Map<String, String> params = new HashMap<String, String>();
+                            params.put("Content-Type", "application/json; charset=UTF-8");
+                            params.put("Authorization", "Bearer "+_token);
+                            return params;
+                        }
                         @Override
                         public String getBodyContentType() {
                             return "application/json; charset=utf-8";

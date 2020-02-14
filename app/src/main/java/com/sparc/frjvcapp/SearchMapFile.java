@@ -48,7 +48,7 @@ public class SearchMapFile extends AppCompatActivity {
     ArrayList<String> arrdiv = new ArrayList<String>();
     ArrayList<String> maprange = new ArrayList<String>();
     MaterialSpinner division, range, fb;
-    String divValue, rangeValue, fbValue, divid, forbname, fbid, userid, divCode, locationRange, rangeCode, vanName, vanValue, foresttype;
+    String divValue, rangeValue, fbValue, divid, forbname, fbid, userid,_token, divCode, locationRange, rangeCode, vanName, vanValue, foresttype;
     //private TextInputEditText txtdivision;
     Button submit, download, pillarpoint;
     DbHelper dbHelper;
@@ -79,6 +79,7 @@ public class SearchMapFile extends AppCompatActivity {
         arrdiv.add(shared.getString("udivname", "0"));
         divid = shared.getString("udivid", "0");
         userid = shared.getString("uemail", "0");
+        _token=shared.getString("token","0");
         //Division.
         //name.setText(shared.getString("uname", "0"));
         //dept.setText(shared.getString("upos", "0"));
@@ -165,19 +166,23 @@ public class SearchMapFile extends AppCompatActivity {
                     sbView.setBackgroundColor(ContextCompat.getColor(getApplicationContext(), R.color.colorPrimary));
                     snackbar.show();
                 } else {
-                    checkCMVData();
-                    //checkOtherData(); && state == true && circle == true && ran == true && div == true
-                    if (cmvsta1 == true && mmvsta1 == true) {
-                        DeleteRestoreData();
-                    } else if (cmvsta1 == false && mmvsta1 == true) {
-                        Toast.makeText(SearchMapFile.this, "This FB doesn't have CMV file.You can proceed with MMV", Toast.LENGTH_SHORT).show();
+                    if(_token!="") {
+                        checkCMVData();
+                        //checkOtherData(); && state == true && circle == true && ran == true && div == true
+                        if (cmvsta1 == true && mmvsta1 == true) {
+                            DeleteRestoreData();
+                        } else if (cmvsta1 == false && mmvsta1 == true) {
+                            Toast.makeText(SearchMapFile.this, "This FB doesn't have CMV file.You can proceed with MMV", Toast.LENGTH_SHORT).show();
 
 
-                    } else if (cmvsta1 == true && mmvsta1 == false) {
-                        Toast.makeText(SearchMapFile.this, "This FB doesn't have MMV file.You can proceed with CMV", Toast.LENGTH_SHORT).show();
+                        } else if (cmvsta1 == true && mmvsta1 == false) {
+                            Toast.makeText(SearchMapFile.this, "This FB doesn't have MMV file.You can proceed with CMV", Toast.LENGTH_SHORT).show();
 
-                    } else if (cmvsta1 == false && mmvsta1 == false) {
-                        DownloadCMVMMVFiles();
+                        } else if (cmvsta1 == false && mmvsta1 == false) {
+                            DownloadCMVMMVFiles();
+                        }
+                    }else{
+                        Toast.makeText(SearchMapFile.this,"Invalid User access,You cannot use this module",Toast.LENGTH_LONG).show();
                     }
                 }
             }

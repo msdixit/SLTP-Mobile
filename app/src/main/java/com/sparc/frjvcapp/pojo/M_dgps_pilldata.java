@@ -224,6 +224,9 @@ public class M_dgps_pilldata {
     private String pillar_sfile_path;
     private String pillar_sfile_status;
     private String completion_status;
+    private String rtx_min;
+    private String rtx_sec;
+
 
     public String getPillar_rfile_path() {
         return pillar_rfile_path;
@@ -371,7 +374,7 @@ public class M_dgps_pilldata {
                            String survey_segment,String completion_sts, String f_pic_name, String b_pic_name,
                            String i_pic_name, String o_pic_name, String div_pic_name,String device_imei_no,
                            String pillar_sfile_path,String pillar_sfile_status,String frjvc_lat,String frjvc_long,
-                           String d_pill_no,String d_old_id,String pillar_rfile_path,String pillar_rfile_status,String completion_status) {
+                           String d_pill_no,String d_old_id,String pillar_rfile_path,String pillar_rfile_status,String completion_status,String rtx_min,String rtx_sec) {
         this.d_id = d_id;
         this.r_id = r_id;
         this.fb_id = fb_id;
@@ -412,6 +415,8 @@ public class M_dgps_pilldata {
         this.pillar_rfile_path=pillar_rfile_path;
         this.pillar_rfile_status=pillar_rfile_status;
         this.completion_status=completion_status;
+        this.rtx_min=rtx_min;
+        this.rtx_sec=rtx_sec;
     }
 
 
@@ -421,5 +426,21 @@ public class M_dgps_pilldata {
 
     public void setCompletion_status(String completion_status) {
         this.completion_status = completion_status;
+    }
+
+    public String getRtx_min() {
+        return rtx_min;
+    }
+
+    public void setRtx_min(String rtx_min) {
+        this.rtx_min = rtx_min;
+    }
+
+    public String getRtx_sec() {
+        return rtx_sec;
+    }
+
+    public void setRtx_sec(String rtx_sec) {
+        this.rtx_sec = rtx_sec;
     }
 }

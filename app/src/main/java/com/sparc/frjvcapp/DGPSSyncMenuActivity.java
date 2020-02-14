@@ -10,7 +10,6 @@ import android.net.NetworkInfo;
 import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -32,9 +31,6 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.sparc.frjvcapp.config.AllApi;
-import com.sparc.frjvcapp.pojo.M_Dgps_Sync_Data;
-import com.sparc.frjvcapp.pojo.M_dgps_pill_pic;
-import com.sparc.frjvcapp.pojo.M_fb;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -49,13 +45,16 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
+import okhttp3.Interceptor;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
+import okhttp3.OkHttpClient;
 import okhttp3.RequestBody;
-import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Retrofit;
@@ -63,9 +62,10 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class DGPSSyncMenuActivity extends AppCompatActivity {
     public static final String data = "data";
+    public static final String userlogin = "userlogin";
     private SQLiteDatabase db;
-    String sharediv, sharerange, sharefb, sharefbtype, sharefbname, userid, jobid, div_name, range_name, fb_name, frjvc_lat, frjvc_long;
-    SharedPreferences shared;
+    String sharediv, sharerange, sharefb, sharefbtype, sharefbname, userid, jobid, div_name, range_name, fb_name,_token,frjvc_lat, frjvc_long;
+    SharedPreferences shared,_shareToken;
     Button sync, syncfile;
     DbHelper dbHelper;
     private ProgressDialog progressDialog;
@@ -107,14 +107,27 @@ public class DGPSSyncMenuActivity extends AppCompatActivity {
         range_name = shared.getString("range_name", "0");
         fb_name = shared.getString("fb_name", "0");
 
+        _shareToken=getApplicationContext().getSharedPreferences(userlogin,MODE_PRIVATE);
+        _token=_shareToken.getString("token","0");
+
         dgpsfbName.setText(fb_name);
 
         getDataforDisplay(userid);
 
+        OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
+
+        httpClient.addInterceptor(new Interceptor() {
+            @Override
+            public okhttp3.Response intercept(Chain chain) throws IOException {
+                okhttp3.Request request = chain.request().newBuilder().addHeader("Authorization", "Bearer "+_token).build();
+                return chain.proceed(request);
+            }
+        });
 
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(AllApi.BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
+                .client(httpClient.build())
                 .build();
 
         jsonPlaceHolderApi = retrofit.create(RetrofitInterface.class);
@@ -130,7 +143,7 @@ public class DGPSSyncMenuActivity extends AppCompatActivity {
                         Toast.makeText(getApplicationContext(), "Your pillar data is not tagged with the static data.", Toast.LENGTH_LONG).show();
                     }
                 } else {
-                    progressDialog1.dismiss();
+                    //progressDialog1.dismiss();
                     Toast.makeText(getApplicationContext(), "You dont have any data for Synchronization", Toast.LENGTH_LONG).show();
                 }
             }
@@ -606,6 +619,13 @@ public class DGPSSyncMenuActivity extends AppCompatActivity {
 
                         }
                     }) {
+                        @Override
+                        public Map<String, String> getHeaders() throws AuthFailureError {
+                            Map<String, String> params = new HashMap<String, String>();
+                            params.put("Content-Type", "application/json; charset=UTF-8");
+                            params.put("Authorization", "Bearer "+_token);
+                            return params;
+                        }
                         @Override
                         public String getBodyContentType() {
                             return "application/json; charset=utf-8";

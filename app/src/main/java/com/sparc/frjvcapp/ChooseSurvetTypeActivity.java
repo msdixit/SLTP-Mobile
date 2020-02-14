@@ -35,11 +35,14 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
+import java.util.HashMap;
+import java.util.Map;
 
 public class ChooseSurvetTypeActivity extends AppCompatActivity {
-    SharedPreferences shared;
-    String  sharediv, sharerange, sharefb, sharefbtype, sharefbname, userid,jobid,div_name,range_name,fb_name,spinner_duration,spinner_segment;
+    SharedPreferences shared,_shareToken;
+    String  sharediv, sharerange, sharefb, sharefbtype, sharefbname, userid,jobid,div_name,range_name,fb_name,_token,spinner_duration,spinner_segment;
     public static final String data = "data";
+    public static final String userlogin = "userlogin";
     ImageView data_collect,data_view,data_export,data_sync,data_point_dwld,mapview;
     TextView dgpsfbName;
     SQLiteDatabase db;
@@ -74,6 +77,9 @@ public class ChooseSurvetTypeActivity extends AppCompatActivity {
         div_name = shared.getString("div_name", "0");
         range_name = shared.getString("range_name", "0");
         fb_name = shared.getString("fb_name", "0");
+
+        _shareToken=getApplicationContext().getSharedPreferences(userlogin,MODE_PRIVATE);
+        _token=_shareToken.getString("token","0");
         dbHelper = new DbHelper(this);
 
         dgpsfbName.setText(fb_name);
@@ -415,6 +421,13 @@ public class ChooseSurvetTypeActivity extends AppCompatActivity {
                     Toast.makeText(getApplicationContext(), "Data is not available in Server", Toast.LENGTH_SHORT).show();
                 }
             }) {
+                @Override
+                public Map<String, String> getHeaders() throws AuthFailureError {
+                    Map<String, String> params = new HashMap<String, String>();
+                    params.put("Content-Type", "application/json; charset=UTF-8");
+                    params.put("Authorization", "Bearer "+_token);
+                    return params;
+                }
                 @Override
                 public String getBodyContentType() {
                     return "application/json; charset=utf-8";

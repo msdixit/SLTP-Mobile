@@ -21,6 +21,7 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -36,6 +37,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class ListDataViewActivity extends AppCompatActivity implements View.OnClickListener {
     public static final String data = "data";
@@ -46,8 +49,8 @@ public class ListDataViewActivity extends AppCompatActivity implements View.OnCl
     Integer i = 1;
     RecyclerView recyclerView;
     LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
-    SharedPreferences shared, userdata;
-    String sharerange, sharefb, userid;
+    SharedPreferences shared, userdata,_shareToken;
+    String sharerange, sharefb, userid,_token;
     int syncstatus = 0;
     Cursor c;
     private Boolean isFabOpen = false;
@@ -87,6 +90,9 @@ public class ListDataViewActivity extends AppCompatActivity implements View.OnCl
         arrayList = new ArrayList<DataViewDetails>();
         syncarrylist = new ArrayList<DataViewDetails>(arrayList.size() + 1);
         adapter = new DataViewAdapter(getApplicationContext(), arrayList);
+
+        _shareToken=getApplicationContext().getSharedPreferences(userlogin,MODE_PRIVATE);
+        _token=_shareToken.getString("token","0");
 
         new displayCard().execute("");
     }
@@ -273,6 +279,13 @@ public class ListDataViewActivity extends AppCompatActivity implements View.OnCl
                     //progress.hide();
                 }
             }) {
+                @Override
+                public Map<String, String> getHeaders() throws AuthFailureError {
+                    Map<String, String> params = new HashMap<String, String>();
+                    params.put("Content-Type", "application/json; charset=UTF-8");
+                    params.put("Authorization", "Bearer "+_token);
+                    return params;
+                }
                 @Override
                 public String getBodyContentType() {
                     return "application/json; charset=utf-8";

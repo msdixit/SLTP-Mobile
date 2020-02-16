@@ -177,7 +177,10 @@ public class DbHelper {
             "pillar_rfile_status TEXT," +
             "completion_status TEXT,"+
             "rtx_survey_min TEXT,"+
-            "rtx_survey_second TEXT)";
+            "rtx_survey_second TEXT,"+
+            "survey_status TEXT,"+
+            "reason TEXT,"+
+            "remark TEXT)";
 
     private static final String CREATE_m_dgps_Survey_pill_data = "CREATE TABLE IF NOT EXISTS " + m_dgps_Survey_pill_data + "( " +
             "id INTEGER PRIMARY KEY, " +
@@ -189,7 +192,8 @@ public class DbHelper {
             "m_pillar_avl_sts TEXT," +
             "m_dgps_surv_sts TEXT," +
             "m_dgps_file_sts TEXT," +
-            "o_Id TEXT)";
+            "o_Id TEXT,"+
+            "m_survey_status TEXT)";
 
     private static final String CREATE_m_fb_dgps_survey_pill_pic = "CREATE TABLE IF NOT EXISTS " + m_fb_dgps_survey_pill_pic + "( " +
             "id INTEGER PRIMARY KEY, " +
@@ -422,6 +426,9 @@ public class DbHelper {
             contentValues.put("completion_status", mpr.getCompletion_status());
             contentValues.put("rtx_survey_min", mpr.getRtx_min());
             contentValues.put("rtx_survey_second", mpr.getRtx_sec());
+            contentValues.put("survey_status", mpr.getSurvey_status());
+            contentValues.put("reason", mpr.getReason());
+            contentValues.put("remark", mpr.getRemark());
             id = mDb.insert(m_fb_dgps_survey_pill_data, null, contentValues);
             mDb.setTransactionSuccessful();
         } catch (Exception ee) {
@@ -445,6 +452,7 @@ public class DbHelper {
             contentValues.put("m_dgps_surv_sts", fb.getM_dgps_surv_sts());
             contentValues.put("m_dgps_file_sts", fb.getM_dgps_file_sts());
             contentValues.put("o_Id", fb.getO_Id());
+            contentValues.put("m_survey_status", fb.getM_survey_status());
             id = mDb.insert(m_dgps_Survey_pill_data, null, contentValues);
         } catch (Exception ee) {
             ee.printStackTrace();

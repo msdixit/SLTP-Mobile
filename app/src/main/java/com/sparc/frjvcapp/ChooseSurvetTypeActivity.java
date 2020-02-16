@@ -400,7 +400,7 @@ public class ChooseSurvetTypeActivity extends AppCompatActivity {
                         JSONArray jsonArray = new JSONArray(response);
                         for (int i = 0; i < jsonArray.length(); i++) {
                             JSONObject object = jsonArray.getJSONObject(i);
-                            M_dgpssurvey_pillar_data m_fb = new M_dgpssurvey_pillar_data(object.getString("latitude"), object.getString("longitude"), object.getString("pillar_no"), "", fbid, object.getString("status"),"0","0",object.getString("id"));//object.getString("point_path")
+                            M_dgpssurvey_pillar_data m_fb = new M_dgpssurvey_pillar_data(object.getString("latitude"), object.getString("longitude"), object.getString("pillar_no"), "", fbid, object.getString("status"),"0","0",object.getString("id"),"0");//object.getString("point_path")
                             dbHelper.open();
                             dbHelper.insertdgpsSurveyedPointDataData(m_fb);
                             dbHelper.close();

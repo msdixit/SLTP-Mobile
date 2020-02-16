@@ -70,19 +70,21 @@ public class DGPSDataCollectActivity extends AppCompatActivity {
     private static final int ACTION_TAKE_GALLERY_PIC = 0;
     public String imgValue = "blank";
     String[] duration = {"Clockwise", "Anticlockwise"};
-    String[] survey_segment = {"A", "B", "C", "D", "E", "F", "G", "H", "I", "J"};
-    MaterialSpinner bpduration, dpSegment;
-    EditText edttxtpillarno, remark, edttxtpatchno, edttxtringno, edtForestoffnm, edtJobID, edtdpillno;
+    String[] _survey_Possibility = {"Yes", "No"};
+    String[] _surveyReason = {"Inaccessible", "Encroachment", "Other"};
+    MaterialSpinner bpduration, surveyPossibility, chooseReason;
+    EditText edttxtpillarno, remark, edttxtpatchno, edttxtringno, edtForestoffnm, edtJobID, edtdpillno, edtremark;
     ImageView setpicforward, takepicforward, setpicbackward, takepicbackward, setpicinward, takepicinward, setpicoutward, takepicoutward, setpictop, takepictop;
     TextView txtViewdiv, txtViewran, txtViewfb, fbname;
-    LinearLayout lh1;
+    LinearLayout lh1, lh2, l17;
     String sharediv, sharerange, sharefb, sharefbtype, sharefbname,
-            userid, jobid, div_name, range_name, fb_name, spinner_duration, spinner_segment, id, d_frjvc_lat, d_frjvc_long,d_old_id,
-            d_frjvc_pill_no, imagepath1_F, imagepath1_B, imagepath1_I, imagepath1_O, imagepath1_T, d_check_sts,_startTime,_endTime;
+            userid, jobid, div_name, range_name, fb_name, spinner_duration, spinner_segment, id, d_frjvc_lat, d_frjvc_long, d_old_id,
+            d_frjvc_pill_no, imagepath1_F, imagepath1_B, imagepath1_I, imagepath1_O, imagepath1_T,
+            d_check_sts, _startTime, _endTime, _surveyPossibility, _reason, _remark;
     Integer REQUEST_CAMERA = 1, SELECT_FILE = 0;
     Map<Character, String> image_name;
     String imei;
-    int clickedStatus,timecheck = 0;
+    int clickedStatus, timecheck = 0;
     DbHelper dbHelper;
     SharedPreferences shared;
     SQLiteDatabase db;
@@ -92,8 +94,8 @@ public class DGPSDataCollectActivity extends AppCompatActivity {
     private String mCurrentPhotoPath_F, mCurrentPhotoPath_B, mCurrentPhotoPath_I, mCurrentPhotoPath_O, mCurrentPhotoPath_T;
     private Character pic_status;
     private AlbumStorageDirFactory mAlbumStorageDirFactory = null;
-    SimpleDateFormat _startDateFormat,_endDateFormat;
-    long _min,_second;
+    SimpleDateFormat _startDateFormat, _endDateFormat;
+    long _min, _second;
     TelephonyManager telephonyManager;
     //Ti
 
@@ -120,6 +122,8 @@ public class DGPSDataCollectActivity extends AppCompatActivity {
         //Matterial Spinner
 
         bpduration = findViewById(R.id.bpduration);
+        surveyPossibility = findViewById(R.id.surveyPossibility);
+        chooseReason = findViewById(R.id.chooseReason);
 
         //EditText
         edttxtpillarno = findViewById(R.id.edttxtpillarno);
@@ -129,6 +133,7 @@ public class DGPSDataCollectActivity extends AppCompatActivity {
         edtJobID = findViewById(R.id.edtJobID);
         edtdpillno = findViewById(R.id.edtdpillno);
         edtForestoffnm = findViewById(R.id.edtForestoffnm);
+        edtremark=findViewById(R.id.edtremark);
 
         //Image View
         setpicforward = findViewById(R.id.setpicforward);
@@ -149,6 +154,8 @@ public class DGPSDataCollectActivity extends AppCompatActivity {
         fbname = findViewById(R.id.fbname);
 
         lh1 = findViewById(R.id.lh1);
+        lh2 = findViewById(R.id.lh2);
+        l17 = findViewById(R.id.l17);
 
         shared = getApplicationContext().getSharedPreferences(data, MODE_PRIVATE);
         sharediv = shared.getString("fbdivcode", "0");
@@ -166,6 +173,7 @@ public class DGPSDataCollectActivity extends AppCompatActivity {
         edttxtpatchno.setText("1");
         edttxtringno.setText("0");
         edtJobID.setText(jobid);
+
         //point_no = getSLNO(sharefb);
 
 
@@ -175,7 +183,7 @@ public class DGPSDataCollectActivity extends AppCompatActivity {
         d_frjvc_lat = i.getStringExtra("lat");
         d_frjvc_long = i.getStringExtra("lon");
         d_frjvc_pill_no = i.getStringExtra("pill_no");
-        d_old_id= i.getStringExtra("old_id");
+        d_old_id = i.getStringExtra("old_id");
         /*  d_check_sts = i.getStringExtra("checksts");*/
         point_no = Integer.parseInt(d_frjvc_pill_no);
         edttxtpillarno.setText(String.valueOf(point_no));
@@ -186,8 +194,8 @@ public class DGPSDataCollectActivity extends AppCompatActivity {
         txtViewfb.setText(fb_name);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            imei  = getUniqueIMEIId(this);
-        }else{
+            imei = getUniqueIMEIId(this);
+        } else {
 
         }
 
@@ -294,6 +302,34 @@ public class DGPSDataCollectActivity extends AppCompatActivity {
             }
         });
 
+        final ArrayAdapter<String> _surveyPossibilityadapter = new ArrayAdapter<String>(getApplicationContext(), R.layout.spinner_row, _survey_Possibility);
+        surveyPossibility.setAdapter(_surveyPossibilityadapter);
+        surveyPossibility.setPaddingSafe(0, 0, 0, 0);
+        surveyPossibility.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                _surveyPossibility = (String) parent.getItemAtPosition(position);
+                if (!_surveyPossibility.equals("Is DGPS Survey Possible for this Pillar?")) {
+                    //CheckPillarStatus(locationtype);
+                    if (_surveyPossibility.equals("Yes")) {
+                        lh1.setVisibility(View.VISIBLE);
+                        lh2.setVisibility(View.GONE);
+                        l17.setVisibility(View.VISIBLE);
+                    } else {
+                        lh1.setVisibility(View.GONE);
+                        lh2.setVisibility(View.VISIBLE);
+                        l17.setVisibility(View.VISIBLE);
+                    }
+
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
         final ArrayAdapter<String> durationadapter = new ArrayAdapter<String>(getApplicationContext(), R.layout.spinner_row, duration);
         bpduration.setAdapter(durationadapter);
         bpduration.setPaddingSafe(0, 0, 0, 0);
@@ -302,6 +338,25 @@ public class DGPSDataCollectActivity extends AppCompatActivity {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 spinner_duration = (String) parent.getItemAtPosition(position);
                 if (!spinner_duration.equals("Select Direction")) {
+                    //CheckPillarStatus(locationtype);
+
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
+        final ArrayAdapter<String> _reasonofNosurvey = new ArrayAdapter<String>(getApplicationContext(), R.layout.spinner_row, _surveyReason);
+        chooseReason.setAdapter(_reasonofNosurvey);
+        chooseReason.setPaddingSafe(0, 0, 0, 0);
+        chooseReason.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                _reason = (String) parent.getItemAtPosition(position);
+                if (!_reason.equals("Select Reason")) {
                     //CheckPillarStatus(locationtype);
 
                 }
@@ -337,8 +392,7 @@ public class DGPSDataCollectActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         //Calculate and storage of RTX time for Report generation
-        if(timecheck!=0)
-        {
+        if (timecheck != 0) {
             try {
                 Calendar c = Calendar.getInstance();
                 System.out.println("Current time =&gt; " + c.getTime());
@@ -348,38 +402,25 @@ public class DGPSDataCollectActivity extends AppCompatActivity {
                 java.util.Date date1 = df.parse(_startTime);
                 java.util.Date date2 = df.parse(_endTime);
                 long diff = date2.getTime() - date1.getTime();
-                _min= diff / (60 * 1000) % 60;
+                _min = diff / (60 * 1000) % 60;
                 _second = diff / 1000 % 60;
-                if((_min>=4 && _second>=30)||(_min>=14 &&_second>=30))
-                {
-                    _min+=1;
+                if ((_min >= 4 && _second >= 30) || (_min >= 14 && _second >= 30)) {
+                    _min += 1;
 
                 }
                 db = openOrCreateDatabase("sltp.db", MODE_PRIVATE, null);
-                Cursor cursor = db.rawQuery("update m_fb_dgps_survey_pill_data set rtx_survey_min='"+_min+"',rtx_survey_second='"+_second+"' where u_id='" + userid + "' and pill_no='" + d_frjvc_pill_no + "' and frjvc_lat='"+d_frjvc_lat+"' and frjvc_long='"+d_frjvc_long+"'", null);
+                Cursor cursor = db.rawQuery("update m_fb_dgps_survey_pill_data set rtx_survey_min='" + _min + "',rtx_survey_second='" + _second + "' where u_id='" + userid + "' and pill_no='" + d_frjvc_pill_no + "' and frjvc_lat='" + d_frjvc_lat + "' and frjvc_long='" + d_frjvc_long + "'", null);
                 if (cursor.getCount() >= 0) {
                     Toast.makeText(this, "Observation time has been updated to this pillar..", Toast.LENGTH_SHORT).show();
                 }
                 cursor.close();
                 db.close();
-
-                /*SharedPreferences sharedPreferences = getSharedPreferences(_startTime, 0);
-                SharedPreferences.Editor editor = sharedPreferences.edit();
-                editor.clear();
-                editor.putString("_min", String.valueOf(_min));
-                editor.putString("_second", String.valueOf(_second));*/
-
-
-            }catch (Exception ee)
-            {
+            } catch (Exception ee) {
                 ee.printStackTrace();
-            }
-            finally {
-                timecheck=0;
+            } finally {
+                timecheck = 0;
             }
         }
-        //point_no = getSLNO(sharefb);
-        //edttxtpillarno.setText(String.valueOf(point_no));
     }
 
     @Override
@@ -397,24 +438,125 @@ public class DGPSDataCollectActivity extends AppCompatActivity {
     }
 
     private void SaveData() {
+        if (_surveyPossibility.equals("Yes")) {
+            if (edttxtpillarno.getText().toString() == "" || edttxtpillarno.getText().toString() == "0") {
+                Toast.makeText(this, "Serial Number can not ne blank or Zero", Toast.LENGTH_LONG).show();
+            } else if (spinner_duration.equals("Select Duration")) {
+                Toast.makeText(this, "Please Select Duration", Toast.LENGTH_LONG).show();
+            } else if (edtForestoffnm.getText().toString() == "") {
+                Toast.makeText(this, "Please Provide the Forest official name", Toast.LENGTH_LONG).show();
+            } else if (imagepath1_F == "" || imagepath1_F == null) {
+                Toast.makeText(this, "Front view of pillar is not available", Toast.LENGTH_LONG).show();
+            } else if (imagepath1_B == "" || imagepath1_B == null) {
+                Toast.makeText(this, "Back view of pillar is not available", Toast.LENGTH_LONG).show();
+            } else if (imagepath1_I == "" || imagepath1_I == null) {
+                Toast.makeText(this, "Inward view of pillar is not available", Toast.LENGTH_LONG).show();
+            } else if (imagepath1_O == "" || imagepath1_O == null) {
+                Toast.makeText(this, "Outward view of pillar is not available", Toast.LENGTH_LONG).show();
+            } else if (imagepath1_T == "" || imagepath1_T == null) {
+                Toast.makeText(this, "Withdevice view of pillar is not available", Toast.LENGTH_LONG).show();
+            } else {
+                db = openOrCreateDatabase("sltp.db", MODE_PRIVATE, null);
+                Cursor c = db.rawQuery("select * from m_fb_dgps_survey_pill_data where u_id='" + userid + "' and d_id='" + sharediv + "' and r_id='" + sharerange + "' and fb_id='" + sharefb + "' and frjvc_lat='" + d_frjvc_lat + "' and frjvc_long='" + d_frjvc_long + "'", null);
+                if (c.getCount() > 0) {
+                    if (c.moveToFirst()) {
+                        if (Integer.parseInt(c.getString(c.getColumnIndex("pillar_sfile_status"))) == 0) {
+                            Toast.makeText(this, "This pillar is already registered.Please tag the pillar with its Static Observation data.", Toast.LENGTH_LONG).show();
+                        } else if (Integer.parseInt(c.getString(c.getColumnIndex("pillar_sfile_status"))) == 1) {
+                            Toast.makeText(this, "This pillar is already registered and Tagged.", Toast.LENGTH_LONG).show();
+                        } else {
 
-        if (edttxtpillarno.getText().toString() == "" || edttxtpillarno.getText().toString() == "0") {
-            Toast.makeText(this, "Serial Number can not ne blank or Zero", Toast.LENGTH_LONG).show();
-        } else if (spinner_duration.equals("Select Duration")) {
-            Toast.makeText(this, "Please Select Duration", Toast.LENGTH_LONG).show();
-        } else if (edtForestoffnm.getText().toString() == "") {
-            Toast.makeText(this, "Please Provide the Forest official name", Toast.LENGTH_LONG).show();
-        } else if (imagepath1_F == "" || imagepath1_F == null) {
-            Toast.makeText(this, "Front view of pillar is not available", Toast.LENGTH_LONG).show();
-        } else if (imagepath1_B == "" || imagepath1_B == null) {
-            Toast.makeText(this, "Back view of pillar is not available", Toast.LENGTH_LONG).show();
-        } else if (imagepath1_I == "" || imagepath1_I == null) {
-            Toast.makeText(this, "Inward view of pillar is not available", Toast.LENGTH_LONG).show();
-        } else if (imagepath1_O == "" || imagepath1_O == null) {
-            Toast.makeText(this, "Outward view of pillar is not available", Toast.LENGTH_LONG).show();
-        } else if (imagepath1_T == "" || imagepath1_T == null) {
-            Toast.makeText(this, "Withdevice view of pillar is not available", Toast.LENGTH_LONG).show();
-        } else {
+                        }
+                    }
+                } else {
+                    AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+                    //alertDialogBuilder.setMessage("Are you sure to save this pillar data?");
+                    final View customLayout = getLayoutInflater().inflate(R.layout.save_custome_dialod_register_pillar, null);
+                    alertDialogBuilder.setView(customLayout);
+                    alertDialogBuilder.setPositiveButton("Ok",
+                            new DialogInterface.OnClickListener() {
+
+                                @Override
+                                public void onClick(DialogInterface arg0, int arg1) {
+                                    int sl = Integer.parseInt(edttxtpillarno.getText().toString());
+                                    String jobID = edtJobID.getText().toString();
+                                    SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+                                    Date date = new Date();
+                                    M_dgps_pilldata mpr1 = new M_dgps_pilldata(sharediv, sharerange, sharefb, sl, jobID, userid, spinner_duration,
+                                            "0", "0", "0", "0", "0",
+                                            edttxtpatchno.getText().toString(), edttxtringno.getText().toString(), edtForestoffnm.getText().toString(),
+                                            userid, formatter.format(date), txtViewdiv.getText().toString(), txtViewran.getText().toString(),
+                                            txtViewfb.getText().toString(), "0", "0", "0", "",
+                                            "", imagepath1_F, imagepath1_B, imagepath1_I, imagepath1_O, imagepath1_T,
+                                            getMyMacAddress(), "", "0",
+                                            d_frjvc_lat, d_frjvc_long, edtdpillno.getText().toString(), d_old_id,
+                                            "", "0", "0", "", "",
+                                            "1", "", "");//+"_"+pilshiftsts,surdir,accuracy
+                                    try {
+                                        dbHelper.open();
+                                        long status = dbHelper.insertDGPSSurveyPillarData(mpr1);
+                                        dbHelper.close();
+                                        if (status >= 0) {
+                                            if (checkDGPSDataAvalability(1)) {
+                                                image_name = new HashMap<Character, String>();
+                                                image_name.put('F', imagepath1_F);
+                                                image_name.put('B', imagepath1_B);
+                                                image_name.put('I', imagepath1_I);
+                                                image_name.put('O', imagepath1_O);
+                                                image_name.put('T', imagepath1_T);
+                                                long a = insertDGPSImage((HashMap<Character, String>) image_name, userid, Integer.parseInt(d_old_id));
+                                                if (a == 5) {
+                                                    ClipboardManager cm = (ClipboardManager) getApplication().getSystemService(Context.CLIPBOARD_SERVICE);
+                                                    ClipData clipData = ClipData.newPlainText("JobID", jobID);
+                                                    cm.setPrimaryClip(clipData);
+                                                    Intent launchIntent = getPackageManager().getLaunchIntentForPackage("SurveyMobile.Droid");
+                                                    if (launchIntent != null) {
+                                                        timecheck = 1;
+                                                        Calendar c = Calendar.getInstance();
+                                                        System.out.println("Current time =&gt; " + c.getTime());
+                                                        _startDateFormat = new SimpleDateFormat("hh:mm:ss");
+                                                        _startTime = _startDateFormat.format(c.getTime());
+                                                        // finishAffinity();
+                                                        reset();
+                                                        startActivity(launchIntent);
+                                                    } else {
+                                                        Toast.makeText(DGPSDataCollectActivity.this, "There is no package available in android", Toast.LENGTH_LONG).show();
+                                                    }
+                                                } else {
+                                                    Toast.makeText(getApplicationContext(), "Pillar pictures is not stored", Toast.LENGTH_LONG).show();
+                                                }
+                                            } else {
+                                                Toast.makeText(getApplicationContext(), "NoT Pillar registered Successfully", Toast.LENGTH_LONG).show();
+                                            }
+                                        }
+
+
+                                    } catch (Exception ee) {
+                                        ee.printStackTrace();
+                                    } finally {
+                                        if (dbHelper != null) {
+                                            dbHelper.close();
+                                        }
+                                    }
+                                }
+                            });
+
+                    alertDialogBuilder.setNegativeButton("Cancel",
+                            new DialogInterface.OnClickListener() {
+
+                                @Override
+                                public void onClick(DialogInterface arg0, int arg1) {
+                                    Toast.makeText(getApplicationContext(), "You canceled the save request...please try again", Toast.LENGTH_LONG).show();
+                                }
+                            });
+
+                    AlertDialog alertDialog = alertDialogBuilder.create();
+                    alertDialog.show();
+                }
+
+            }
+        }
+        else {
             db = openOrCreateDatabase("sltp.db", MODE_PRIVATE, null);
             Cursor c = db.rawQuery("select * from m_fb_dgps_survey_pill_data where u_id='" + userid + "' and d_id='" + sharediv + "' and r_id='" + sharerange + "' and fb_id='" + sharefb + "' and frjvc_lat='" + d_frjvc_lat + "' and frjvc_long='" + d_frjvc_long + "'", null);
             if (c.getCount() > 0) {
@@ -441,48 +583,28 @@ public class DGPSDataCollectActivity extends AppCompatActivity {
                                 String jobID = edtJobID.getText().toString();
                                 SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
                                 Date date = new Date();
-                                M_dgps_pilldata mpr1 = new M_dgps_pilldata(sharediv, sharerange, sharefb, sl, jobID, userid, spinner_duration,
+                                M_dgps_pilldata mpr1 = new M_dgps_pilldata(sharediv, sharerange, sharefb, sl, jobID, userid, "",
                                         "0", "0", "0", "0", "0",
                                         edttxtpatchno.getText().toString(), edttxtringno.getText().toString(), edtForestoffnm.getText().toString(),
                                         userid, formatter.format(date), txtViewdiv.getText().toString(), txtViewran.getText().toString(),
                                         txtViewfb.getText().toString(), "0", "0", "0", "",
-                                        "", imagepath1_F, imagepath1_B, imagepath1_I, imagepath1_O, imagepath1_T, getMyMacAddress(), "", "0"
-                                        , d_frjvc_lat, d_frjvc_long, edtdpillno.getText().toString(),d_old_id,"","0","0","","");//+"_"+pilshiftsts,surdir,accuracy
+                                        "", "", "", "", "", "",
+                                        getMyMacAddress(), "", "0"
+                                        , d_frjvc_lat, d_frjvc_long, edtdpillno.getText().toString(), d_old_id,
+                                        "", "0", "0", "", "",
+                                        "0", _reason, edtremark.getText().toString());
                                 try {
                                     dbHelper.open();
                                     long status = dbHelper.insertDGPSSurveyPillarData(mpr1);
                                     dbHelper.close();
                                     if (status >= 0) {
-                                        if (checkDGPSDataAvalability()) {
-                                            image_name = new HashMap<Character, String>();
-                                            image_name.put('F', imagepath1_F);
-                                            image_name.put('B', imagepath1_B);
-                                            image_name.put('I', imagepath1_I);
-                                            image_name.put('O', imagepath1_O);
-                                            image_name.put('T', imagepath1_T);
-                                            long a = insertDGPSImage((HashMap<Character, String>) image_name, userid, Integer.parseInt(d_old_id));
-                                            if (a == 5) {
-                                                ClipboardManager cm = (ClipboardManager) getApplication().getSystemService(Context.CLIPBOARD_SERVICE);
-                                                ClipData clipData = ClipData.newPlainText("JobID", jobID);
-                                                cm.setPrimaryClip(clipData);
-                                                Intent launchIntent = getPackageManager().getLaunchIntentForPackage("SurveyMobile.Droid");
-                                                if (launchIntent != null) {
-                                                    timecheck=1;
-                                                    Calendar c = Calendar.getInstance();
-                                                    System.out.println("Current time =&gt; "+c.getTime());
-                                                    _startDateFormat = new SimpleDateFormat("hh:mm:ss");
-                                                    _startTime = _startDateFormat.format(c.getTime());
-                                                    // finishAffinity();
-                                                    reset();
-                                                    startActivity(launchIntent);
-                                                } else {
-                                                    Toast.makeText(DGPSDataCollectActivity.this, "There is no package available in android", Toast.LENGTH_LONG).show();
-                                                }
-                                            } else {
-                                                Toast.makeText(getApplicationContext(), "Pillar pictures is not stored", Toast.LENGTH_LONG).show();
-                                            }
-                                        } else {
-                                            Toast.makeText(getApplicationContext(), "NoT Pillar registered Successfully", Toast.LENGTH_LONG).show();
+                                        if (checkDGPSDataAvalability(2)) {
+                                            Toast.makeText(getApplicationContext(), "Pillar registered successfully", Toast.LENGTH_LONG).show();
+                                            Intent i = null;
+                                            i = new Intent(getApplicationContext(), DGPSMapViewActivity.class);
+                                            i.putExtra("kml_status", kmlstatus);
+                                            /* i.putExtra("check_sts", d_check_sts);*/
+                                            startActivity(i);
                                         }
                                     }
 
@@ -512,6 +634,7 @@ public class DGPSDataCollectActivity extends AppCompatActivity {
 
         }
     }
+
     private String getMyMacAddress() {
         String macAddress = "";
         telephonyManager = (TelephonyManager) getSystemService(this.TELEPHONY_SERVICE);
@@ -525,6 +648,7 @@ public class DGPSDataCollectActivity extends AppCompatActivity {
         }
         return macAddress;
     }
+
     private int insertDGPSImage(HashMap<Character, String> image_name, String userid, int sl) {
         long status = 0;
         int count = 0;
@@ -544,11 +668,11 @@ public class DGPSDataCollectActivity extends AppCompatActivity {
         return count;
     }
 
-    private boolean checkDGPSDataAvalability() {
+    private boolean checkDGPSDataAvalability(int a) {
         boolean b = false;
         try {
             db = openOrCreateDatabase("sltp.db", MODE_PRIVATE, null);
-            Cursor c = db.rawQuery("update m_dgps_Survey_pill_data set m_dgps_surv_sts='1' where m_p_lat='" + d_frjvc_lat + "' and m_p_long='" + d_frjvc_long + "'", null);
+            Cursor c = db.rawQuery("update m_dgps_Survey_pill_data set m_dgps_surv_sts='1',m_survey_status='"+a+"' where m_p_lat='" + d_frjvc_lat + "' and m_p_long='" + d_frjvc_long + "'", null);
             if (c.getCount() >= 0) {
                 b = true;
             }
@@ -561,7 +685,7 @@ public class DGPSDataCollectActivity extends AppCompatActivity {
     }
 
     public static String getUniqueIMEIId(Context context) {
-        String imei="";
+        String imei = "";
        /* try {
             TelephonyManager telephonyManager = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
             if (ActivityCompat.checkSelfPermission(context, android.Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {

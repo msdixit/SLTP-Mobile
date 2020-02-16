@@ -366,6 +366,35 @@ public class M_dgps_pilldata {
 
     private String d_pill_no;
 
+    private String survey_status;
+    private String reason;
+
+    public String getSurvey_status() {
+        return survey_status;
+    }
+
+    public void setSurvey_status(String survey_status) {
+        this.survey_status = survey_status;
+    }
+
+    public String getReason() {
+        return reason;
+    }
+
+    public void setReason(String reason) {
+        this.reason = reason;
+    }
+
+    public String getRemark() {
+        return remark;
+    }
+
+    public void setRemark(String remark) {
+        this.remark = remark;
+    }
+
+    private String remark;
+
 
     public M_dgps_pilldata(String d_id, String r_id, String fb_id, int pill_no, String job_id, String u_id, String survey_durn,
                            String f_pic_status, String b_pic_status, String i_pic_status, String o_pic_status, String div_pic_status,
@@ -374,7 +403,8 @@ public class M_dgps_pilldata {
                            String survey_segment,String completion_sts, String f_pic_name, String b_pic_name,
                            String i_pic_name, String o_pic_name, String div_pic_name,String device_imei_no,
                            String pillar_sfile_path,String pillar_sfile_status,String frjvc_lat,String frjvc_long,
-                           String d_pill_no,String d_old_id,String pillar_rfile_path,String pillar_rfile_status,String completion_status,String rtx_min,String rtx_sec) {
+                           String d_pill_no,String d_old_id,String pillar_rfile_path,String pillar_rfile_status,
+                           String completion_status,String rtx_min,String rtx_sec,String survey_status,String reason,String remark) {
         this.d_id = d_id;
         this.r_id = r_id;
         this.fb_id = fb_id;
@@ -417,6 +447,9 @@ public class M_dgps_pilldata {
         this.completion_status=completion_status;
         this.rtx_min=rtx_min;
         this.rtx_sec=rtx_sec;
+        this.survey_status=survey_status;
+        this.reason=reason;
+        this.remark=remark;
     }
 
 

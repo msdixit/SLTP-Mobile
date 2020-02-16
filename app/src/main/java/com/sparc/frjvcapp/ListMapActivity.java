@@ -981,56 +981,6 @@ public class ListMapActivity extends AppCompatActivity implements OnMapReadyCall
             } else {
                 c3.setChecked(false);
             }
-          /*  if (k == 1) {
-                c6.setChecked(true);
-            } else {
-                c6.setChecked(false);
-            }
-            if (l == 1) {
-                c1.setChecked(true);
-            } else {
-                c1.setChecked(false);
-            }
-            if (m == 1) {
-                c2.setChecked(true);
-            } else {
-                c2.setChecked(false);
-            }
-            if (n == 1) {
-                c3.setChecked(true);
-            } else {
-                c3.setChecked(false);
-            }*/
-
-            /*c1.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-
-                    if (((CheckBox) view).isChecked()) {
-                        getStateData();
-                        l = 1;
-                    } else {
-                     googleMap.clear();
-
-                        getAllSureypoints(userid, divid, rangeid, fbid);
-                        l = 0;
-                    }
-                }
-            });
-            c2.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-
-                    if (((CheckBox) view).isChecked()) {
-                        getDivisionData();
-                        m = 1;
-                    } else {
-                       googleMap.clear();
-                        getAllSureypoints(userid, divid, rangeid, fbid);
-                        m = 0;
-                    }
-                }
-            });*/
             c3.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -1062,9 +1012,6 @@ public class ListMapActivity extends AppCompatActivity implements OnMapReadyCall
                             }
                             getAllSureypoints(userid, divid, rangeid, fbid);
                         }
-
-
-                       // n = 0;
                     }
                 }
             });

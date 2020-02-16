@@ -1,7 +1,7 @@
 package com.sparc.frjvcapp.pojo;
 
 public class M_dgpssurvey_pillar_data {
-    public M_dgpssurvey_pillar_data(String p_lat, String p_long, String pillar_no, String fb_name, String fb_id, String p_syrvey_sts, String m_dgps_surv_sts,String m_dgps_file_sts,String o_Id) {
+    public M_dgpssurvey_pillar_data(String p_lat, String p_long, String pillar_no, String fb_name, String fb_id, String p_syrvey_sts, String m_dgps_surv_sts, String m_dgps_file_sts, String o_Id, String m_survey_status) {
         this.p_lat = p_lat;
         this.p_long = p_long;
         this.pillar_no = pillar_no;
@@ -9,9 +9,12 @@ public class M_dgpssurvey_pillar_data {
         this.fb_id = fb_id;
         this.p_syrvey_sts = p_syrvey_sts;
         this.m_dgps_surv_sts = m_dgps_surv_sts;
-        this.m_dgps_file_sts=m_dgps_file_sts;
-        this.o_Id=o_Id;
+        this.m_dgps_file_sts = m_dgps_file_sts;
+        this.o_Id = o_Id;
+        this.m_survey_status = m_survey_status;
     }
+
+    private String m_survey_status;
 
     public String getO_Id() {
         return o_Id;
@@ -104,4 +107,12 @@ public class M_dgpssurvey_pillar_data {
     }
 
     private String m_dgps_file_sts;
+
+    public String getM_survey_status() {
+        return m_survey_status;
+    }
+
+    public void setM_survey_status(String m_survey_status) {
+        this.m_survey_status = m_survey_status;
+    }
 }

@@ -63,9 +63,8 @@
             android:textSize="17dip" />
 
         -->
-
         <CheckBox
-            android:id="@+id/CheckMMV"
+            android:id="@+id/checkCMV"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="0dp"
@@ -77,9 +76,8 @@
             android:text="CMV Boundary"
             android:textSize="17dip"
             />
-
         <CheckBox
-            android:id="@+id/checkCMV"
+            android:id="@+id/CheckMMV"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="0dp"
@@ -91,6 +89,8 @@
             android:text="MMV Boundary"
             android:textSize="17dip"
             />
+
+
         <CheckBox
             android:id="@+id/chkSurveyPillar"
             android:layout_width="fill_parent"

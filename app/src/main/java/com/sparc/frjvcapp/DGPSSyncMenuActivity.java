@@ -228,6 +228,10 @@ public class DGPSSyncMenuActivity extends AppCompatActivity {
     }
 
     private void ZipFolder(File file) {
+        /*if(file.isDirectory())
+        {
+            file.delete();
+        }*/
         RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), file);
         MultipartBody.Part multipartBody = MultipartBody.Part.createFormData("file", file.getName(), requestFile);
         Call<Object> responseBodyCall = jsonPlaceHolderApi.sendDataWithFile(Integer.parseInt(sharefb), multipartBody);
@@ -288,6 +292,11 @@ public class DGPSSyncMenuActivity extends AppCompatActivity {
     }
 
     private void ZipRTXFolder(File file) {
+       /* if(file.isDirectory())
+        {
+            file.delete();
+        }
+*/
         RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), file);
         MultipartBody.Part multipartBody = MultipartBody.Part.createFormData("file", file.getName(), requestFile);
         Call<Object> responseBodyCall = jsonPlaceHolderApi.sendRTXDataWithFile(Integer.parseInt(sharefb), multipartBody);
@@ -560,6 +569,11 @@ public class DGPSSyncMenuActivity extends AppCompatActivity {
                             json.put("pillar_rfile_path", cursor.getString(cursor.getColumnIndex("pillar_rfile_path")));
                             json.put("pillar_rfile_status", cursor.getString(cursor.getColumnIndex("pillar_rfile_status")));
                             json.put("completion_status", cursor.getString(cursor.getColumnIndex("completion_status")));
+                            json.put("rtx_survey_min", cursor.getString(cursor.getColumnIndex("rtx_survey_min")));
+                            json.put("rtx_survey_second", cursor.getString(cursor.getColumnIndex("rtx_survey_second")));
+                            json.put("survey_status", cursor.getString(cursor.getColumnIndex("survey_status")));
+                            json.put("reason", cursor.getString(cursor.getColumnIndex("reason")));
+                            json.put("remark", cursor.getString(cursor.getColumnIndex("remark")));
                             jsonArray.put(json);
                         } catch (Exception ee) {
                             ee.printStackTrace();

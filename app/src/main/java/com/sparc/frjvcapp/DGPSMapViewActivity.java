@@ -568,6 +568,7 @@ public class DGPSMapViewActivity extends AppCompatActivity implements OnMapReady
             ArrayList<String> status = new ArrayList<String>();
             ArrayList<String> file = new ArrayList<String>();
             ArrayList<String> o_id = new ArrayList<String>();
+            ArrayList<String> survey_status = new ArrayList<String>();
 
             rangeKey = new HashMap<>();
             db = openOrCreateDatabase("sltp.db", MODE_PRIVATE, null);
@@ -581,13 +582,14 @@ public class DGPSMapViewActivity extends AppCompatActivity implements OnMapReady
                         status.add(cursor.getString(cursor.getColumnIndex("m_dgps_surv_sts")));
                         file.add(cursor.getString(cursor.getColumnIndex("m_dgps_file_sts")));
                         o_id.add(cursor.getString(cursor.getColumnIndex("o_Id")));
+                        survey_status.add(cursor.getString(cursor.getColumnIndex("m_survey_status")));
                     } while (cursor.moveToNext());
                 }
                 cmvsta = true;
                 cursor.close();
                 db.close();
                 for (int j = 0; j < pillarno.size(); j++) {
-                    addSurveyPointtoMap(Double.parseDouble(lat.get(j)), Double.parseDouble(lon.get(j)), pillarno.get(j), Integer.parseInt(status.get(j)), Integer.parseInt(file.get(j)), Integer.parseInt(o_id.get(j)));
+                    addSurveyPointtoMap(Double.parseDouble(lat.get(j)), Double.parseDouble(lon.get(j)), pillarno.get(j), Integer.parseInt(status.get(j)), Integer.parseInt(file.get(j)), Integer.parseInt(o_id.get(j)),Integer.parseInt(survey_status.get(j)));
                 }
             } else {
                 cmvsta = false;
@@ -598,23 +600,30 @@ public class DGPSMapViewActivity extends AppCompatActivity implements OnMapReady
         }
     }
 
-    private void addSurveyPointtoMap(double key, double value, String pillno, int Status, int file_sts, int o_id) {
-        if (Status == 0 && file_sts == 0) {
+    private void addSurveyPointtoMap(double key, double value, String pillno, int Status, int file_sts, int o_id,int survey_status) {
+        if (Status == 0 && file_sts == 0 && survey_status==0) {
             BitmapDrawable bitmapdraw = (BitmapDrawable) getResources().getDrawable(R.drawable.yellow);
             Bitmap b = bitmapdraw.getBitmap();
             Bitmap smallMarker = Bitmap.createScaledBitmap(b, 80, 80, false);
             googleMap.addMarker(new MarkerOptions().position(
                     new LatLng(key, value)).title("Pillar No:" + pillno).snippet("Lat:" + key + ",Long:" + value + ",Status:" + Status + ",File:" + file_sts + ",OldID:" + o_id).icon(BitmapDescriptorFactory.fromBitmap(smallMarker)));
-        } else if (Status == 1 && file_sts == 0) {
+        } else if (Status == 1 && file_sts == 0 && survey_status==1) {
             BitmapDrawable bitmapdraw = (BitmapDrawable) getResources().getDrawable(R.drawable.red);
             Bitmap b = bitmapdraw.getBitmap();
             Bitmap smallMarker = Bitmap.createScaledBitmap(b, 80, 80, false);
             googleMap.addMarker(new MarkerOptions().position(
                     new LatLng(key, value)).title("Pillar No:" + pillno).snippet("Lat:" + key + ",Long:" + value + ",Status:" + Status + ",File:" + file_sts + ",OldID:" + o_id).icon(BitmapDescriptorFactory.fromBitmap(smallMarker)));
-        } else if (Status == 1 && file_sts == 1) {
+        } else if (Status == 1 && file_sts == 1 && survey_status==1) {
             BitmapDrawable bitmapdraw = (BitmapDrawable) getResources().getDrawable(R.drawable.green);
             Bitmap b = bitmapdraw.getBitmap();
             Bitmap smallMarker = Bitmap.createScaledBitmap(b, 80, 80, false);
+            googleMap.addMarker(new MarkerOptions().position(
+                    new LatLng(key, value)).title("Pillar No:" + pillno).snippet("Lat:" + key + ",Long:" + value + ",Status:" + Status + ",File:" + file_sts + ",OldID:" + o_id).icon(BitmapDescriptorFactory.fromBitmap(smallMarker)));
+        }
+        else if (Status == 1 && file_sts == 0 && survey_status==2) {
+            BitmapDrawable bitmapdraw = (BitmapDrawable) getResources().getDrawable(R.drawable.green);
+            Bitmap b = bitmapdraw.getBitmap();
+            Bitmap smallMarker = Bitmap.createScaledBitmap(b, 120, 120, false);
             googleMap.addMarker(new MarkerOptions().position(
                     new LatLng(key, value)).title("Pillar No:" + pillno).snippet("Lat:" + key + ",Long:" + value + ",Status:" + Status + ",File:" + file_sts + ",OldID:" + o_id).icon(BitmapDescriptorFactory.fromBitmap(smallMarker)));
         }

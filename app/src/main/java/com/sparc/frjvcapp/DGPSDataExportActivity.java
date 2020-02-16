@@ -230,7 +230,7 @@ public class DGPSDataExportActivity extends AppCompatActivity {
         try {
             db = openOrCreateDatabase("sltp.db", MODE_PRIVATE, null);
             arrayList.clear();
-            c = db.rawQuery("SELECT * from m_fb_dgps_survey_pill_data where pillar_sfile_status='0' and delete_status='0' and fb_id='" + sharefb + "' order by survey_time desc limit 1", null);
+            c = db.rawQuery("SELECT * from m_fb_dgps_survey_pill_data where pillar_sfile_status='0' and delete_status='0' and survey_status='1' and fb_id='" + sharefb + "' order by survey_time desc limit 1", null);
             int count = c.getCount();
             if (count >= 1) {
                 if (c.moveToFirst()) {

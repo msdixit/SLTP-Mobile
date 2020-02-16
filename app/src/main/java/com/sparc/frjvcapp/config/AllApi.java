@@ -6,6 +6,8 @@ public class AllApi {
     //public static final String LOG_IN_API="http://odishaforestlandsurvey.in/api/values/auth/";
     public static final String LOG_IN_API="http://14.98.253.212/sltp/api/values/auth/";
 
+    public static final String OTP_IN_API="http://14.98.253.212/sltp/api/values/sendotptouser/";
+
     //public static final String F_D_RANGE_DATA_API="http://odishaforestlandsurvey.in/api/values/range/";
     public static final String F_D_RANGE_DATA_API="http://14.98.253.212/sltp/api/values/range/";
 

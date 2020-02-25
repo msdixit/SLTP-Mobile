@@ -32,16 +32,27 @@
             android:layout_height="0dp"
             android:layout_weight="1"
             android:gravity="center"
-            android:orientation="horizontal">
+            android:orientation="vertical"
+            android:weightSum="1">
 
             <TextView
                 android:id="@+id/WelcomeTextView"
+                android:layout_weight=".7"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="0dp"
                 android:text="@string/welcome_back"
                 android:textAlignment="center"
                 android:textColor="@color/cast_expanded_controller_background_color"
                 android:textSize="25sp"
+                android:textStyle="bold" />
+            <TextView
+                android:id="@+id/macaddress"
+                android:layout_width="match_parent"
+                android:layout_weight=".3"
+                android:layout_height="0dp"
+                android:textAlignment="center"
+                android:textColor="@color/cast_expanded_controller_background_color"
+                android:textSize="15sp"
                 android:textStyle="bold" />
         </LinearLayout>
         <LinearLayout

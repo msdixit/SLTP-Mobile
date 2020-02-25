@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
@@ -45,9 +46,10 @@ public class MiddleMapListActivity extends AppCompatActivity {
     public static final String data = "data";
     public static final String userlogin = "userlogin";
     ImageView data_view, map_view, sync, download;
+    TextView fbName;
     SQLiteDatabase db;
     DbHelper dbHelper;
-    String divid, rangeid, fbid, userid, kmlstatus,_token;;
+    String divid, rangeid, fbid, userid, kmlstatus,_token,fb_name;
     JSONArray jsonArray = new JSONArray();
     JSONObject fp_data = new JSONObject();
     ProgressDialog progressDialog;
@@ -62,6 +64,7 @@ public class MiddleMapListActivity extends AppCompatActivity {
         divid = shared.getString("fbdivcode", "0");
         rangeid = shared.getString("fbrangecode", "0");
         fbid = shared.getString("fbcode", "0");
+        fb_name = shared.getString("fbname", "0");
 
         SharedPreferences login = getApplicationContext().getSharedPreferences(userlogin, MODE_PRIVATE);
         userid = login.getString("uemail", "0");
@@ -72,9 +75,11 @@ public class MiddleMapListActivity extends AppCompatActivity {
         data_view = findViewById(R.id.dataview);
         map_view = findViewById(R.id.mapview);
         sync = findViewById(R.id.sync);
-        download = findViewById(R.id.download);
+        download = findViewById(R.id.data_point_dwld);
+        fbName=findViewById(R.id.dgpsfbName);
         Intent i = getIntent();
         kmlstatus = i.getStringExtra("kml_status");
+        fbName.setText(fb_name);
 
         map_view.setOnClickListener(new View.OnClickListener() {
             @Override

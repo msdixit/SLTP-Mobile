@@ -10,6 +10,7 @@ import okhttp3.MultipartBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.FormUrlEncoded;
+import retrofit2.http.Header;
 import retrofit2.http.Multipart;
 import retrofit2.http.POST;
 import retrofit2.http.Part;
@@ -25,10 +26,10 @@ public interface RetrofitInterface {
     Call<Response1> uploadDGPSImage(@Part MultipartBody.Part image);
 
     @Multipart
-    @POST("/api/values/savezipfiles")
+    @POST("/sltp/api/values/savezipfiles")
     Call<Object> sendDataWithFile(@Query("fid") Integer fid,@Part MultipartBody.Part file);
 
     @Multipart
-    @POST("/api/values/savezipfilesrtx")
+    @POST("/sltp/api/values/savezipfilesrtx")
     Call<Object> sendRTXDataWithFile(@Query("fid") Integer fid,@Part MultipartBody.Part file);
 }

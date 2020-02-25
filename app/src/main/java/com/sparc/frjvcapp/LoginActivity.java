@@ -94,11 +94,11 @@ public class LoginActivity extends AppCompatActivity {
     ArrayList<String> mmv_list;
     Context context;
     private ImageView bookIconImageView;
-    private TextView bookITextView, skipTextView;
+    private TextView bookITextView, skipTextView,macaddress;
     private ProgressBar loadingProgressBar;
     private RelativeLayout rootView;
     LinearLayout afterAnimationView;
-    private TextInputEditText txtemail, txtpassword,otpEditText;
+    private TextInputEditText txtemail, txtpassword, otpEditText;
     private Button login, getOTPButton;
     private String password;
     private DbHelper.DatabaseHelper mDbHelper;
@@ -108,8 +108,7 @@ public class LoginActivity extends AppCompatActivity {
     int[] head = new int[]{1, 2, 3, 12};
     int[] subhead = new int[]{4, 5, 6, 7, 10, 11};
     TelephonyManager telephonyManager;
-    String _token,_serviceOTP;
-
+    String _token, _serviceOTP;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -125,7 +124,10 @@ public class LoginActivity extends AppCompatActivity {
 
         txtemail = findViewById(R.id.emailEditText);
         txtpassword = findViewById(R.id.passwordEditText);
-        otpEditText=findViewById(R.id.otpEditText);
+        otpEditText = findViewById(R.id.otpEditText);
+
+        macaddress=findViewById(R.id.macaddress);
+        macaddress.setText(getMyMacAddress());
 
         login = findViewById(R.id.loginButton);
         getOTPButton = findViewById(R.id.getOTPButton);
@@ -172,14 +174,14 @@ public class LoginActivity extends AppCompatActivity {
             }
         }
 
-        otpEditText.addTextChangedListener (new TextWatcher() {
+        otpEditText.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
             }
 
             @Override
-            public void onTextChanged(CharSequence s, int i, int i1, int i2){
+            public void onTextChanged(CharSequence s, int i, int i1, int i2) {
                 if (!(otpEditText.toString().trim().isEmpty()))
                     login.setVisibility(VISIBLE);
             }
@@ -200,7 +202,7 @@ public class LoginActivity extends AppCompatActivity {
                     ConnectivityManager cm = (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
                     NetworkInfo nInfo = cm.getActiveNetworkInfo();
                     if (nInfo != null && nInfo.isAvailable() && nInfo.isConnected()) {
-                       get_OTP(txtemail.getText().toString(), txtpassword.getText().toString());
+                        get_OTP(txtemail.getText().toString(), txtpassword.getText().toString(),macaddress.getText().toString());
 
                     } else {
                         Toast.makeText(getApplicationContext(), "You don't have Internet Connection.", Toast.LENGTH_SHORT).show();
@@ -217,13 +219,13 @@ public class LoginActivity extends AppCompatActivity {
                     txtemail.setError("Please Enter the User Id");
                 } else if (txtpassword.getText().toString().matches("")) {
                     txtpassword.setError("Please Enter Password");
-                }  else if (otpEditText.getText().toString().matches("")) {
+                } else if (otpEditText.getText().toString().matches("")) {
                     txtpassword.setError("Please Enter OTP");
                 } else {
                     ConnectivityManager cm = (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
                     NetworkInfo nInfo = cm.getActiveNetworkInfo();
                     if (nInfo != null && nInfo.isAvailable() && nInfo.isConnected()) {
-                        login_auth(txtpassword.getText().toString(),otpEditText.getText().toString(),_serviceOTP);
+                        login_auth(txtpassword.getText().toString(), otpEditText.getText().toString(), _serviceOTP);
                     } else {
                         Toast.makeText(getApplicationContext(), "You don't have Internet Connection.", Toast.LENGTH_SHORT).show();
                     }
@@ -345,10 +347,10 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
-    private boolean login_auth(String pass,String _OTP,String _sOTP) {
+    private boolean login_auth(String pass, String _OTP, String _sOTP) {
         try {
             RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
-            String URL = AllApi.LOG_IN_API + txtemail.getText().toString() + "/" + pass+"/"+_OTP+"/"+_sOTP;
+            String URL = AllApi.LOG_IN_API + txtemail.getText().toString() + "/" + pass + "/" + _OTP + "/" + _sOTP;
             progressDialog = new ProgressDialog(this, R.style.MyAlertDialogStyle);
             progressDialog.setMessage("Please wait...You are logging in to GFLO");
             progressDialog.show();
@@ -408,9 +410,12 @@ public class LoginActivity extends AppCompatActivity {
                 public void onErrorResponse(VolleyError error) {
                     try {
                         final int httpStatusCode = error.networkResponse.statusCode;
+                        progressDialog.dismiss();
                         if (httpStatusCode == 400) {
-                            Toast.makeText(LoginActivity.this, "Invalid User or Password", Toast.LENGTH_LONG).show();
-                            progressDialog.dismiss();
+                            Toast.makeText(LoginActivity.this, "Unauthorize User", Toast.LENGTH_LONG).show();
+
+                        } else if (httpStatusCode == 401) {
+                            Toast.makeText(LoginActivity.this, "Invalid User or Password or OTP", Toast.LENGTH_LONG).show();
                         }
                     } catch (Exception ee) {
                         ee.printStackTrace();
@@ -528,21 +533,23 @@ public class LoginActivity extends AppCompatActivity {
 
     }
 
-    private void get_OTP(String _userID, String _password) {
+    private String get_OTP(String _userID, String _password,String _macaddress) {
         try {
             RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
-            String URL = AllApi.OTP_IN_API + _userID + "/" + _password;
+            String URL = AllApi.OTP_IN_API + _userID + "/" + _password;//+"/"+_macaddress
             progressDialog = new ProgressDialog(this, R.style.MyAlertDialogStyle);
             progressDialog.setMessage("Wait for sometime...");
             progressDialog.show();
             StringRequest stringRequest = new StringRequest(Request.Method.GET, URL, response -> {
                 try {
-                    int _otp=Integer.parseInt(response);
-                    _serviceOTP =String.valueOf(_otp);
-                    if(_serviceOTP.equals("2")) {
+                    int _otp = Integer.parseInt(response);
+                    if (_serviceOTP != "")
+                        _serviceOTP = "";
+                    _serviceOTP = String.valueOf(_otp);
+                    if (_serviceOTP.equals("2")) {
                         progressDialog.dismiss();
                         Toast.makeText(getApplicationContext(), "Your mobile number is not registered with us..Please contact server admin", Toast.LENGTH_SHORT).show();
-                    }else{
+                    } else {
                         progressDialog.dismiss();
                         Toast.makeText(getApplicationContext(), "OTP sent to your registered mobile number..", Toast.LENGTH_SHORT).show();
                     }
@@ -576,6 +583,7 @@ public class LoginActivity extends AppCompatActivity {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        return _serviceOTP;
     }
 
     @Override

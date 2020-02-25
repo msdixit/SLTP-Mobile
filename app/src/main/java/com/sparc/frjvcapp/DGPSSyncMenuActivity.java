@@ -64,9 +64,9 @@ public class DGPSSyncMenuActivity extends AppCompatActivity {
     public static final String data = "data";
     public static final String userlogin = "userlogin";
     private SQLiteDatabase db;
-    String sharediv, sharerange, sharefb, sharefbtype, sharefbname, userid, jobid, div_name, range_name, fb_name,_token,frjvc_lat, frjvc_long;
-    SharedPreferences shared,_shareToken;
-    Button sync, syncfile;
+    String sharediv, sharerange, sharefb, sharefbtype, sharefbname, userid, jobid, div_name, range_name, fb_name, _token, frjvc_lat, frjvc_long;
+    SharedPreferences shared, _shareToken;
+    Button sync, syncfile, rtxfile;
     DbHelper dbHelper;
     private ProgressDialog progressDialog;
     JSONArray jsonArray;
@@ -83,6 +83,7 @@ public class DGPSSyncMenuActivity extends AppCompatActivity {
 
         sync = findViewById(R.id.sync);
         syncfile = findViewById(R.id.syncfile);
+        rtxfile = findViewById(R.id.rtxfile);
 
         totpoint = findViewById(R.id.totpoint);
         syncpoint = findViewById(R.id.syncpoint);
@@ -107,8 +108,8 @@ public class DGPSSyncMenuActivity extends AppCompatActivity {
         range_name = shared.getString("range_name", "0");
         fb_name = shared.getString("fb_name", "0");
 
-        _shareToken=getApplicationContext().getSharedPreferences(userlogin,MODE_PRIVATE);
-        _token=_shareToken.getString("token","0");
+        _shareToken = getApplicationContext().getSharedPreferences(userlogin, MODE_PRIVATE);
+        _token = _shareToken.getString("token", "0");
 
         dgpsfbName.setText(fb_name);
 
@@ -116,10 +117,50 @@ public class DGPSSyncMenuActivity extends AppCompatActivity {
 
         OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
 
+        db = openOrCreateDatabase("sltp.db", MODE_PRIVATE, null);
+        Cursor c = db.rawQuery("update m_fb_dgps_survey_pill_data set pillar_sfile_status='1',pillar_rfile_status='1',sync_status='0'", null);
+        if (c.getCount() >= 0) {
+
+        }
+        c.close();
+        db.close();
+/*        OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
         httpClient.addInterceptor(new Interceptor() {
             @Override
             public okhttp3.Response intercept(Chain chain) throws IOException {
+                okhttp3.Request original = chain.request();
+
+                // Request customization: add request headers
+                Request.Builder requestBuilder = original.newBuilder()
+                        .addHeader("Cache-Control", "no-cache")
+                        .addHeader("Cache-Control", "no-store");
+
+                Request request = requestBuilder.build();
+                return chain.proceed(request);
+            }
+        });*/
+       /* httpClient.addInterceptor(new Interceptor() {
+            @Override
+            public okhttp3.Response intercept(Chain chain) throws IOException {
                 okhttp3.Request request = chain.request().newBuilder().addHeader("Authorization", "Bearer "+_token).build();
+                return chain.proceed(request);
+            }
+        });*/
+       /* OkHttpClient client = new OkHttpClient.Builder().addInterceptor(new Interceptor() {
+            @Override
+            public okhttp3.Response intercept(Chain chain) throws IOException {
+                okhttp3.Request newRequest  = chain.request().newBuilder()
+                        .addHeader("Authorization", "Bearer "+_token)
+                        .build();
+                return chain.proceed(newRequest);
+            }
+        }).build();*/
+
+
+        httpClient.addInterceptor(new Interceptor() {
+            @Override
+            public okhttp3.Response intercept(Chain chain) throws IOException {
+                okhttp3.Request request = chain.request().newBuilder().addHeader("Authorization", "Bearer " + _token).build();
                 return chain.proceed(request);
             }
         });
@@ -161,7 +202,7 @@ public class DGPSSyncMenuActivity extends AppCompatActivity {
                         String zipPath = "/SyncFile" + "_" + timeStamp + ".zip";
                         sfinalpath = sfile + spath;
                         dfinalpath = sfile + zipPath;
-
+                        File f = new File(dfinalpath);
                         zipFileAtPath(sfinalpath, dfinalpath);
                         Toast.makeText(getApplicationContext(), "Zip Completed", Toast.LENGTH_LONG).show();
                         File file = new File(dfinalpath);
@@ -169,6 +210,15 @@ public class DGPSSyncMenuActivity extends AppCompatActivity {
                     } else {
                         Toast.makeText(getApplicationContext(), "All files are synced", Toast.LENGTH_LONG).show();
                     }
+                }
+            }
+        });
+        rtxfile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ConnectivityManager cm = (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+                NetworkInfo nInfo = cm.getActiveNetworkInfo();
+                if (nInfo != null && nInfo.isAvailable() && nInfo.isConnected()) {
                     if (checkRTXFileStatus(userid, sharediv)) {
                         String sfile = Environment.getExternalStorageDirectory().toString();
                         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
@@ -176,7 +226,6 @@ public class DGPSSyncMenuActivity extends AppCompatActivity {
                         String zipPath = "/RtxData" + "_" + timeStamp + ".zip";
                         sfinalpath = sfile + spath;
                         dfinalpath = sfile + zipPath;
-
                         zipFileAtPath(sfinalpath, dfinalpath);
                         Toast.makeText(getApplicationContext(), "Zip Completed", Toast.LENGTH_LONG).show();
                         File file = new File(dfinalpath);
@@ -185,6 +234,7 @@ public class DGPSSyncMenuActivity extends AppCompatActivity {
                         Toast.makeText(getApplicationContext(), "All files are synced", Toast.LENGTH_LONG).show();
                     }
                 }
+
             }
         });
     }
@@ -235,6 +285,7 @@ public class DGPSSyncMenuActivity extends AppCompatActivity {
         RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), file);
         MultipartBody.Part multipartBody = MultipartBody.Part.createFormData("file", file.getName(), requestFile);
         Call<Object> responseBodyCall = jsonPlaceHolderApi.sendDataWithFile(Integer.parseInt(sharefb), multipartBody);
+        Toast.makeText(this, "ddd", Toast.LENGTH_LONG).show();
         responseBodyCall.enqueue(new Callback<Object>() {
             @Override
             public void onResponse(Call<Object> call, retrofit2.Response<Object> response) {
@@ -276,6 +327,7 @@ public class DGPSSyncMenuActivity extends AppCompatActivity {
                             }
                         }
                     } else {
+                        String s = response.errorBody().toString();
                         Toast.makeText(getApplicationContext(), response.errorBody().toString(), Toast.LENGTH_SHORT).show();
                     }
                 } catch (Exception ee) {
@@ -287,6 +339,7 @@ public class DGPSSyncMenuActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<Object> call, Throwable t) {
+                Toast.makeText(getApplicationContext(), "bsvshcvsc", Toast.LENGTH_LONG).show();
             }
         });
     }
@@ -637,9 +690,10 @@ public class DGPSSyncMenuActivity extends AppCompatActivity {
                         public Map<String, String> getHeaders() throws AuthFailureError {
                             Map<String, String> params = new HashMap<String, String>();
                             params.put("Content-Type", "application/json; charset=UTF-8");
-                            params.put("Authorization", "Bearer "+_token);
+                            params.put("Authorization", "Bearer " + _token);
                             return params;
                         }
+
                         @Override
                         public String getBodyContentType() {
                             return "application/json; charset=utf-8";

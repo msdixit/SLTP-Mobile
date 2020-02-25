@@ -130,7 +130,6 @@ public class DFPSRTXDataExportActivity extends AppCompatActivity {
                     @Override
                     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                         spill_no = (String) parent.getItemAtPosition(position);
-
                         fbid = fbKey.get(spill_no);
                         if (!spill_no.equals("Select Forest Block")) {
                         }

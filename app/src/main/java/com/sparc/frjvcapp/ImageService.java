@@ -238,7 +238,6 @@ public class ImageService extends JobService {
                 @Override
                 public void onFailure(Call<Response1> call, Throwable t) {
                 }
-
             });
         } else {
             Toast.makeText(ImageService.this, "Internet Connection is Not Available", Toast.LENGTH_LONG).show();

@@ -395,7 +395,6 @@ public class DGPSDataCollectActivity extends AppCompatActivity {
         if (timecheck != 0) {
             try {
                 Calendar c = Calendar.getInstance();
-                System.out.println("Current time =&gt; " + c.getTime());
                 _endDateFormat = new SimpleDateFormat("hh:mm:ss");
                 _endTime = _endDateFormat.format(c.getTime());
                 java.text.DateFormat df = new java.text.SimpleDateFormat("hh:mm:ss");
@@ -419,13 +418,18 @@ public class DGPSDataCollectActivity extends AppCompatActivity {
                 ee.printStackTrace();
             } finally {
                 timecheck = 0;
+                Intent i = null;
+                i = new Intent(getApplicationContext(), DGPSMapViewActivity.class);
+                i.putExtra("kml_status", kmlstatus);
+                /* i.putExtra("check_sts", d_check_sts);*/
+                startActivity(i);
             }
         }
     }
 
     @Override
     public void onBackPressed() {
-        Intent i = new Intent(getApplicationContext(), ChooseSurvetTypeActivity.class);
+        Intent i = new Intent(getApplicationContext(), DGPSMapViewActivity.class);
         i.setFlags(i.FLAG_ACTIVITY_NEW_TASK | i.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(i);
 
@@ -722,8 +726,12 @@ public class DGPSDataCollectActivity extends AppCompatActivity {
         mCurrentPhotoPath_T = null;
         edtForestoffnm.setText("");
         edtdpillno.setText("");
+        edtremark.setText("");
+
         /* dpSegment.setSelection(0);*/
         bpduration.setSelection(0);
+        surveyPossibility.setSelection(0);
+        chooseReason.setSelection(0);
         setpicoutward.setImageResource(0);
         setpictop.setImageResource(0);
         setpicbackward.setImageResource(0);

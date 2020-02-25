@@ -421,7 +421,7 @@
             android:layout_marginRight="5dp"
             android:layout_weight="0.12"
             android:orientation="horizontal"
-            android:weightSum="1">
+            android:weightSum="1.5">
 
 
             <Button
@@ -443,7 +443,19 @@
                 android:layout_marginRight="10dp"
                 android:layout_weight=".5"
                 android:background="@drawable/button_drawable"
-                android:text="Sync File"
+                android:text="Sync Static"
+                android:textColor="@color/white"
+                android:textSize="18dp" />
+
+            <Button
+                android:id="@+id/rtxfile"
+                android:layout_width="0dp"
+                android:layout_marginTop="10dp"
+                android:layout_height="match_parent"
+                android:layout_marginRight="10dp"
+                android:layout_weight=".5"
+                android:background="@drawable/button_drawable"
+                android:text="Sync RTX"
                 android:textColor="@color/white"
                 android:textSize="18dp" />
 

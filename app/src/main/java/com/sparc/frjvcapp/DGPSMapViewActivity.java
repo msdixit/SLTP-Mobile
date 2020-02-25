@@ -621,9 +621,9 @@ public class DGPSMapViewActivity extends AppCompatActivity implements OnMapReady
                     new LatLng(key, value)).title("Pillar No:" + pillno).snippet("Lat:" + key + ",Long:" + value + ",Status:" + Status + ",File:" + file_sts + ",OldID:" + o_id).icon(BitmapDescriptorFactory.fromBitmap(smallMarker)));
         }
         else if (Status == 1 && file_sts == 0 && survey_status==2) {
-            BitmapDrawable bitmapdraw = (BitmapDrawable) getResources().getDrawable(R.drawable.green);
+            BitmapDrawable bitmapdraw = (BitmapDrawable) getResources().getDrawable(R.drawable.map_grey);
             Bitmap b = bitmapdraw.getBitmap();
-            Bitmap smallMarker = Bitmap.createScaledBitmap(b, 120, 120, false);
+            Bitmap smallMarker = Bitmap.createScaledBitmap(b, 80, 80, false);
             googleMap.addMarker(new MarkerOptions().position(
                     new LatLng(key, value)).title("Pillar No:" + pillno).snippet("Lat:" + key + ",Long:" + value + ",Status:" + Status + ",File:" + file_sts + ",OldID:" + o_id).icon(BitmapDescriptorFactory.fromBitmap(smallMarker)));
         }

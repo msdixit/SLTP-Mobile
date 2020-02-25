@@ -87,15 +87,6 @@
                 android:weightSum="1">
 
                 <ImageView
-                    android:id="@+id/dataview"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_below="@+id/mapview"
-                    android:layout_weight=".5"
-                    android:background="@drawable/data_view"
-                    android:clickable="true" />
-
-                <ImageView
                     android:id="@+id/exporttofolder"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
@@ -103,6 +94,14 @@
                     android:layout_weight=".5"
                     android:background="@drawable/tag"
                     android:clickable="true" />
+                <ImageView
+                    android:id="@+id/synchronize"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_below="@+id/exporttofolder"
+                    android:layout_weight=".5"
+                    android:background="@drawable/sync"
+                    android:clickable="false" />
 
             </LinearLayout>
 
@@ -116,13 +115,15 @@
                 android:weightSum="1">
 
                 <ImageView
-                    android:id="@+id/synchronize"
+                    android:id="@+id/dataview"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:layout_below="@+id/exporttofolder"
+                    android:layout_below="@+id/mapview"
                     android:layout_weight=".5"
-                    android:background="@drawable/sync"
-                    android:clickable="false" />
+                    android:background="@drawable/data_view"
+                    android:clickable="true" />
+
+
 
                 <ImageView
                     android:id="@+id/exporttoExcel"

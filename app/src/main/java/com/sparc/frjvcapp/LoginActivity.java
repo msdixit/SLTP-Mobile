@@ -127,7 +127,7 @@ public class LoginActivity extends AppCompatActivity {
         otpEditText = findViewById(R.id.otpEditText);
 
         macaddress=findViewById(R.id.macaddress);
-        macaddress.setText(getMyMacAddress());
+        macaddress.setText("MAC ID:"+getMyMacAddress());
 
         login = findViewById(R.id.loginButton);
         getOTPButton = findViewById(R.id.getOTPButton);
@@ -350,7 +350,7 @@ public class LoginActivity extends AppCompatActivity {
     private boolean login_auth(String pass, String _OTP, String _sOTP) {
         try {
             RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
-            String URL = AllApi.LOG_IN_API + txtemail.getText().toString() + "/" + pass + "/" + _OTP + "/" + _sOTP;
+            String URL = BuildConfig.LOG_IN_API + txtemail.getText().toString() + "/" + pass + "/" + _OTP + "/" + _sOTP;
             progressDialog = new ProgressDialog(this, R.style.MyAlertDialogStyle);
             progressDialog.setMessage("Please wait...You are logging in to GFLO");
             progressDialog.show();
@@ -438,7 +438,7 @@ public class LoginActivity extends AppCompatActivity {
     private void insertrangeData(final String div_id) {
         try {
             RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
-            String URL = AllApi.F_D_RANGE_DATA_API + div_id;
+            String URL = BuildConfig.F_D_RANGE_DATA_API + div_id;
             StringRequest stringRequest = new StringRequest(Request.Method.GET, URL, new Response.Listener<String>() {
                 @Override
                 public void onResponse(String response) {
@@ -486,7 +486,7 @@ public class LoginActivity extends AppCompatActivity {
     private void inserfbdata(final String div_id) {
         try {
             RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
-            String URL = AllApi.F_D_FB_DATA_API + div_id;
+            String URL = BuildConfig.F_D_FB_DATA_API + div_id;
             StringRequest stringRequest = new StringRequest(Request.Method.GET, URL, new Response.Listener<String>() {
                 @Override
                 public void onResponse(String response) {
@@ -536,7 +536,7 @@ public class LoginActivity extends AppCompatActivity {
     private String get_OTP(String _userID, String _password,String _macaddress) {
         try {
             RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
-            String URL = AllApi.OTP_IN_API + _userID + "/" + _password;//+"/"+_macaddress
+            String URL = BuildConfig.OTP_IN_API + _userID + "/" + _password;//+"/"+_macaddress
             progressDialog = new ProgressDialog(this, R.style.MyAlertDialogStyle);
             progressDialog.setMessage("Wait for sometime...");
             progressDialog.show();

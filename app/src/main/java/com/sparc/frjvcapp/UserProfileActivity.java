@@ -46,12 +46,15 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.net.ssl.HttpsURLConnection;
 
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -236,7 +239,7 @@ public class UserProfileActivity extends AppCompatActivity implements EasyPermis
             ArrayList<String> mfb = dbHelper.getCMVMMVFiles(divid);
             for (int i = 0; i < mfb.size(); i++) {
 
-                new DownloadFile().execute(AllApi.F_KML_API + mfb.get(i));
+                new DownloadFile().execute(BuildConfig.F_KML_API + mfb.get(i));
 
             }
             dbHelper.close();
@@ -424,7 +427,7 @@ public class UserProfileActivity extends AppCompatActivity implements EasyPermis
                     fp_data = new JSONObject();
                     fp_data.put("fpdata", jsonArray);
                     RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
-                    String URL = AllApi.F_UDT_PILL_DATA;
+                    String URL = BuildConfig.F_UDT_PILL_DATA;
                     requestQueue.getCache().remove(URL);
                     final String requestBody = fp_data.toString();
                     StringRequest stringRequest = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
@@ -514,7 +517,7 @@ public class UserProfileActivity extends AppCompatActivity implements EasyPermis
                     fp_data = new JSONObject();
                     fp_data.put("fpdata", jsonArray);
                     RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
-                    String URL = AllApi.F_CFM_UDT_PILL_DATA;
+                    String URL = BuildConfig.F_CFM_UDT_PILL_DATA;
                     requestQueue.getCache().remove(URL);
                     final String requestBody = fp_data.toString();
                     StringRequest stringRequest = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
@@ -600,7 +603,7 @@ public class UserProfileActivity extends AppCompatActivity implements EasyPermis
                     fp_data = new JSONObject();
                     fp_data.put("sfpdata", jsonArray);
                     RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
-                    String URL = AllApi.F_SFT_FRJVC_PILL_DATA;
+                    String URL = BuildConfig.F_SFT_FRJVC_PILL_DATA;
                     requestQueue.getCache().remove(URL);
                     final String requestBody = fp_data.toString();
                     StringRequest stringRequest = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
@@ -785,7 +788,7 @@ public class UserProfileActivity extends AppCompatActivity implements EasyPermis
             int count;
             try {
                 URL url = new URL(f_url[0]);
-                URLConnection connection = url.openConnection();
+                HttpsURLConnection connection = (HttpsURLConnection)url.openConnection();
                 connection.connect();
                 // getting file length
                 int lengthOfFile = connection.getContentLength();

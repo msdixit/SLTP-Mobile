@@ -28,6 +28,6 @@ public String pill_no;
     }
 
     public String filename;
-public String sync_status;
+    public String sync_status;
 
 }

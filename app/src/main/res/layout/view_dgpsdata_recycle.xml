@@ -57,7 +57,7 @@
                 android:layout_gravity="center"
                 android:scaleType="fitXY"
                 android:padding="20dp"/>
-            </LinearLayout>
+        </LinearLayout>
 
     </LinearLayout>
 

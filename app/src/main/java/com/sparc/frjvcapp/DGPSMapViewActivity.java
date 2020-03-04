@@ -88,7 +88,6 @@ public class DGPSMapViewActivity extends AppCompatActivity implements OnMapReady
     private GoogleMap googleMap;
     private LatLng latLng, destination;
     String sharediv, sharerange, sharefb, sharefbtype, userid, jobid, div_name, range_name, fb_name;
-    private String serverKey = "AIzaSyB-VJ5Dc0Wf-AzmvNlwd48GuzwBN25s8JQ";
     public static int baseMapMenuPos = 0;
     public static LayoutInflater inflater1, inflater2;
     public static View alertLayout, alertLayout2;
@@ -572,7 +571,7 @@ public class DGPSMapViewActivity extends AppCompatActivity implements OnMapReady
 
             rangeKey = new HashMap<>();
             db = openOrCreateDatabase("sltp.db", MODE_PRIVATE, null);
-            Cursor cursor = db.rawQuery("select * from m_dgps_Survey_pill_data where m_fb_id='" + fbid + "' order by m_fb_pillar_no", null);
+            Cursor cursor = db.rawQuery("select * from m_dgps_Survey_pill_data where m_fb_id='" + fbid + "' and (m_pillar_avl_sts='0' or m_pillar_avl_sts='2')order by m_fb_pillar_no", null);
             if (cursor.getCount() > 0) {
                 if (cursor.moveToFirst()) {
                     do {

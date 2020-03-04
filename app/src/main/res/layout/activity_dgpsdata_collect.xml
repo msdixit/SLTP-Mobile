@@ -91,7 +91,7 @@
                         android:text="Division:"
                         android:textAlignment="gravity"
                         android:textColor="@color/color1"
-                        android:textSize="20sp"
+                        android:textSize="15sp"
                         android:textStyle="normal"
 
                         />
@@ -111,11 +111,10 @@
                         android:layout_height="match_parent"
                         android:enabled="true"
                         android:singleLine="true"
-                        android:textAlignment="gravity"
+                        android:textAlignment="center"
                         android:textColor="@color/color1"
                         android:textSize="15sp"
                         android:textStyle="normal"
-
                         />
 
                 </LinearLayout>
@@ -149,7 +148,7 @@
                         android:text="Range:"
                         android:textAlignment="gravity"
                         android:textColor="@color/color1"
-                        android:textSize="20sp"
+                        android:textSize="15sp"
                         android:textStyle="normal"
 
                         />
@@ -169,7 +168,7 @@
                         android:layout_height="match_parent"
                         android:enabled="true"
                         android:singleLine="true"
-                        android:textAlignment="gravity"
+                        android:textAlignment="center"
                         android:textColor="@color/color1"
                         android:textSize="15sp"
                         android:textStyle="normal"
@@ -207,7 +206,7 @@
                         android:text="Forest Block:"
                         android:textAlignment="gravity"
                         android:textColor="@color/color1"
-                        android:textSize="20sp"
+                        android:textSize="15sp"
                         android:textStyle="normal"
 
                         />
@@ -227,7 +226,7 @@
                         android:layout_height="match_parent"
                         android:enabled="true"
                         android:singleLine="true"
-                        android:textAlignment="gravity"
+                        android:textAlignment="center"
                         android:textColor="@color/color1"
                         android:textSize="15sp"
                         android:textStyle="normal"
@@ -253,7 +252,7 @@
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_marginRight="5sp"
-                    android:layout_weight="2"
+                    android:layout_weight="3"
                     android:gravity="center">
 
                     <TextView
@@ -265,7 +264,7 @@
                         android:text="Patch No:"
                         android:textAlignment="gravity"
                         android:textColor="@color/color1"
-                        android:textSize="20sp"
+                        android:textSize="15sp"
                         android:textStyle="normal" />
 
                 </LinearLayout>
@@ -273,7 +272,7 @@
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:layout_weight="3"
+                    android:layout_weight="2"
                     android:gravity="center">
 
                     <EditText
@@ -307,7 +306,7 @@
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_marginRight="5sp"
-                    android:layout_weight="2"
+                    android:layout_weight="3"
                     android:gravity="center">
 
                     <TextView
@@ -319,7 +318,7 @@
                         android:text="Ring No:"
                         android:textAlignment="gravity"
                         android:textColor="@color/color1"
-                        android:textSize="20sp"
+                        android:textSize="15sp"
                         android:textStyle="normal" />
 
                 </LinearLayout>
@@ -327,7 +326,7 @@
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:layout_weight="3"
+                    android:layout_weight="2"
                     android:gravity="center">
 
                     <EditText
@@ -361,7 +360,7 @@
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:layout_weight="2"
+                    android:layout_weight="3"
                     android:gravity="center">
 
                     <TextView
@@ -373,7 +372,7 @@
                         android:text="Pillar No:"
                         android:textAlignment="gravity"
                         android:textColor="@color/color1"
-                        android:textSize="20sp"
+                        android:textSize="15sp"
                         android:textStyle="normal" />
 
                 </LinearLayout>
@@ -381,7 +380,7 @@
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:layout_weight="3"
+                    android:layout_weight="2"
                     android:gravity="center">
 
                     <EditText
@@ -414,7 +413,7 @@
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:layout_weight="2"
+                    android:layout_weight="3"
                     android:gravity="center">
 
                     <TextView
@@ -423,10 +422,10 @@
                         android:layout_height="match_parent"
                         android:enabled="true"
                         android:singleLine="true"
-                        android:text="Frst. Person:"
+                        android:text="Forest Official:"
                         android:textAlignment="gravity"
                         android:textColor="@color/color1"
-                        android:textSize="20sp"
+                        android:textSize="15sp"
                         android:textStyle="normal" />
 
                 </LinearLayout>
@@ -434,7 +433,7 @@
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:layout_weight="3"
+                    android:layout_weight="2"
                     android:gravity="center">
 
                     <EditText
@@ -510,8 +509,52 @@
                 android:visibility="gone"
                 android:weightSum="5">
 
+<!--                <LinearLayout-->
+<!--                    android:id="@+id/l9"-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_below="@+id/l8"-->
+<!--                    android:layout_marginTop="10sp"-->
+<!--                    android:layout_weight="1"-->
+<!--                    android:orientation="horizontal"-->
+<!--                    android:weightSum="5">-->
+
+<!--                    <LinearLayout-->
+<!--                        android:layout_width="0dp"-->
+<!--                        android:layout_height="match_parent"-->
+<!--                        android:layout_weight="5"-->
+<!--                        android:gravity="center">-->
+
+<!--                        <fr.ganfra.materialspinner.MaterialSpinner-->
+<!--                            android:id="@+id/bpduration"-->
+<!--                            android:layout_width="match_parent"-->
+<!--                            android:layout_height="wrap_content"-->
+<!--                            android:layout_marginLeft="5sp"-->
+<!--                            android:layout_marginTop="5sp"-->
+<!--                            android:layout_marginRight="5sp"-->
+<!--                            android:layout_marginBottom="5sp"-->
+<!--                            app:ms_alignLabels="false"-->
+<!--                            app:ms_arrowColor="@color/color1"-->
+<!--                            app:ms_arrowSize="14dp"-->
+<!--                            app:ms_baseColor="@color/color1"-->
+<!--                            app:ms_dropDownHintView="@layout/dropdown_hint_item_layout"-->
+<!--                            app:ms_enableErrorLabel="false"-->
+<!--                            app:ms_enableFloatingLabel="true"-->
+<!--                            app:ms_errorColor="@color/red"-->
+<!--                            app:ms_floatingLabelColor="@color/color1"-->
+<!--                            app:ms_floatingLabelText="Direction"-->
+<!--                            app:ms_highlightColor="@color/color1"-->
+<!--                            app:ms_hint="Select Direction"-->
+<!--                            app:ms_hintColor="@color/color1"-->
+<!--                            app:ms_hintTextSize="15sp"-->
+<!--                            app:ms_hintView="@layout/hint_item_layout"-->
+<!--                            app:ms_multiline="false"-->
+<!--                            app:ms_thickness="0.5dp" />-->
+<!--                    </LinearLayout>-->
+<!--                </LinearLayout>-->
+
                 <LinearLayout
-                    android:id="@+id/l9"
+                    android:id="@+id/l10"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/l8"
@@ -523,52 +566,8 @@
                     <LinearLayout
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
-                        android:layout_weight="5"
-                        android:gravity="center">
-
-                        <fr.ganfra.materialspinner.MaterialSpinner
-                            android:id="@+id/bpduration"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginLeft="5sp"
-                            android:layout_marginTop="5sp"
-                            android:layout_marginRight="5sp"
-                            android:layout_marginBottom="5sp"
-                            app:ms_alignLabels="false"
-                            app:ms_arrowColor="@color/color1"
-                            app:ms_arrowSize="14dp"
-                            app:ms_baseColor="@color/color1"
-                            app:ms_dropDownHintView="@layout/dropdown_hint_item_layout"
-                            app:ms_enableErrorLabel="false"
-                            app:ms_enableFloatingLabel="true"
-                            app:ms_errorColor="@color/red"
-                            app:ms_floatingLabelColor="@color/color1"
-                            app:ms_floatingLabelText="Direction"
-                            app:ms_highlightColor="@color/color1"
-                            app:ms_hint="Select Direction"
-                            app:ms_hintColor="@color/color1"
-                            app:ms_hintTextSize="15sp"
-                            app:ms_hintView="@layout/hint_item_layout"
-                            app:ms_multiline="false"
-                            app:ms_thickness="0.5dp" />
-                    </LinearLayout>
-                </LinearLayout>
-
-                <LinearLayout
-                    android:id="@+id/l10"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@+id/l9"
-                    android:layout_marginTop="10sp"
-                    android:layout_weight="1"
-                    android:orientation="horizontal"
-                    android:weightSum="5">
-
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
                         android:layout_marginRight="5sp"
-                        android:layout_weight="2"
+                        android:layout_weight="3"
                         android:gravity="center">
 
                         <TextView
@@ -577,10 +576,10 @@
                             android:layout_height="match_parent"
                             android:enabled="true"
                             android:singleLine="true"
-                            android:text="Insc. Pill No"
+                            android:text="Inscribed Pillar No."
                             android:textAlignment="gravity"
                             android:textColor="@color/color1"
-                            android:textSize="20sp"
+                            android:textSize="15sp"
                             android:textStyle="normal" />
 
                     </LinearLayout>
@@ -588,7 +587,7 @@
                     <LinearLayout
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
-                        android:layout_weight="3"
+                        android:layout_weight="2"
                         android:gravity="center">
 
                         <EditText

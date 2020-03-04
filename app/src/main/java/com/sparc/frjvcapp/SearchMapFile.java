@@ -30,11 +30,14 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+
+import javax.net.ssl.HttpsURLConnection;
 
 import fr.ganfra.materialspinner.MaterialSpinner;
 
@@ -663,7 +666,7 @@ public class SearchMapFile extends AppCompatActivity {
         try {
             if (!filename.equals("null")) {
 
-                new SearchMapFile.DownloadFile().execute(AllApi.F_KML_API + filename);
+                new SearchMapFile.DownloadFile().execute(BuildConfig.F_KML_API + filename);
             } else {
                 AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
                 alertDialogBuilder.setMessage("CMV/MMV file for this fb is not available....");
@@ -697,7 +700,7 @@ public class SearchMapFile extends AppCompatActivity {
         try {
             if (!filename.equals("null")) {
 
-                new SearchMapFile.DownloadPointFile().execute(AllApi.F_KML_API + filename);
+                new SearchMapFile.DownloadPointFile().execute(BuildConfig.F_KML_API + filename);
             } else {
                 AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
                 alertDialogBuilder.setMessage("Point KML file for this fb is not available....");
@@ -829,7 +832,7 @@ public class SearchMapFile extends AppCompatActivity {
             if (f_url[0].substring(f_url[0].lastIndexOf('/') + 1) != "null" || f_url[0].substring(f_url[0].lastIndexOf('/') + 1) != "") {
                 try {
                     URL url = new URL(f_url[0]);
-                    URLConnection connection = url.openConnection();
+                    HttpURLConnection connection = (HttpURLConnection)url.openConnection();
                     connection.connect();
                     int lengthOfFile = connection.getContentLength();
                     InputStream input = new BufferedInputStream(url.openStream(), 8192);
@@ -914,7 +917,7 @@ public class SearchMapFile extends AppCompatActivity {
             if (f_url[0].substring(f_url[0].lastIndexOf('/') + 1) != "null" || f_url[0].substring(f_url[0].lastIndexOf('/') + 1) != "") {
                 try {
                     URL url = new URL(f_url[0]);
-                    URLConnection connection = url.openConnection();
+                    HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
                     connection.connect();
                     int lengthOfFile = connection.getContentLength();
                     InputStream input = new BufferedInputStream(url.openStream(), 8192);

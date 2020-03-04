@@ -2,6 +2,7 @@ package com.sparc.frjvcapp;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.provider.ContactsContract;
 import android.support.v7.app.AppCompatActivity;
@@ -21,6 +22,7 @@ public class MainContainerActivity extends AppCompatActivity {
     ArrayList<Integer> subheadlist = new ArrayList<>();
     int[] head=new int[]{1, 2, 3,12,4};
     int[] subhead=new int[]{5,6,7,10,11};
+    SQLiteDatabase db, db1, db2, db3;
     TextView logout;
     //final String pos;
     @Override
@@ -30,13 +32,20 @@ public class MainContainerActivity extends AppCompatActivity {
         DataCollector=findViewById(R.id.mis_imageView);
         MapViewer=findViewById(R.id.gis_imageView);
         DGPSSurvey=findViewById(R.id.dgps_imageview);
-        Util.scheduleJob(getApplicationContext());
+        try{
+            Util.scheduleJob(getApplicationContext());
+        }catch (Exception ee)
+        {
+            ee.printStackTrace();
+        }
+      //  Util.scheduleJob(getApplicationContext());
         for (int id: head) {
             headlist.add(id);
         }
         for (int id: subhead) {
             subheadlist.add(id);
         }
+        //runService();
         logout = findViewById(R.id.name_textView);
        final SharedPreferences shared = getSharedPreferences(userlogin, MODE_PRIVATE);
         DataCollector.setOnClickListener(new View.OnClickListener() {
@@ -139,6 +148,59 @@ public class MainContainerActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    private void runService() {
+        String divid, userid;
+        final SharedPreferences shared = getSharedPreferences(userlogin, MODE_PRIVATE);
+        divid = shared.getString("udivid", "0");
+        userid = shared.getString("uemail", "0");
+        db = openOrCreateDatabase("sltp.db", MODE_PRIVATE, null);
+        Cursor c = db.rawQuery("select * from m_pillar_reg where d_id='" + divid + "' and uid='" + userid + "' and img_status='0' and p_pic is not null", null);
+        int count = c.getCount();
+        if (c.getCount() >= 1) {
+            if (c.moveToFirst()) {
+                try {
+                    Util.scheduleJob(getApplicationContext());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
+            c.close();
+            db.close();
+        }
+        Cursor c1 = db1.rawQuery("select * from m_shifting_pillar_reg where uid='" + userid + "' and simg_status='0' and s_pic is not null", null);
+        int count1 = c.getCount();
+        if (c1.getCount() >= 1) {
+            if (c1.moveToFirst()) {
+                try {
+                    Util.scheduleJob(getApplicationContext());
+                    ///uploadImage(Utility.getByeArr(Utility.setPic(c1.getString(c1.getColumnIndex("s_pic")))), c1.getString(c1.getColumnIndex("s_pic")), "2");
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
+            c1.close();
+            db1.close();
+        }
+        Cursor c2 = db1.rawQuery("select * from m_fb_dgps_survey_pill_pic where u_id='" + userid + "' and pic_status='0' and pic_name is not null", null);
+        int count2 = c.getCount();
+        if (c2.getCount() >= 1) {
+            if (c2.moveToFirst()) {
+                try {
+                    Util.scheduleJob(getApplicationContext());
+                    //uploadDGPSImage(Utility.getByeArr(Utility.setPic(c2.getString(c2.getColumnIndex("pic_name")))), c2.getString(c2.getColumnIndex("pic_name")), "1", c2.getString(c2.getColumnIndex("pic_view")));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+            c2.close();
+            db2.close();
+        }else{
+
+        }
     }
 
 

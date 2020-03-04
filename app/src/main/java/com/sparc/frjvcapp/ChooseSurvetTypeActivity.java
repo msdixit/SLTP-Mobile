@@ -389,7 +389,7 @@ public class ChooseSurvetTypeActivity extends AppCompatActivity {
     private void getDataForSurveyPoints(String fbid) {
         try {
             RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
-            String URL = AllApi.F_D_FB_PILL_DATA_API + fbid;
+            String URL = BuildConfig.F_D_FB_PILL_DATA_API + fbid;
             progressDialog = new ProgressDialog(this , R.style.MyAlertDialogStyle);
             progressDialog.setMessage("Please wait...Your Point data is downloading");
             progressDialog.show();

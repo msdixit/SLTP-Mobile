@@ -36,9 +36,9 @@ public class ImageService extends JobService {
 
     @Override
     public boolean onStartJob(com.firebase.jobdispatcher.JobParameters job) {
-        Log.d("util123", "pass");
+                Log.d("util123", "pass");
         Util.scheduleJob(getApplication());
-        Log.d("util", "pass");
+        //Log.d("util", "pass");
         new imgaeSync().execute("");
         return true;
     }
@@ -110,7 +110,7 @@ public class ImageService extends JobService {
         NetworkInfo nInfo = cm.getActiveNetworkInfo();
         if (nInfo != null && nInfo.isAvailable() && nInfo.isConnected()) {
             Retrofit retrofit = new Retrofit.Builder()
-                    .baseUrl(AllApi.F_PILL_PIC_NODE_SERVICE)
+                    .baseUrl(BuildConfig.F_PILL_PIC_NODE_SERVICE)
                     .addConverterFactory(GsonConverterFactory.create())
                     .build();
             RetrofitInterface retrofitInterface = retrofit.create(RetrofitInterface.class);
@@ -171,7 +171,7 @@ public class ImageService extends JobService {
         NetworkInfo nInfo = cm.getActiveNetworkInfo();
         if (nInfo != null && nInfo.isAvailable() && nInfo.isConnected()) {
             Retrofit retrofit = new Retrofit.Builder()
-                    .baseUrl(AllApi.DGPS_PILL_PIC_NODE_SERVICE)
+                    .baseUrl(BuildConfig.DGPS_PILL_PIC_NODE_SERVICE)
                     .addConverterFactory(GsonConverterFactory.create())
                     .build();
             RetrofitInterface retrofitInterface = retrofit.create(RetrofitInterface.class);

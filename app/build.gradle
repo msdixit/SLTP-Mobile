@@ -1,8 +1,43 @@
 apply plugin: 'com.android.application'
 
+def LOG_IN_API = '"' + LOG_IN + '"' ?: '"Define BASE URL"';
+def BASE_URL = '"' + BASE + '"' ?: '"Define BASE URL"';
+def OTP_IN_API = '"' + OTP_IN + '"' ?: '"Define BASE URL"';
+def F_D_RANGE_DATA_API = '"' + F_D_RANGE_DATA + '"' ?: '"Define BASE URL"';
+def F_D_FB_DATA_API = '"' + F_D_FB_DATA + '"' ?: '"Define BASE URL"';
+def F_D_FB_PILL_DATA_API = '"' + F_D_FB_PILL_DATA + '"' ?: '"Define BASE URL"';
+def DGPS_D_FB_PILL_DATA_API = '"' + DGPS_D_FB_PILL_DATA + '"' ?: '"Define BASE URL"';
+def F_PILL_PIC_NODE_SERVICE = '"' + F_PILL_PIC_NODE + '"' ?: '"Define BASE URL"';
+def DGPS_PILL_PIC_NODE_SERVICE = '"' + DGPS_PILL_PIC_NODE + '"' ?: '"Define BASE URL"';
+def F_PILL_PIC_SYNC_DATA_VIEW = '"' + F_PILL_PIC_SYNC_DATA + '"' ?: '"Define BASE URL"';
+def F_DOWND_FRJVC_SRV_POINT_API = '"' + F_DOWND_FRJVC_SRV_POINT + '"' ?: '"Define BASE URL"';
+def F_KML_API = '"' + F_KML + '"' ?: '"Define BASE URL"';
+def F_UDT_PILL_DATA = '"' + F_UDT_PILL + '"' ?: '"Define BASE URL"';
+def F_CFM_UDT_PILL_DATA = '"' + F_CFM_UDT_PILL + '"' ?: '"Define BASE URL"';
+def F_SFT_FRJVC_PILL_DATA = '"' + F_SFT_FRJVC_PILL + '"' ?: '"Define BASE URL"';
+
+android.buildTypes.each { type ->
+    type.buildConfigField 'String', 'LOG_IN_API', LOG_IN
+    type.buildConfigField 'String', 'BASE_URL', BASE
+    type.buildConfigField 'String', 'OTP_IN_API', OTP_IN
+    type.buildConfigField 'String', 'F_D_RANGE_DATA_API', F_D_RANGE_DATA
+    type.buildConfigField 'String', 'F_D_FB_DATA_API', F_D_FB_DATA
+    type.buildConfigField 'String', 'F_D_FB_PILL_DATA_API', F_D_FB_PILL_DATA
+    type.buildConfigField 'String', 'DGPS_D_FB_PILL_DATA_API', DGPS_D_FB_PILL_DATA
+    type.buildConfigField 'String', 'F_PILL_PIC_NODE_SERVICE', F_PILL_PIC_NODE
+    type.buildConfigField 'String', 'DGPS_PILL_PIC_NODE_SERVICE', DGPS_PILL_PIC_NODE
+    type.buildConfigField 'String', 'F_PILL_PIC_SYNC_DATA_VIEW', F_PILL_PIC_SYNC_DATA
+    type.buildConfigField 'String', 'F_DOWND_FRJVC_SRV_POINT_API', F_DOWND_FRJVC_SRV_POINT
+    type.buildConfigField 'String', 'F_KML_API', F_KML
+    type.buildConfigField 'String', 'F_UDT_PILL_DATA', F_UDT_PILL
+    type.buildConfigField 'String', 'F_CFM_UDT_PILL_DATA', F_CFM_UDT_PILL
+    type.buildConfigField 'String', 'F_SFT_FRJVC_PILL_DATA', F_SFT_FRJVC_PILL
+}
+
 android {
     compileSdkVersion 28
     defaultConfig {
+        resValue 'string',"ApiKey",'AIzaSyB-VJ5Dc0Wf-AzmvNlwd48GuzwBN25s8JQ'
         applicationId "com.sparc.frjvcapp"
         minSdkVersion 21
         targetSdkVersion 28
@@ -10,7 +45,15 @@ android {
         versionName "6.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         ndk.abiFilters 'armeabi-v7a', 'arm64-v8a', 'x86', 'x86_64'
+        externalNativeBuild {
+            cmake {
+                cppFlags ""
+            }
+        }
 
+        ndk {
+            abiFilters 'x86', 'armeabi', 'armeabi-v7a'
+        }
     }
 
     compileOptions {
@@ -19,7 +62,8 @@ android {
     }
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
+            shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
@@ -58,11 +102,13 @@ dependencies {
     implementation 'com.android.support:recyclerview-v7:28.0.0'
     implementation 'com.squareup.retrofit2:retrofit:2.4.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.4.0'
-    implementation 'com.firebase:firebase-jobdispatcher:0.8.5'
+    implementation 'com.firebase:firebase-jobdispatcher:0.8.6'
     implementation 'com.github.bumptech.glide:glide:4.9.0'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.9.0'
     implementation 'com.github.pengrad:mapscaleview:1.4.2'
     implementation "android.arch.work:work-runtime:1.0.0-alpha05"
     implementation 'net.lingala.zip4j:zip4j:2.2.7'
+    implementation 'net.zetetic:android-database-sqlcipher:4.3.0@aar'
+    implementation "androidx.sqlite:sqlite:2.0.1"
 
 }

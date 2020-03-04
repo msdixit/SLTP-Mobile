@@ -87,7 +87,7 @@ public class DGPSViewPillarDetailActivity extends AppCompatActivity {
         } else {
             mAlbumStorageDirFactory = new BaseAlbumDirFactory();
         }
-        bpduration = findViewById(R.id.bpduration);
+       /* bpduration = findViewById(R.id.bpduration);*/
         edttxtpillarno = findViewById(R.id.edttxtpillarno);
         remark = findViewById(R.id.remark);
         edttxtpatchno = findViewById(R.id.edttxtpatchno);

@@ -83,7 +83,7 @@
                     android:layout_weight=".5"
                     android:fontFamily="@font/abeezee"
                     android:gravity="center|top"
-                    android:text="Total Point"
+                    android:text="Total point"
                     android:textColor="@color/color1"
                     android:textSize="18dp"
                     android:textStyle="normal" />
@@ -123,7 +123,7 @@
                     android:layout_weight=".5"
                     android:fontFamily="@font/abeezee"
                     android:gravity="center|top"
-                    android:text="Sync Point"
+                    android:text="Synced Point"
                     android:textColor="@color/color1"
                     android:textSize="18dp"
                     android:textStyle="normal" />
@@ -175,7 +175,7 @@
                     android:layout_weight=".5"
                     android:fontFamily="@font/abeezee"
                     android:gravity="center|top"
-                    android:text="Total Image"
+                    android:text="Total image"
                     android:textColor="@color/color1"
                     android:textSize="18dp"
                     android:textStyle="normal" />
@@ -215,7 +215,7 @@
                     android:layout_weight=".5"
                     android:fontFamily="@font/abeezee"
                     android:gravity="center|top"
-                    android:text="Sync Image"
+                    android:text="Synced Image"
                     android:textColor="@color/color1"
                     android:textSize="18dp"
                     android:textStyle="normal" />
@@ -270,7 +270,7 @@
                     android:layout_weight=".5"
                     android:fontFamily="@font/abeezee"
                     android:gravity="center|top"
-                    android:text="Static File"
+                    android:text="Static file"
                     android:textColor="@color/color1"
                     android:textSize="18dp"
                     android:textStyle="normal" />
@@ -310,7 +310,7 @@
                     android:layout_weight=".5"
                     android:fontFamily="@font/abeezee"
                     android:gravity="center|top"
-                    android:text="Synced Static File"
+                    android:text="Synced static file"
                     android:textColor="@color/color1"
                     android:textSize="18dp"
                     android:textStyle="normal" />
@@ -362,7 +362,7 @@
                     android:layout_weight=".5"
                     android:fontFamily="@font/abeezee"
                     android:gravity="center|top"
-                    android:text="RTX File"
+                    android:text="RTX file"
                     android:textColor="@color/color1"
                     android:textSize="18dp"
                     android:textStyle="normal" />
@@ -402,7 +402,7 @@
                     android:layout_weight=".5"
                     android:fontFamily="@font/abeezee"
                     android:gravity="center|top"
-                    android:text="Synced RTX File"
+                    android:text="Synced RTX file"
                     android:textColor="@color/color1"
                     android:textSize="18dp"
                     android:textStyle="normal" />
@@ -421,21 +421,21 @@
             android:layout_marginRight="5dp"
             android:layout_weight="0.12"
             android:orientation="horizontal"
-            android:weightSum="1.5">
+            >
 
 
             <Button
                 android:id="@+id/sync"
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_marginTop="10dp"
                 android:layout_height="match_parent"
                 android:layout_marginRight="10dp"
-                android:layout_weight=".5"
+                android:layout_marginLeft="10dp"
                 android:background="@drawable/button_drawable"
-                android:text="Sync Data"
+                android:text="Synchronize File and Data"
                 android:textColor="@color/white"
                 android:textSize="18dp" />
-            <Button
+         <!--   <Button
                 android:id="@+id/syncfile"
                 android:layout_width="0dp"
                 android:layout_marginTop="10dp"
@@ -457,7 +457,7 @@
                 android:background="@drawable/button_drawable"
                 android:text="Sync RTX"
                 android:textColor="@color/white"
-                android:textSize="18dp" />
+                android:textSize="18dp" />-->
 
 
         </LinearLayout>

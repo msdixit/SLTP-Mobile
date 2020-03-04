@@ -94,13 +94,28 @@ public class DFPSRTXDataExportActivity extends AppCompatActivity {
             d.mkdirs();
         }
 
+
         File[] listOfFiles = s.listFiles();
         if (listOfFiles.length > 0) {
-            for (int i = 0; i < 1; i++) {
-                if (listOfFiles[i].isFile()) {
-                    txtStsFileName.setText(listOfFiles[i].getName());
-                } else {
-                    txtStsFileName.setText("No file available for download");
+            for (int i = 0; i < listOfFiles.length;) {
+                String a=getFileExtension(listOfFiles[i]);
+                if(getFileExtension(listOfFiles[i]).equals(".csv")) {
+                    if (listOfFiles[i].isFile()) {
+                        txtStsFileName.setText(listOfFiles[i].getName());
+                        break;
+                    } else {
+                        txtStsFileName.setText("No file available for download");
+                        img_download.setVisibility(View.GONE);
+                        break;
+                    }
+                }else{
+                    i++;
+                    if(1==1)
+                        txtStsFileName.setText("No file available for download");
+                    txtStsFileName.setTextSize(15);
+                    txtStsFileName.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+                    txtStsFileName.setWidth(ViewGroup.LayoutParams.MATCH_PARENT);
+                    txtStsFileName.setLayoutParams(new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.MATCH_PARENT, 1f));
                     img_download.setVisibility(View.GONE);
                 }
             }
@@ -112,6 +127,7 @@ public class DFPSRTXDataExportActivity extends AppCompatActivity {
             txtStsFileName.setLayoutParams(new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.MATCH_PARENT, 1f));
             img_download.setVisibility(View.GONE);
         }
+
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
         img_download.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -145,9 +161,13 @@ public class DFPSRTXDataExportActivity extends AppCompatActivity {
 
                             @Override
                             public void onClick(DialogInterface arg0, int arg1) {
-                                String d_f_name[]=txtStsFileName.getText().toString().split("\\.");//.split(".")
-                                String f_file_name=d_f_name[0]+"_"+fbid+"_"+userid+"."+d_f_name[1];
-                                new DFPSRTXDataExportActivity.ExportPointRTXData().execute(sfinalpath + "/" + txtStsFileName.getText().toString(), fbid, dfinalpath + "/" +f_file_name);
+                                if(!spill_no.equals("Select Forest Block")){
+                                    String d_f_name[] = txtStsFileName.getText().toString().split("\\.");//.split(".")
+                                    String f_file_name = d_f_name[0] + "_" + fbid + "_" + userid + "." + d_f_name[1];
+                                    new DFPSRTXDataExportActivity.ExportPointRTXData().execute(sfinalpath + "/" + txtStsFileName.getText().toString(), fbid, dfinalpath + "/" + f_file_name);
+                                }else{
+                                    Toast.makeText(getApplicationContext(), "Please choose the forest block", Toast.LENGTH_LONG);
+                                }
 
                             }
                         });
@@ -169,6 +189,23 @@ public class DFPSRTXDataExportActivity extends AppCompatActivity {
         });
 
     }
+
+    private static String getFileExtension(File _file) {
+        String extension = "";
+
+        try {
+            if (_file != null && _file.exists()) {
+                String name = _file.getName();
+                extension = name.substring(name.lastIndexOf("."));
+            }
+        } catch (Exception e) {
+            extension = "";
+        }
+
+        return extension;
+
+    }
+
     private class ExportPointRTXData extends AsyncTask<String, String, String> {
 
         private ProgressDialog progressDialog;

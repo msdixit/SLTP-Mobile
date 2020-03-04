@@ -53,7 +53,7 @@
                 android:textAlignment="center"
                 android:textColor="@color/cast_expanded_controller_background_color"
                 android:textSize="15sp"
-                android:textStyle="bold" />
+                android:textStyle="italic" />
         </LinearLayout>
         <LinearLayout
             android:id="@+id/linear"

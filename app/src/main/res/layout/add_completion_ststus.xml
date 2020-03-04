@@ -18,7 +18,7 @@
             android:textAlignment="center"
             android:text="Is DGPS survey of this FB completed?"
             android:textColor="@color/offwhite"
-            android:textSize="25dp"
+            android:textSize="20dp"
             />
 
     </RelativeLayout>
@@ -54,7 +54,7 @@
                     android:text="FB Name:"
                     android:textAlignment="gravity"
                     android:textColor="@color/color1"
-                    android:textSize="30sp"
+                    android:textSize="15sp"
                     android:textStyle="normal"
 
                     />
@@ -76,7 +76,7 @@
                     android:singleLine="true"
                     android:textAlignment="gravity"
                     android:textColor="@color/color1"
-                    android:textSize="30sp"
+                    android:textSize="15sp"
                     android:textStyle="normal"
 
                     />
@@ -111,7 +111,7 @@
                     android:text="FB ID:"
                     android:textAlignment="gravity"
                     android:textColor="@color/color1"
-                    android:textSize="30sp"
+                    android:textSize="15sp"
                     android:textStyle="normal"
 
                     />
@@ -133,7 +133,7 @@
                     android:singleLine="true"
                     android:textAlignment="gravity"
                     android:textColor="@color/color1"
-                    android:textSize="30sp"
+                    android:textSize="15sp"
                     android:textStyle="normal"
 
                     />

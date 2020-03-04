@@ -121,7 +121,7 @@ public class DGPSDataCollectActivity extends AppCompatActivity {
         dbHelper = new DbHelper(getApplicationContext());
         //Matterial Spinner
 
-        bpduration = findViewById(R.id.bpduration);
+//        bpduration = findViewById(R.id.bpduration);
         surveyPossibility = findViewById(R.id.surveyPossibility);
         chooseReason = findViewById(R.id.chooseReason);
 
@@ -315,10 +315,12 @@ public class DGPSDataCollectActivity extends AppCompatActivity {
                         lh1.setVisibility(View.VISIBLE);
                         lh2.setVisibility(View.GONE);
                         l17.setVisibility(View.VISIBLE);
-                    } else {
+                    } else if(_surveyPossibility.equals("No")){
                         lh1.setVisibility(View.GONE);
                         lh2.setVisibility(View.VISIBLE);
                         l17.setVisibility(View.VISIBLE);
+                    }else{
+
                     }
 
                 }
@@ -330,7 +332,7 @@ public class DGPSDataCollectActivity extends AppCompatActivity {
             }
         });
 
-        final ArrayAdapter<String> durationadapter = new ArrayAdapter<String>(getApplicationContext(), R.layout.spinner_row, duration);
+       /* final ArrayAdapter<String> durationadapter = new ArrayAdapter<String>(getApplicationContext(), R.layout.spinner_row, duration);
         bpduration.setAdapter(durationadapter);
         bpduration.setPaddingSafe(0, 0, 0, 0);
         bpduration.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -347,7 +349,7 @@ public class DGPSDataCollectActivity extends AppCompatActivity {
             public void onNothingSelected(AdapterView<?> parent) {
 
             }
-        });
+        });*/
 
         final ArrayAdapter<String> _reasonofNosurvey = new ArrayAdapter<String>(getApplicationContext(), R.layout.spinner_row, _surveyReason);
         chooseReason.setAdapter(_reasonofNosurvey);
@@ -442,24 +444,128 @@ public class DGPSDataCollectActivity extends AppCompatActivity {
     }
 
     private void SaveData() {
-        if (_surveyPossibility.equals("Yes")) {
-            if (edttxtpillarno.getText().toString() == "" || edttxtpillarno.getText().toString() == "0") {
-                Toast.makeText(this, "Serial Number can not ne blank or Zero", Toast.LENGTH_LONG).show();
-            } else if (spinner_duration.equals("Select Duration")) {
-                Toast.makeText(this, "Please Select Duration", Toast.LENGTH_LONG).show();
-            } else if (edtForestoffnm.getText().toString() == "") {
-                Toast.makeText(this, "Please Provide the Forest official name", Toast.LENGTH_LONG).show();
-            } else if (imagepath1_F == "" || imagepath1_F == null) {
-                Toast.makeText(this, "Front view of pillar is not available", Toast.LENGTH_LONG).show();
-            } else if (imagepath1_B == "" || imagepath1_B == null) {
-                Toast.makeText(this, "Back view of pillar is not available", Toast.LENGTH_LONG).show();
-            } else if (imagepath1_I == "" || imagepath1_I == null) {
-                Toast.makeText(this, "Inward view of pillar is not available", Toast.LENGTH_LONG).show();
-            } else if (imagepath1_O == "" || imagepath1_O == null) {
-                Toast.makeText(this, "Outward view of pillar is not available", Toast.LENGTH_LONG).show();
-            } else if (imagepath1_T == "" || imagepath1_T == null) {
-                Toast.makeText(this, "Withdevice view of pillar is not available", Toast.LENGTH_LONG).show();
-            } else {
+        if(!_surveyPossibility.equals("Is DGPS Survey Possible for this Pillar?")) {
+            if (_surveyPossibility.equals("Yes")) {
+                if (edttxtpillarno.getText().toString() == "" || edttxtpillarno.getText().toString() == "0") {
+                    Toast.makeText(this, "Serial Number can not ne blank or Zero", Toast.LENGTH_LONG).show();
+                } /*else if (spinner_duration.equals("Select Duration")) {
+                    Toast.makeText(this, "Please Select Duration", Toast.LENGTH_LONG).show();
+                }*/ else if (edtForestoffnm.getText().toString() == "") {
+                    Toast.makeText(this, "Please Provide the Forest official name", Toast.LENGTH_LONG).show();
+                } else if (imagepath1_F == "" || imagepath1_F == null) {
+                    Toast.makeText(this, "Front view of pillar is not available", Toast.LENGTH_LONG).show();
+                } else if (imagepath1_B == "" || imagepath1_B == null) {
+                    Toast.makeText(this, "Back view of pillar is not available", Toast.LENGTH_LONG).show();
+                } else if (imagepath1_I == "" || imagepath1_I == null) {
+                    Toast.makeText(this, "Inward view of pillar is not available", Toast.LENGTH_LONG).show();
+                } else if (imagepath1_O == "" || imagepath1_O == null) {
+                    Toast.makeText(this, "Outward view of pillar is not available", Toast.LENGTH_LONG).show();
+                } else if (imagepath1_T == "" || imagepath1_T == null) {
+                    Toast.makeText(this, "Withdevice view of pillar is not available", Toast.LENGTH_LONG).show();
+                } else if (_surveyPossibility.equals("Is DGPS Survey Possible for this Pillar?")) {
+                    Toast.makeText(this, "Please select survey possibility", Toast.LENGTH_LONG).show();
+                } else {
+                    db = openOrCreateDatabase("sltp.db", MODE_PRIVATE, null);
+                    Cursor c = db.rawQuery("select * from m_fb_dgps_survey_pill_data where u_id='" + userid + "' and d_id='" + sharediv + "' and r_id='" + sharerange + "' and fb_id='" + sharefb + "' and frjvc_lat='" + d_frjvc_lat + "' and frjvc_long='" + d_frjvc_long + "'", null);
+                    if (c.getCount() > 0) {
+                        if (c.moveToFirst()) {
+                            if (Integer.parseInt(c.getString(c.getColumnIndex("pillar_sfile_status"))) == 0) {
+                                Toast.makeText(this, "This pillar is already registered.Please tag the pillar with its Static Observation data.", Toast.LENGTH_LONG).show();
+                            } else if (Integer.parseInt(c.getString(c.getColumnIndex("pillar_sfile_status"))) == 1) {
+                                Toast.makeText(this, "This pillar is already registered and Tagged.", Toast.LENGTH_LONG).show();
+                            } else {
+
+                            }
+                        }
+                    } else {
+                        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+                        //alertDialogBuilder.setMessage("Are you sure to save this pillar data?");
+                        final View customLayout = getLayoutInflater().inflate(R.layout.save_custome_dialod_register_pillar, null);
+                        alertDialogBuilder.setView(customLayout);
+                        alertDialogBuilder.setPositiveButton("Ok",
+                                new DialogInterface.OnClickListener() {
+
+                                    @Override
+                                    public void onClick(DialogInterface arg0, int arg1) {
+                                        int sl = Integer.parseInt(edttxtpillarno.getText().toString());
+                                        String jobID = edtJobID.getText().toString();
+                                        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+                                        Date date = new Date();
+                                        M_dgps_pilldata mpr1 = new M_dgps_pilldata(sharediv, sharerange, sharefb, sl, jobID, userid, "",
+                                                "0", "0", "0", "0", "0",
+                                                edttxtpatchno.getText().toString(), edttxtringno.getText().toString(), edtForestoffnm.getText().toString(),
+                                                userid, formatter.format(date), txtViewdiv.getText().toString(), txtViewran.getText().toString(),
+                                                txtViewfb.getText().toString(), "0", "0", "0", "",
+                                                "", imagepath1_F, imagepath1_B, imagepath1_I, imagepath1_O, imagepath1_T,
+                                                getMyMacAddress(), "", "0",
+                                                d_frjvc_lat, d_frjvc_long, edtdpillno.getText().toString(), d_old_id,
+                                                "", "0", "0", "", "",
+                                                "1", "", "", "", "");//+"_"+pilshiftsts,surdir,accuracy
+                                        try {
+                                            dbHelper.open();
+                                            long status = dbHelper.insertDGPSSurveyPillarData(mpr1);
+                                            dbHelper.close();
+                                            if (status >= 0) {
+                                                if (checkDGPSDataAvalability(1)) {
+                                                    image_name = new HashMap<Character, String>();
+                                                    image_name.put('F', imagepath1_F);
+                                                    image_name.put('B', imagepath1_B);
+                                                    image_name.put('I', imagepath1_I);
+                                                    image_name.put('O', imagepath1_O);
+                                                    image_name.put('T', imagepath1_T);
+                                                    long a = insertDGPSImage((HashMap<Character, String>) image_name, userid, Integer.parseInt(d_old_id));
+                                                    if (a == 5) {
+                                                        ClipboardManager cm = (ClipboardManager) getApplication().getSystemService(Context.CLIPBOARD_SERVICE);
+                                                        ClipData clipData = ClipData.newPlainText("JobID", jobID);
+                                                        cm.setPrimaryClip(clipData);
+                                                        Intent launchIntent = getPackageManager().getLaunchIntentForPackage("SurveyMobile.Droid");
+                                                        if (launchIntent != null) {
+                                                            timecheck = 1;
+                                                            Calendar c = Calendar.getInstance();
+                                                            System.out.println("Current time =&gt; " + c.getTime());
+                                                            _startDateFormat = new SimpleDateFormat("hh:mm:ss");
+                                                            _startTime = _startDateFormat.format(c.getTime());
+                                                            // finishAffinity();
+                                                            reset();
+                                                            startActivity(launchIntent);
+                                                        } else {
+                                                            Toast.makeText(DGPSDataCollectActivity.this, "There is no package available in android", Toast.LENGTH_LONG).show();
+                                                        }
+                                                    } else {
+                                                        Toast.makeText(getApplicationContext(), "Pillar pictures is not stored", Toast.LENGTH_LONG).show();
+                                                    }
+                                                } else {
+                                                    Toast.makeText(getApplicationContext(), "NoT Pillar registered Successfully", Toast.LENGTH_LONG).show();
+                                                }
+                                            }
+
+
+                                        } catch (Exception ee) {
+                                            ee.printStackTrace();
+                                        } finally {
+                                            if (dbHelper != null) {
+                                                dbHelper.close();
+                                            }
+                                        }
+                                    }
+                                });
+
+                        alertDialogBuilder.setNegativeButton("Cancel",
+                                new DialogInterface.OnClickListener() {
+
+                                    @Override
+                                    public void onClick(DialogInterface arg0, int arg1) {
+                                        Toast.makeText(getApplicationContext(), "You canceled the save request...please try again", Toast.LENGTH_LONG).show();
+                                    }
+                                });
+
+                        AlertDialog alertDialog = alertDialogBuilder.create();
+                        alertDialog.show();
+                    }
+
+                }
+            }
+            else {
                 db = openOrCreateDatabase("sltp.db", MODE_PRIVATE, null);
                 Cursor c = db.rawQuery("select * from m_fb_dgps_survey_pill_data where u_id='" + userid + "' and d_id='" + sharediv + "' and r_id='" + sharerange + "' and fb_id='" + sharefb + "' and frjvc_lat='" + d_frjvc_lat + "' and frjvc_long='" + d_frjvc_long + "'", null);
                 if (c.getCount() > 0) {
@@ -486,51 +592,28 @@ public class DGPSDataCollectActivity extends AppCompatActivity {
                                     String jobID = edtJobID.getText().toString();
                                     SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
                                     Date date = new Date();
-                                    M_dgps_pilldata mpr1 = new M_dgps_pilldata(sharediv, sharerange, sharefb, sl, jobID, userid, spinner_duration,
+                                    M_dgps_pilldata mpr1 = new M_dgps_pilldata(sharediv, sharerange, sharefb, sl, jobID, userid, "",
                                             "0", "0", "0", "0", "0",
                                             edttxtpatchno.getText().toString(), edttxtringno.getText().toString(), edtForestoffnm.getText().toString(),
                                             userid, formatter.format(date), txtViewdiv.getText().toString(), txtViewran.getText().toString(),
                                             txtViewfb.getText().toString(), "0", "0", "0", "",
-                                            "", imagepath1_F, imagepath1_B, imagepath1_I, imagepath1_O, imagepath1_T,
-                                            getMyMacAddress(), "", "0",
-                                            d_frjvc_lat, d_frjvc_long, edtdpillno.getText().toString(), d_old_id,
+                                            "", "", "", "", "", "",
+                                            getMyMacAddress(), "", "0"
+                                            , d_frjvc_lat, d_frjvc_long, edtdpillno.getText().toString(), d_old_id,
                                             "", "0", "0", "", "",
-                                            "1", "", "");//+"_"+pilshiftsts,surdir,accuracy
+                                            "0", _reason, edtremark.getText().toString(), "", "");
                                     try {
                                         dbHelper.open();
                                         long status = dbHelper.insertDGPSSurveyPillarData(mpr1);
                                         dbHelper.close();
                                         if (status >= 0) {
-                                            if (checkDGPSDataAvalability(1)) {
-                                                image_name = new HashMap<Character, String>();
-                                                image_name.put('F', imagepath1_F);
-                                                image_name.put('B', imagepath1_B);
-                                                image_name.put('I', imagepath1_I);
-                                                image_name.put('O', imagepath1_O);
-                                                image_name.put('T', imagepath1_T);
-                                                long a = insertDGPSImage((HashMap<Character, String>) image_name, userid, Integer.parseInt(d_old_id));
-                                                if (a == 5) {
-                                                    ClipboardManager cm = (ClipboardManager) getApplication().getSystemService(Context.CLIPBOARD_SERVICE);
-                                                    ClipData clipData = ClipData.newPlainText("JobID", jobID);
-                                                    cm.setPrimaryClip(clipData);
-                                                    Intent launchIntent = getPackageManager().getLaunchIntentForPackage("SurveyMobile.Droid");
-                                                    if (launchIntent != null) {
-                                                        timecheck = 1;
-                                                        Calendar c = Calendar.getInstance();
-                                                        System.out.println("Current time =&gt; " + c.getTime());
-                                                        _startDateFormat = new SimpleDateFormat("hh:mm:ss");
-                                                        _startTime = _startDateFormat.format(c.getTime());
-                                                        // finishAffinity();
-                                                        reset();
-                                                        startActivity(launchIntent);
-                                                    } else {
-                                                        Toast.makeText(DGPSDataCollectActivity.this, "There is no package available in android", Toast.LENGTH_LONG).show();
-                                                    }
-                                                } else {
-                                                    Toast.makeText(getApplicationContext(), "Pillar pictures is not stored", Toast.LENGTH_LONG).show();
-                                                }
-                                            } else {
-                                                Toast.makeText(getApplicationContext(), "NoT Pillar registered Successfully", Toast.LENGTH_LONG).show();
+                                            if (checkDGPSDataAvalability(2)) {
+                                                Toast.makeText(getApplicationContext(), "Pillar registered successfully", Toast.LENGTH_LONG).show();
+                                                Intent i = null;
+                                                i = new Intent(getApplicationContext(), DGPSMapViewActivity.class);
+                                                i.putExtra("kml_status", kmlstatus);
+                                                /* i.putExtra("check_sts", d_check_sts);*/
+                                                startActivity(i);
                                             }
                                         }
 
@@ -559,83 +642,8 @@ public class DGPSDataCollectActivity extends AppCompatActivity {
                 }
 
             }
-        }
-        else {
-            db = openOrCreateDatabase("sltp.db", MODE_PRIVATE, null);
-            Cursor c = db.rawQuery("select * from m_fb_dgps_survey_pill_data where u_id='" + userid + "' and d_id='" + sharediv + "' and r_id='" + sharerange + "' and fb_id='" + sharefb + "' and frjvc_lat='" + d_frjvc_lat + "' and frjvc_long='" + d_frjvc_long + "'", null);
-            if (c.getCount() > 0) {
-                if (c.moveToFirst()) {
-                    if (Integer.parseInt(c.getString(c.getColumnIndex("pillar_sfile_status"))) == 0) {
-                        Toast.makeText(this, "This pillar is already registered.Please tag the pillar with its Static Observation data.", Toast.LENGTH_LONG).show();
-                    } else if (Integer.parseInt(c.getString(c.getColumnIndex("pillar_sfile_status"))) == 1) {
-                        Toast.makeText(this, "This pillar is already registered and Tagged.", Toast.LENGTH_LONG).show();
-                    } else {
-
-                    }
-                }
-            } else {
-                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
-                //alertDialogBuilder.setMessage("Are you sure to save this pillar data?");
-                final View customLayout = getLayoutInflater().inflate(R.layout.save_custome_dialod_register_pillar, null);
-                alertDialogBuilder.setView(customLayout);
-                alertDialogBuilder.setPositiveButton("Ok",
-                        new DialogInterface.OnClickListener() {
-
-                            @Override
-                            public void onClick(DialogInterface arg0, int arg1) {
-                                int sl = Integer.parseInt(edttxtpillarno.getText().toString());
-                                String jobID = edtJobID.getText().toString();
-                                SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
-                                Date date = new Date();
-                                M_dgps_pilldata mpr1 = new M_dgps_pilldata(sharediv, sharerange, sharefb, sl, jobID, userid, "",
-                                        "0", "0", "0", "0", "0",
-                                        edttxtpatchno.getText().toString(), edttxtringno.getText().toString(), edtForestoffnm.getText().toString(),
-                                        userid, formatter.format(date), txtViewdiv.getText().toString(), txtViewran.getText().toString(),
-                                        txtViewfb.getText().toString(), "0", "0", "0", "",
-                                        "", "", "", "", "", "",
-                                        getMyMacAddress(), "", "0"
-                                        , d_frjvc_lat, d_frjvc_long, edtdpillno.getText().toString(), d_old_id,
-                                        "", "0", "0", "", "",
-                                        "0", _reason, edtremark.getText().toString());
-                                try {
-                                    dbHelper.open();
-                                    long status = dbHelper.insertDGPSSurveyPillarData(mpr1);
-                                    dbHelper.close();
-                                    if (status >= 0) {
-                                        if (checkDGPSDataAvalability(2)) {
-                                            Toast.makeText(getApplicationContext(), "Pillar registered successfully", Toast.LENGTH_LONG).show();
-                                            Intent i = null;
-                                            i = new Intent(getApplicationContext(), DGPSMapViewActivity.class);
-                                            i.putExtra("kml_status", kmlstatus);
-                                            /* i.putExtra("check_sts", d_check_sts);*/
-                                            startActivity(i);
-                                        }
-                                    }
-
-
-                                } catch (Exception ee) {
-                                    ee.printStackTrace();
-                                } finally {
-                                    if (dbHelper != null) {
-                                        dbHelper.close();
-                                    }
-                                }
-                            }
-                        });
-
-                alertDialogBuilder.setNegativeButton("Cancel",
-                        new DialogInterface.OnClickListener() {
-
-                            @Override
-                            public void onClick(DialogInterface arg0, int arg1) {
-                                Toast.makeText(getApplicationContext(), "You canceled the save request...please try again", Toast.LENGTH_LONG).show();
-                            }
-                        });
-
-                AlertDialog alertDialog = alertDialogBuilder.create();
-                alertDialog.show();
-            }
-
+        }else{
+            Toast.makeText(this, "Please select survey possibility", Toast.LENGTH_LONG).show();
         }
     }
 
@@ -729,7 +737,7 @@ public class DGPSDataCollectActivity extends AppCompatActivity {
         edtremark.setText("");
 
         /* dpSegment.setSelection(0);*/
-        bpduration.setSelection(0);
+//        bpduration.setSelection(0);
         surveyPossibility.setSelection(0);
         chooseReason.setSelection(0);
         setpicoutward.setImageResource(0);

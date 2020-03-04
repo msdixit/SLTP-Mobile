@@ -227,6 +227,25 @@ public class M_dgps_pilldata {
     private String rtx_min;
     private String rtx_sec;
 
+    public String getPillar_jfile_path() {
+        return pillar_jfile_path;
+    }
+
+    public void setPillar_jfile_path(String pillar_jfile_path) {
+        this.pillar_jfile_path = pillar_jfile_path;
+    }
+
+    public String getPillar_jfile_status() {
+        return pillar_jfile_status;
+    }
+
+    public void setPillar_jfile_status(String pillar_jfile_status) {
+        this.pillar_jfile_status = pillar_jfile_status;
+    }
+
+    private String pillar_jfile_path;
+    private String pillar_jfile_status;
+
 
     public String getPillar_rfile_path() {
         return pillar_rfile_path;
@@ -404,7 +423,7 @@ public class M_dgps_pilldata {
                            String i_pic_name, String o_pic_name, String div_pic_name,String device_imei_no,
                            String pillar_sfile_path,String pillar_sfile_status,String frjvc_lat,String frjvc_long,
                            String d_pill_no,String d_old_id,String pillar_rfile_path,String pillar_rfile_status,
-                           String completion_status,String rtx_min,String rtx_sec,String survey_status,String reason,String remark) {
+                           String completion_status,String rtx_min,String rtx_sec,String survey_status,String reason,String remark,String pillar_jfile_path,String pillar_jfile_status) {
         this.d_id = d_id;
         this.r_id = r_id;
         this.fb_id = fb_id;
@@ -450,6 +469,8 @@ public class M_dgps_pilldata {
         this.survey_status=survey_status;
         this.reason=reason;
         this.remark=remark;
+        this.pillar_jfile_path=pillar_jfile_path;
+        this.pillar_jfile_status=pillar_jfile_status;
     }
 
 

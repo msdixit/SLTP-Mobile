@@ -175,12 +175,14 @@ public class DbHelper {
             "d_old_id TEXT," +
             "pillar_rfile_path TEXT," +
             "pillar_rfile_status TEXT," +
-            "completion_status TEXT,"+
-            "rtx_survey_min TEXT,"+
-            "rtx_survey_second TEXT,"+
-            "survey_status TEXT,"+
-            "reason TEXT,"+
-            "remark TEXT)";
+            "completion_status TEXT," +
+            "rtx_survey_min TEXT," +
+            "rtx_survey_second TEXT," +
+            "survey_status TEXT," +
+            "reason TEXT," +
+            "remark TEXT," +
+            "pillar_jfile_path TEXT," +
+            "pillar_jfile_status TEXT)";
 
     private static final String CREATE_m_dgps_Survey_pill_data = "CREATE TABLE IF NOT EXISTS " + m_dgps_Survey_pill_data + "( " +
             "id INTEGER PRIMARY KEY, " +
@@ -192,7 +194,7 @@ public class DbHelper {
             "m_pillar_avl_sts TEXT," +
             "m_dgps_surv_sts TEXT," +
             "m_dgps_file_sts TEXT," +
-            "o_Id TEXT,"+
+            "o_Id TEXT," +
             "m_survey_status TEXT)";
 
     private static final String CREATE_m_fb_dgps_survey_pill_pic = "CREATE TABLE IF NOT EXISTS " + m_fb_dgps_survey_pill_pic + "( " +
@@ -429,6 +431,8 @@ public class DbHelper {
             contentValues.put("survey_status", mpr.getSurvey_status());
             contentValues.put("reason", mpr.getReason());
             contentValues.put("remark", mpr.getRemark());
+            contentValues.put("pillar_jfile_path", mpr.getPillar_jfile_path());
+            contentValues.put("pillar_jfile_status", mpr.getPillar_jfile_status());
             id = mDb.insert(m_fb_dgps_survey_pill_data, null, contentValues);
             mDb.setTransactionSuccessful();
         } catch (Exception ee) {
@@ -626,8 +630,7 @@ public class DbHelper {
                 res.moveToNext();
             }
             res.close();
-        }catch (Exception ee)
-        {
+        } catch (Exception ee) {
             ee.printStackTrace();
         }
         return array_list;
@@ -644,8 +647,7 @@ public class DbHelper {
                 res.moveToNext();
             }
             res.close();
-        }catch (Exception ee)
-        {
+        } catch (Exception ee) {
             ee.printStackTrace();
         }
         return array_list;
@@ -667,8 +669,7 @@ public class DbHelper {
                 }
                 res.close();//slno=array_list[0];
             }
-        }catch (Exception ee)
-        {
+        } catch (Exception ee) {
             ee.printStackTrace();
         }
         return slno;

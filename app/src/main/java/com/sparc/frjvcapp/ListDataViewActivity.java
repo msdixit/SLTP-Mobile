@@ -236,7 +236,7 @@ public class ListDataViewActivity extends AppCompatActivity implements View.OnCl
     private boolean returnSyncData(String fid, String uid) {
         try {
             RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
-            String URL = AllApi.F_PILL_PIC_SYNC_DATA_VIEW + fid + "/" + uid;
+            String URL = BuildConfig.F_PILL_PIC_SYNC_DATA_VIEW + fid + "/" + uid;
             StringRequest stringRequest = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
                 @Override
                 public void onResponse(String response) {

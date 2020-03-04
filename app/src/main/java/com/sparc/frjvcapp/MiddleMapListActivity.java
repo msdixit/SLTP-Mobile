@@ -122,7 +122,7 @@ public class MiddleMapListActivity extends AppCompatActivity {
         try {
 
             RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
-            String URL = AllApi.F_DOWND_FRJVC_SRV_POINT_API + fbid;
+            String URL = BuildConfig.F_DOWND_FRJVC_SRV_POINT_API + fbid;
             progressDialog = new ProgressDialog(this, R.style.MyAlertDialogStyle);
             progressDialog.setMessage("Please wait...Your pillar data is being downloaded");
             progressDialog.show();

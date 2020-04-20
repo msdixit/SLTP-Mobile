@@ -15,6 +15,7 @@ def F_KML_API = '"' + F_KML + '"' ?: '"Define BASE URL"';
 def F_UDT_PILL_DATA = '"' + F_UDT_PILL + '"' ?: '"Define BASE URL"';
 def F_CFM_UDT_PILL_DATA = '"' + F_CFM_UDT_PILL + '"' ?: '"Define BASE URL"';
 def F_SFT_FRJVC_PILL_DATA = '"' + F_SFT_FRJVC_PILL + '"' ?: '"Define BASE URL"';
+def R_DGPS_PILL_DOWNLOAD = '"' + R_DGPS_PILL_DWNLD + '"' ?: '"Define BASE URL"';
 
 android.buildTypes.each { type ->
     type.buildConfigField 'String', 'LOG_IN_API', LOG_IN
@@ -32,12 +33,13 @@ android.buildTypes.each { type ->
     type.buildConfigField 'String', 'F_UDT_PILL_DATA', F_UDT_PILL
     type.buildConfigField 'String', 'F_CFM_UDT_PILL_DATA', F_CFM_UDT_PILL
     type.buildConfigField 'String', 'F_SFT_FRJVC_PILL_DATA', F_SFT_FRJVC_PILL
+    type.buildConfigField 'String', 'R_DGPS_PILL_DOWNLOAD', R_DGPS_PILL_DWNLD
 }
 
 android {
     compileSdkVersion 28
     defaultConfig {
-        resValue 'string',"ApiKey",'AIzaSyB-VJ5Dc0Wf-AzmvNlwd48GuzwBN25s8JQ'
+        resValue 'string', "ApiKey", 'AIzaSyB-VJ5Dc0Wf-AzmvNlwd48GuzwBN25s8JQ'
         applicationId "com.sparc.frjvcapp"
         minSdkVersion 21
         targetSdkVersion 28

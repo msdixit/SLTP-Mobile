@@ -54,11 +54,11 @@ public class SelectFBForDGPSActivity extends AppCompatActivity {
         submit = findViewById(R.id.submit);
         download = findViewById(R.id.download);
 
-
         SharedPreferences shared = getSharedPreferences(userlogin, MODE_PRIVATE);
         arrdiv.add(shared.getString("udivname", "0"));
         divid = shared.getString("udivid", "0");
         userid = shared.getString("uemail", "0");
+
         //Division.
         //name.setText(shared.getString("uname", "0"));
         //dept.setText(shared.getString("upos", "0"));

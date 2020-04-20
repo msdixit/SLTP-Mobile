@@ -168,7 +168,12 @@ public class DGPSViewPillarDetailActivity extends AppCompatActivity {
             if (cursor.getCount() > 0) {
                 if (cursor.moveToFirst()) {
                     do {
-                        edttxtpillarno.setText(cursor.getString(cursor.getColumnIndex("pill_no")));
+                        if(Integer.parseInt(cursor.getString(cursor.getColumnIndex("pndjv_pill_no")))!=0)
+                        {
+                            edttxtpillarno.setText(cursor.getString(cursor.getColumnIndex("pill_no"))+"-"+cursor.getString(cursor.getColumnIndex("pndjv_pill_no")));
+                        }else {
+                            edttxtpillarno.setText(cursor.getString(cursor.getColumnIndex("pill_no")));
+                        }
                         edttxtpatchno.setText(cursor.getString(cursor.getColumnIndex("patch_no")));
                         edttxtringno.setText(cursor.getString(cursor.getColumnIndex("ring_no")));
                         edtDirection.setText(cursor.getString(cursor.getColumnIndex("survey_durn")));

@@ -20,6 +20,7 @@ public class Util {
     public static void scheduleJob(Context context) {
         Driver driver = new GooglePlayDriver(context);
         FirebaseJobDispatcher firebaseJobDispatcher = new FirebaseJobDispatcher(driver);
+
         Job constraintReminderJob = firebaseJobDispatcher.newJobBuilder()
                 .setService(ImageService.class)
                 .setTag(REMINDER_JOB_TAG)

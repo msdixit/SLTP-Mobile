@@ -4,8 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/bg"
-    tools:context=".MiddleMapListActivity">
-
+    tools:context=".RevisitDGPSSyncMenuActivity">
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -143,7 +142,7 @@
             android:orientation="horizontal"
             android:weightSum="1">
 
-            <LinearLayout
+            <!--<LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_margin="10dp"
@@ -182,8 +181,8 @@
 
 
             </LinearLayout>
-
-            <LinearLayout
+-->
+            <!--<LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_margin="10dp"
@@ -222,7 +221,7 @@
 
 
             </LinearLayout>
-
+-->
         </LinearLayout>
 
 
@@ -462,4 +461,5 @@
 
         </LinearLayout>
     </LinearLayout>
+
 </RelativeLayout>

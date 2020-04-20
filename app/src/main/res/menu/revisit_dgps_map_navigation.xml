@@ -19,11 +19,4 @@
         android:title="Base Map"
         android:itemTextAppearance="?android:attr/textAppearance"
         />
-    <item
-        android:id="@+id/newPoint"
-        android:icon="@drawable/add_point"
-        android:title="New Pillar"
-        android:itemTextAppearance="?android:attr/textAppearance"
-        />
-
 </menu>

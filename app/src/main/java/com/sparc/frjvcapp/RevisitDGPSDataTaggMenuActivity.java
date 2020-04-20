@@ -9,25 +9,20 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import fr.ganfra.materialspinner.MaterialSpinner;
-
-public class DGPSDataTaggMenuActivity extends AppCompatActivity {
+public class RevisitDGPSDataTaggMenuActivity extends AppCompatActivity {
 
     SharedPreferences shared;
     String sharediv, sharerange, sharefb, sharefbtype, sharefbname, userid, jobid, div_name, range_name, fb_name;
     public static final String data = "data";
-    ImageView data_view, data_point_dwld, tag_jxl_file;
+    ImageView tagStatic, tagRtx, tag_jxl_file;
     TextView dgpsfbName;
     private SQLiteDatabase db;
     public HashMap<String, String> fbKey;
@@ -38,10 +33,10 @@ public class DGPSDataTaggMenuActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_dgpsdata_tagg_menu);
+        setContentView(R.layout.activity_revisit_dgpsdata_tagg_menu);
 
-        data_view = findViewById(R.id.dataview);
-        data_point_dwld = findViewById(R.id.data_point_dwld);
+        tagStatic = findViewById(R.id.tagStatic);
+        tagRtx = findViewById(R.id.tagRtx);
         tag_jxl_file = findViewById(R.id.jxl_file_tag);
 
         dgpsfbName = findViewById(R.id.dgpsfbName);
@@ -60,10 +55,10 @@ public class DGPSDataTaggMenuActivity extends AppCompatActivity {
 
         dgpsfbName.setText(fb_name);
 
-        data_view.setOnClickListener(new View.OnClickListener() {
+        tagStatic.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent i = new Intent(getApplicationContext(), DGPSDataExportActivity.class);
+                Intent i = new Intent(getApplicationContext(), RevisitDGPSStaticDataExportActivity.class);
                 SharedPreferences sharedPreferences = getSharedPreferences(data, 0);
                 SharedPreferences.Editor editor = sharedPreferences.edit();
                 editor.clear();
@@ -82,7 +77,7 @@ public class DGPSDataTaggMenuActivity extends AppCompatActivity {
             }
         });
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
-        data_point_dwld.setOnClickListener(new View.OnClickListener() {
+        tagRtx.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 int completion_Status = getDGPSForestBlockData(sharefb);
@@ -103,10 +98,10 @@ public class DGPSDataTaggMenuActivity extends AppCompatActivity {
                                     public void onClick(DialogInterface arg0, int arg1) {
                                         try {
                                             db = openOrCreateDatabase("sltp.db", MODE_PRIVATE, null);
-                                            c = db.rawQuery("update m_fb_dgps_survey_pill_data set completion_status='1' where fb_id='" + sharefb + "'", null);
+                                            c = db.rawQuery("update m_fb_revisit_dgps_survey_pill_data set completion_status='1' where fb_id='" + sharefb + "'", null);
                                             if (c.getCount() >= 0) {
                                                 try {
-                                                    Intent i = new Intent(getApplicationContext(), DFPSRTXDataExportActivity.class);
+                                                    Intent i = new Intent(getApplicationContext(), RevisitDGPSRTXDataExportActivity.class);
                                                     SharedPreferences sharedPreferences = getSharedPreferences(data, 0);
                                                     SharedPreferences.Editor editor = sharedPreferences.edit();
                                                     editor.clear();
@@ -148,7 +143,7 @@ public class DGPSDataTaggMenuActivity extends AppCompatActivity {
                         AlertDialog alertDialog = alertDialogBuilder.create();
                         alertDialog.show();
                     } else {
-                        Intent i = new Intent(getApplicationContext(), DFPSRTXDataExportActivity.class);
+                        Intent i = new Intent(getApplicationContext(), RevisitDGPSRTXDataExportActivity.class);
                         SharedPreferences sharedPreferences = getSharedPreferences(data, 0);
                         SharedPreferences.Editor editor = sharedPreferences.edit();
                         editor.clear();
@@ -191,10 +186,10 @@ public class DGPSDataTaggMenuActivity extends AppCompatActivity {
                                     public void onClick(DialogInterface arg0, int arg1) {
                                         try {
                                             db = openOrCreateDatabase("sltp.db", MODE_PRIVATE, null);
-                                            c = db.rawQuery("update m_fb_dgps_survey_pill_data set completion_status='2' where fb_id='" + sharefb + "'", null);
+                                            c = db.rawQuery("update m_fb_revisit_dgps_survey_pill_data set completion_status='2' where fb_id='" + sharefb + "'", null);
                                             if (c.getCount() >= 0) {
                                                 try {
-                                                    Intent i = new Intent(getApplicationContext(), DGPSJXLDataExportActivity.class);
+                                                    Intent i = new Intent(getApplicationContext(), RevisitDGPSJXLDataExportActivity.class);
                                                     SharedPreferences sharedPreferences = getSharedPreferences(data, 0);
                                                     SharedPreferences.Editor editor = sharedPreferences.edit();
                                                     editor.clear();
@@ -237,7 +232,7 @@ public class DGPSDataTaggMenuActivity extends AppCompatActivity {
                         alertDialog.show();
                     }
                     else {
-                        Intent i = new Intent(getApplicationContext(), DGPSJXLDataExportActivity.class);
+                        Intent i = new Intent(getApplicationContext(), RevisitDGPSJXLDataExportActivity.class);
                         SharedPreferences sharedPreferences = getSharedPreferences(data, 0);
                         SharedPreferences.Editor editor = sharedPreferences.edit();
                         editor.clear();
@@ -259,18 +254,15 @@ public class DGPSDataTaggMenuActivity extends AppCompatActivity {
                 }
             }
         });
-
     }
-
     private int getDGPSForestBlockData(String fb_ID) {
-        List<String> fbName = new ArrayList<String>();
         int status=-1;
         //rangeName.add("Select Range");
         fbKey = new HashMap<>();
         try {
             db = openOrCreateDatabase("sltp.db", MODE_PRIVATE, null);
-            db.rawQuery("update m_fb_dgps_survey_pill_data set completion_status='0' where fb_id='" + fb_ID + "'", null);
-            Cursor cursor = db.rawQuery("select distinct completion_status from m_fb_dgps_survey_pill_data where d_id='" + sharediv + "' and r_id ='" + sharerange + "' and fb_id='" + fb_ID + "' order by fb_name", null);
+            db.rawQuery("update m_fb_revisit_dgps_survey_pill_data set completion_status='0' where fb_id='" + fb_ID + "'", null);
+            Cursor cursor = db.rawQuery("select distinct completion_status from m_fb_revisit_dgps_survey_pill_data where d_id='" + sharediv + "' and r_id ='" + sharerange + "' and fb_id='" + fb_ID + "' order by fb_name", null);
             cursor.moveToFirst();
             if (cursor.moveToFirst()) {
                 do {
@@ -286,14 +278,13 @@ public class DGPSDataTaggMenuActivity extends AppCompatActivity {
         return status;
     }
     private int getDGPSForestBlockDataForJXL(String fb_ID) {
-        List<String> fbName = new ArrayList<String>();
         int status=-1;
         //rangeName.add("Select Range");
         fbKey = new HashMap<>();
         try {
             db = openOrCreateDatabase("sltp.db", MODE_PRIVATE, null);
-            db.rawQuery("update m_fb_dgps_survey_pill_data set completion_status='0' where fb_id='" + fb_ID + "'", null);
-            Cursor cursor = db.rawQuery("select distinct completion_status from m_fb_dgps_survey_pill_data where d_id='" + sharediv + "' and r_id ='" + sharerange + "' and fb_id='" + fb_ID + "' order by fb_name", null);
+            db.rawQuery("update m_fb_revisit_dgps_survey_pill_data set completion_status='0' where fb_id='" + fb_ID + "'", null);
+            Cursor cursor = db.rawQuery("select distinct completion_status from m_fb_revisit_dgps_survey_pill_data where d_id='" + sharediv + "' and r_id ='" + sharerange + "' and fb_id='" + fb_ID + "' order by fb_name", null);
             cursor.moveToFirst();
             if (cursor.moveToFirst()) {
                 do {

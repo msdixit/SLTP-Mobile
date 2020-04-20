@@ -49,6 +49,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
@@ -118,11 +119,12 @@ public class LoginActivity extends AppCompatActivity {
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_login);
         //Log.d("login", "service");
+
         dbHelper = new DbHelper(this);
         mDb = openOrCreateDatabase("sltp.db", MODE_PRIVATE, null);
         mDb.execSQL(CREATE_m_pillar_reg_Table);
 
-        txtemail = findViewById(R.id.emailEditText);
+        txtemail    = findViewById(R.id.emailEditText);
         txtpassword = findViewById(R.id.passwordEditText);
         otpEditText = findViewById(R.id.otpEditText);
 
@@ -141,8 +143,8 @@ public class LoginActivity extends AppCompatActivity {
         }
 
         initViews();
-        new CountDownTimer(3000, 1000) {
 
+        new CountDownTimer(3000, 1000) {
             @Override
             public void onTick(long millisUntilFinished) {
                 //bookITextView.setVisibility(GONE);
@@ -202,7 +204,7 @@ public class LoginActivity extends AppCompatActivity {
                     ConnectivityManager cm = (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
                     NetworkInfo nInfo = cm.getActiveNetworkInfo();
                     if (nInfo != null && nInfo.isAvailable() && nInfo.isConnected()) {
-                        get_OTP(txtemail.getText().toString(), txtpassword.getText().toString(),macaddress.getText().toString());
+                        get_OTP(txtemail.getText().toString(), txtpassword.getText().toString());
 
                     } else {
                         Toast.makeText(getApplicationContext(), "You don't have Internet Connection.", Toast.LENGTH_SHORT).show();
@@ -225,7 +227,7 @@ public class LoginActivity extends AppCompatActivity {
                     ConnectivityManager cm = (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
                     NetworkInfo nInfo = cm.getActiveNetworkInfo();
                     if (nInfo != null && nInfo.isAvailable() && nInfo.isConnected()) {
-                        login_auth(txtpassword.getText().toString(), otpEditText.getText().toString(), _serviceOTP);
+                        login_auth(txtpassword.getText().toString(), otpEditText.getText().toString(), _serviceOTP,getMyMacAddress());
                     } else {
                         Toast.makeText(getApplicationContext(), "You don't have Internet Connection.", Toast.LENGTH_SHORT).show();
                     }
@@ -243,9 +245,7 @@ public class LoginActivity extends AppCompatActivity {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_PHONE_STATE}, 101);
             macAddress = "";
         } else {
-            macAddress =
-                    android.provider.Settings.Secure.getString(this.getApplicationContext().getContentResolver(), "android_id");
-
+            macAddress = android.provider.Settings.Secure.getString(this.getApplicationContext().getContentResolver(), "android_id");
         }
         return macAddress;
     }
@@ -257,7 +257,8 @@ public class LoginActivity extends AppCompatActivity {
         String[] permissions = new String[]{
                 android.Manifest.permission.ACCESS_FINE_LOCATION,
                 android.Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.INTERNET,
-                Manifest.permission.ACCESS_NETWORK_STATE, Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE};
+                Manifest.permission.ACCESS_NETWORK_STATE, Manifest.permission.CAMERA,
+                Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE};
 
         for (String perms : permissions) {
             res = checkCallingOrSelfPermission(perms);
@@ -347,10 +348,10 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
-    private boolean login_auth(String pass, String _OTP, String _sOTP) {
+    private boolean login_auth(String pass, String _OTP, String _sOTP,String mac_add) {
         try {
             RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
-            String URL = BuildConfig.LOG_IN_API + txtemail.getText().toString() + "/" + pass + "/" + _OTP + "/" + _sOTP;
+            String URL = BuildConfig.LOG_IN_API + txtemail.getText().toString() + "/" + pass + "/" + _OTP + "/" + _sOTP+"/"+mac_add;
             progressDialog = new ProgressDialog(this, R.style.MyAlertDialogStyle);
             progressDialog.setMessage("Please wait...You are logging in to GFLO");
             progressDialog.show();
@@ -360,7 +361,7 @@ public class LoginActivity extends AppCompatActivity {
                     JSONObject obj = new JSONObject(response);
                     JSONArray arr = obj.getJSONArray("info");
                     _token = obj.getString("token");
-                    Toast.makeText(this, "hsh", Toast.LENGTH_SHORT);
+                    //Toast.makeText(this, "hsh", Toast.LENGTH_SHORT);
                     // JSONArray arr = new JSONArray(response);
                     if (arr.length() > 0) {
                         for (int i = 0; i < arr.length(); i++) {
@@ -375,6 +376,7 @@ public class LoginActivity extends AppCompatActivity {
                             editor.putString("upass", txtpassword.getText().toString());
                             editor.putString("uname", jsonobject.getString("chrv_name"));
                             editor.putString("upos", jsonobject.getString("chrv_designation_nm"));
+
                             if (Integer.parseInt(jsonobject.getString("circle_id")) == 0) {
                                 editor.putString("ucir", "");
                                 editor.putString("udivid", "");
@@ -388,14 +390,15 @@ public class LoginActivity extends AppCompatActivity {
                             editor.putString("uid", jsonobject.getString("chrv_email"));
                             editor.putString("userdivid", jsonobject.getString("desig_id"));
                             editor.putString("token", _token);
+                            //editor.putString("startdate",Date.getTime());
                             editor.apply();
+
                             if (subheadlist.contains(Integer.parseInt(jsonobject.getString("desig_id")))) {
                                 //editor.putString("userdivid", jsonobject.getString("chrv_division_nm"));
                                 insertrangeData(jsonobject.getString("div_id"));
                             }
                             startActivity(intent);
                         }
-
                     } else {
                         progressDialog.dismiss();
                         Toast.makeText(LoginActivity.this, "Invalid Login", Toast.LENGTH_SHORT).show();
@@ -412,7 +415,7 @@ public class LoginActivity extends AppCompatActivity {
                         final int httpStatusCode = error.networkResponse.statusCode;
                         progressDialog.dismiss();
                         if (httpStatusCode == 400) {
-                            Toast.makeText(LoginActivity.this, "Unauthorize User", Toast.LENGTH_LONG).show();
+                            Toast.makeText(LoginActivity.this, "Unauthorized User", Toast.LENGTH_LONG).show();
 
                         } else if (httpStatusCode == 401) {
                             Toast.makeText(LoginActivity.this, "Invalid User or Password or OTP", Toast.LENGTH_LONG).show();
@@ -435,18 +438,22 @@ public class LoginActivity extends AppCompatActivity {
         return false;
     }
 
+
     private void insertrangeData(final String div_id) {
         try {
             RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
             String URL = BuildConfig.F_D_RANGE_DATA_API + div_id;
+
             StringRequest stringRequest = new StringRequest(Request.Method.GET, URL, new Response.Listener<String>() {
                 @Override
                 public void onResponse(String response) {
                     try {
                         JSONArray jsonArray = new JSONArray(response);
-                        for (int i = 0; i < jsonArray.length(); i++) {
+                         for (int i = 0; i < jsonArray.length(); i++) {
                             JSONObject object = jsonArray.getJSONObject(i);
-                            M_range m_range = new M_range(object.getString("range"), object.getString("id"), div_id);
+                            M_range m_range = new M_range(object.getString("range"),
+                                    object.getString("id"),
+                                    div_id);
                             dbHelper.open();
                             dbHelper.insertRangeData(m_range);
                             dbHelper.close();
@@ -494,7 +501,14 @@ public class LoginActivity extends AppCompatActivity {
                         JSONArray jsonArray = new JSONArray(response);
                         for (int i = 0; i < jsonArray.length(); i++) {
                             JSONObject object = jsonArray.getJSONObject(i);
-                            M_fb m_fb = new M_fb(object.getString("fb"), object.getString("fid"), object.getString("rid"), div_id, object.getString("fb_type"), object.getString("cmv_path"), object.getString("mmv_path"), "");//object.getString("point_path")
+                            M_fb m_fb = new M_fb(object.getString("fb"),
+                                    object.getString("fid"),
+                                    object.getString("rid"),
+                                    div_id,
+                                    object.getString("fb_type"),
+                                    object.getString("cmv_path"),
+                                    object.getString("mmv_path"), "");//object.getString("point_path")
+
                             dbHelper.open();
                             dbHelper.inserFBData(m_fb);
                             dbHelper.close();
@@ -533,19 +547,22 @@ public class LoginActivity extends AppCompatActivity {
 
     }
 
-    private String get_OTP(String _userID, String _password,String _macaddress) {
+    private String get_OTP(String _userID, String _password) {
         try {
             RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
             String URL = BuildConfig.OTP_IN_API + _userID + "/" + _password;//+"/"+_macaddress
+
             progressDialog = new ProgressDialog(this, R.style.MyAlertDialogStyle);
             progressDialog.setMessage("Wait for sometime...");
             progressDialog.show();
+
             StringRequest stringRequest = new StringRequest(Request.Method.GET, URL, response -> {
                 try {
                     int _otp = Integer.parseInt(response);
                     if (_serviceOTP != "")
                         _serviceOTP = "";
                     _serviceOTP = String.valueOf(_otp);
+
                     if (_serviceOTP.equals("2")) {
                         progressDialog.dismiss();
                         Toast.makeText(getApplicationContext(), "Your mobile number is not registered with us..Please contact server admin", Toast.LENGTH_SHORT).show();
@@ -570,6 +587,8 @@ public class LoginActivity extends AppCompatActivity {
                         }
                     } catch (Exception ee) {
                         ee.printStackTrace();
+                    }finally{
+                        progressDialog.dismiss();
                     }
                 }
             }) {
@@ -578,7 +597,6 @@ public class LoginActivity extends AppCompatActivity {
                     return "application/json; charset=utf-8";
                 }
             };
-
             requestQueue.add(stringRequest);
         } catch (Exception e) {
             e.printStackTrace();

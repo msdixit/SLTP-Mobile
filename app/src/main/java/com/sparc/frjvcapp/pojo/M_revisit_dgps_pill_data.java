@@ -1,8 +1,67 @@
 package com.sparc.frjvcapp.pojo;
 
-import java.util.Date;
+public class M_revisit_dgps_pill_data {
 
-public class M_dgps_pilldata {
+
+    public M_revisit_dgps_pill_data(String d_id, String r_id, String fb_id, int pill_no, String job_id, String u_id, String survey_durn,
+                                    String f_pic_status, String b_pic_status, String i_pic_status, String o_pic_status, String div_pic_status,
+                                    String patch_no,String ring_no, String forest_person, String surveyor_name, String survey_time, String div_name,
+                                    String range_name, String fb_name, String sync_status, String ack_status, String delete_status,
+                                    String survey_segment,String completion_sts, String f_pic_name, String b_pic_name,
+                                    String i_pic_name, String o_pic_name, String div_pic_name,String device_imei_no,
+                                    String pillar_sfile_path,String pillar_sfile_status,String frjvc_lat,String frjvc_long,
+                                    String d_pill_no,String d_old_id,String pillar_rfile_path,String pillar_rfile_status,
+                                    String completion_status,String rtx_min,String rtx_sec,String survey_status,String reason,
+                                    String remark,String pillar_jfile_path,String pillar_jfile_status) {
+        this.d_id = d_id;
+        this.r_id = r_id;
+        this.fb_id = fb_id;
+        this.pill_no = pill_no;
+        this.job_id = job_id;
+        this.u_id = u_id;
+        this.survey_durn = survey_durn;
+        this.f_pic_status = f_pic_status;
+        this.b_pic_status = b_pic_status;
+        this.i_pic_status = i_pic_status;
+        this.o_pic_status = o_pic_status;
+        this.div_pic_status = div_pic_status;
+        this.patch_no = patch_no;
+        this.ring_no = ring_no;
+        this.forest_person = forest_person;
+        this.surveyor_name = surveyor_name;
+        this.survey_time = survey_time;
+        this.div_name = div_name;
+        this.range_name = range_name;
+        this.fb_name = fb_name;
+        this.sync_status = sync_status;
+        this.ack_status = ack_status;
+        this.delete_status = delete_status;
+        this.survey_segment = survey_segment;
+        this.device_imei_no = device_imei_no;
+        this.pillar_sfile_path = pillar_sfile_path;
+        this.pillar_sfile_status = pillar_sfile_status;
+        this.completion_status = completion_status;
+        this.rtx_min = rtx_min;
+        this.rtx_sec = rtx_sec;
+        this.pillar_jfile_path = pillar_jfile_path;
+        this.pillar_jfile_status = pillar_jfile_status;
+        this.pillar_rfile_path = pillar_rfile_path;
+        this.pillar_rfile_status = pillar_rfile_status;
+        this.d_old_id = d_old_id;
+        this.f_pic_name = f_pic_name;
+        this.b_pic_name = b_pic_name;
+        this.i_pic_name = i_pic_name;
+        this.o_pic_name = o_pic_name;
+        this.div_pic_name = div_pic_name;
+        this.completion_sts = completion_sts;
+        this.frjvc_lat = frjvc_lat;
+        this.frjvc_long = frjvc_long;
+        this.d_pill_no = d_pill_no;
+        this.survey_status = survey_status;
+        this.reason = reason;
+        this.remark = remark;
+    }
+
     public String getPndjv_pill_no() {
         return pndjv_pill_no;
     }
@@ -422,69 +481,6 @@ public class M_dgps_pilldata {
     }
 
     private String remark;
-
-
-    public M_dgps_pilldata(String d_id, String r_id, String fb_id, int pill_no, String job_id, String u_id, String survey_durn,
-                           String f_pic_status, String b_pic_status, String i_pic_status, String o_pic_status, String div_pic_status,
-                           String patch_no,String ring_no, String forest_person, String surveyor_name, String survey_time, String div_name,
-                           String range_name, String fb_name, String sync_status, String ack_status, String delete_status,
-                           String survey_segment,String completion_sts, String f_pic_name, String b_pic_name,
-                           String i_pic_name, String o_pic_name, String div_pic_name,String device_imei_no,
-                           String pillar_sfile_path,String pillar_sfile_status,String frjvc_lat,String frjvc_long,
-                           String d_pill_no,String d_old_id,String pillar_rfile_path,String pillar_rfile_status,
-                           String completion_status,String rtx_min,String rtx_sec,String survey_status,String reason,
-                           String remark,String pillar_jfile_path,String pillar_jfile_status,String pndjv_pill_no) {
-        this.d_id = d_id;
-        this.r_id = r_id;
-        this.fb_id = fb_id;
-        this.pill_no = pill_no;
-        this.job_id = job_id;
-        this.u_id = u_id;
-        this.survey_durn = survey_durn;
-        this.f_pic_status = f_pic_status;
-        this.b_pic_status = b_pic_status;
-        this.i_pic_status = i_pic_status;
-        this.o_pic_status = o_pic_status;
-        this.div_pic_status = div_pic_status;
-        this.patch_no = patch_no;
-        this.ring_no = ring_no;
-        this.forest_person = forest_person;
-        this.surveyor_name = surveyor_name;
-        this.survey_time = survey_time;
-        this.div_name = div_name;
-        this.range_name = range_name;
-        this.fb_name = fb_name;
-        this.sync_status = sync_status;
-        this.ack_status = ack_status;
-        this.delete_status = delete_status;
-        this.survey_segment = survey_segment;
-        this.completion_sts = completion_sts;
-        this.f_pic_name = f_pic_name;
-        this.b_pic_name = b_pic_name;
-        this.i_pic_name = i_pic_name;
-        this.o_pic_name = o_pic_name;
-        this.div_pic_name = div_pic_name;
-        this.device_imei_no = device_imei_no;
-        this.pillar_sfile_path = pillar_sfile_path;
-        this.pillar_sfile_status = pillar_sfile_status;
-        this.frjvc_lat=frjvc_lat;
-        this.frjvc_long=frjvc_long;
-        this.d_pill_no=d_pill_no;
-        this.d_old_id=d_old_id;
-        this.pillar_rfile_path=pillar_rfile_path;
-        this.pillar_rfile_status=pillar_rfile_status;
-        this.completion_status=completion_status;
-        this.rtx_min=rtx_min;
-        this.rtx_sec=rtx_sec;
-        this.survey_status=survey_status;
-        this.reason=reason;
-        this.remark=remark;
-        this.pillar_jfile_path=pillar_jfile_path;
-        this.pillar_jfile_status=pillar_jfile_status;
-        this.pndjv_pill_no=pndjv_pill_no;
-    }
-
-
     public String getCompletion_status() {
         return completion_status;
     }
@@ -508,4 +504,5 @@ public class M_dgps_pilldata {
     public void setRtx_sec(String rtx_sec) {
         this.rtx_sec = rtx_sec;
     }
+
 }

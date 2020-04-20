@@ -16,34 +16,27 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
-import com.android.volley.DefaultRetryPolicy;
-import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.VolleyLog;
-import com.android.volley.toolbox.HttpHeaderParser;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.sparc.frjvcapp.config.AllApi;
+import com.sparc.frjvcapp.pojo.M_dgps_revisit_pillar_data_dwnld;
 import com.sparc.frjvcapp.pojo.M_dgpssurvey_pillar_data;
-import com.sparc.frjvcapp.pojo.M_survey_pillar_data;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ChooseSurvetTypeActivity extends AppCompatActivity {
-    SharedPreferences shared,_shareToken;
-    String  sharediv, sharerange, sharefb, sharefbtype, sharefbname, userid,jobid,div_name,range_name,fb_name,_token,spinner_duration,spinner_segment;
+public class RevisitDGPSSurveyMenuActivity extends AppCompatActivity {
+    SharedPreferences shared, _shareToken;
+    String sharediv, sharerange, sharefb, sharefbtype, sharefbname, userid, jobid, div_name, range_name, fb_name, _token, spinner_duration, spinner_segment;
     public static final String data = "data";
     public static final String userlogin = "userlogin";
-    ImageView data_collect,data_view,data_export,data_sync,data_point_dwld,mapview,revisit;
+    ImageView data_collect, data_view, data_export, data_sync, data_point_dwld, mapview;
     TextView dgpsfbName;
     SQLiteDatabase db;
     DbHelper dbHelper;
@@ -55,17 +48,14 @@ public class ChooseSurvetTypeActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_choose_survet_type);
+        setContentView(R.layout.activity_revisit_dgpssurvey_menu);
 
-
-        /*data_collect=findViewById(R.id.datacollect);*/
         data_view = findViewById(R.id.dataview);
         data_export = findViewById(R.id.exporttofolder);
         data_sync = findViewById(R.id.synchronize);
         data_point_dwld = findViewById(R.id.data_point_dwld);
         mapview = findViewById(R.id.mapview);
         dgpsfbName = findViewById(R.id.dgpsfbName);
-        revisit=findViewById(R.id.exporttoExcel);
 
         shared = getApplicationContext().getSharedPreferences(data, MODE_PRIVATE);
         sharediv = shared.getString("fbdivcode", "0");
@@ -88,7 +78,7 @@ public class ChooseSurvetTypeActivity extends AppCompatActivity {
         data_view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent i = new Intent(getApplicationContext(), DGPSDataViewActivity.class);
+                Intent i = new Intent(getApplicationContext(), RevisitDGPSDataViewActivity.class);
                 SharedPreferences sharedPreferences = getSharedPreferences(data, 0);
                 SharedPreferences.Editor editor = sharedPreferences.edit();
                 editor.clear();
@@ -109,7 +99,7 @@ public class ChooseSurvetTypeActivity extends AppCompatActivity {
         data_export.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent i = new Intent(getApplicationContext(), DGPSDataTaggMenuActivity.class);
+                Intent i = new Intent(getApplicationContext(), RevisitDGPSDataTaggMenuActivity.class);
                 SharedPreferences sharedPreferences = getSharedPreferences(data, 0);
                 SharedPreferences.Editor editor = sharedPreferences.edit();
                 editor.clear();
@@ -138,7 +128,7 @@ public class ChooseSurvetTypeActivity extends AppCompatActivity {
                     } else {
 
                     }
-                } else {
+                }else{
                     Toast.makeText(getApplicationContext(), "Check your internet connection.", Toast.LENGTH_SHORT).show();
                 }
             }
@@ -146,7 +136,7 @@ public class ChooseSurvetTypeActivity extends AppCompatActivity {
         mapview.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent i = new Intent(getApplicationContext(), DGPSMapViewActivity.class);
+                Intent i = new Intent(getApplicationContext(), RevisitDGPSMapViewActivity.class);
                 SharedPreferences sharedPreferences = getSharedPreferences(data, 0);
                 SharedPreferences.Editor editor = sharedPreferences.edit();
                 editor.clear();
@@ -167,7 +157,7 @@ public class ChooseSurvetTypeActivity extends AppCompatActivity {
         data_sync.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent i = new Intent(getApplicationContext(), DGPSSyncMenuActivity.class);
+                Intent i = new Intent(getApplicationContext(), RevisitDGPSSyncMenuActivity.class);
                 SharedPreferences sharedPreferences = getSharedPreferences(data, 0);
                 SharedPreferences.Editor editor = sharedPreferences.edit();
                 editor.clear();
@@ -192,43 +182,14 @@ public class ChooseSurvetTypeActivity extends AppCompatActivity {
                }*/
             }
         });
-        revisit.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-               /* Intent i = new Intent(getApplicationContext(), RevisitDGPSSurveyMenuActivity.class);
-                SharedPreferences sharedPreferences = getSharedPreferences(data, 0);
-                SharedPreferences.Editor editor = sharedPreferences.edit();
-                editor.clear();
-                editor.putString("fbrangecode", sharerange);
-                editor.putString("fbdivcode", sharediv);
-                editor.putString("fbcode", sharefb);
-                editor.putString("fbtype", sharefbtype);
-                editor.putString("fbname", sharefbname);
-                editor.putString("userid", userid);
-                editor.putString("jobid", jobid);
-                editor.putString("div_name", div_name);
-                editor.putString("range_name", range_name);
-                editor.putString("fb_name", fb_name);
-                editor.apply();
-                startActivity(i);*/
-            }
-        });
-    }
-
-    @Override
-    public void onBackPressed() {
-        Intent i = new Intent(getApplicationContext(), SelectFBForDGPSActivity.class);
-        i.setFlags(i.FLAG_ACTIVITY_NEW_TASK | i.FLAG_ACTIVITY_CLEAR_TASK);
-        startActivity(i);
-
     }
     private boolean CheckDataAvalability(String sharefb) {
         db = openOrCreateDatabase("sltp.db", MODE_PRIVATE, null);
         boolean b=false;
-        Cursor cursor = db.rawQuery("select * from m_dgps_Survey_pill_data where m_fb_id='"+sharefb+"'", null);
+        Cursor cursor = db.rawQuery("select * from m_revisit_dgps_download_data where m_fb_id='"+sharefb+"'", null);
         try {
             if (cursor.getCount() > 0) {
-                db.execSQL("delete from m_dgps_Survey_pill_data where m_fb_id='"+sharefb+"'");
+                db.execSQL("delete from m_revisit_dgps_download_data where m_fb_id='"+sharefb+"'");
                 b = true;
             } else {
                 b = true;
@@ -245,9 +206,9 @@ public class ChooseSurvetTypeActivity extends AppCompatActivity {
     private void getDataForSurveyPoints(String fbid) {
         try {
             RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
-            String URL = BuildConfig.F_D_FB_PILL_DATA_API + fbid;
+            String URL =  BuildConfig.R_DGPS_PILL_DOWNLOAD+ fbid;
             progressDialog = new ProgressDialog(this , R.style.MyAlertDialogStyle);
-            progressDialog.setMessage("Please wait...Your Point data is downloading");
+            progressDialog.setMessage("Please wait...Your Revisit Point data is downloading");
             progressDialog.show();
             StringRequest stringRequest = new StringRequest(Request.Method.GET, URL, new Response.Listener<String>() {
                 @Override
@@ -256,18 +217,17 @@ public class ChooseSurvetTypeActivity extends AppCompatActivity {
                         JSONArray jsonArray = new JSONArray(response);
                         for (int i = 0; i < jsonArray.length(); i++) {
                             JSONObject object = jsonArray.getJSONObject(i);
-                            M_dgpssurvey_pillar_data m_fb = new M_dgpssurvey_pillar_data(object.getString("latitude"), object.getString("longitude"), object.getString("pillar_no"), "", fbid, object.getString("status"),"0","0",object.getString("id"),"0","0");//object.getString("point_path")
+                            M_dgps_revisit_pillar_data_dwnld m_fb = new M_dgps_revisit_pillar_data_dwnld(object.getString("lat"), object.getString("longi"), object.getString("pillar_no"), "", fbid, object.getString("status"),"0","0",object.getString("point_id"),"0");//object.getString("point_path")
                             dbHelper.open();
-                            dbHelper.insertdgpsSurveyedPointDataData(m_fb);
+                            dbHelper.insertdgpsRevisitSurveyedPointDataData(m_fb);
                             dbHelper.close();
-
                         }
                         progressDialog.dismiss();
                         Toast.makeText(getApplicationContext(), "The Survey Point Data is downloaded.", Toast.LENGTH_SHORT).show();
                     } catch (Exception e) {
                         e.printStackTrace();
                         progressDialog.dismiss();
-                        Toast.makeText(getApplicationContext(), "You don't have any point.", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(), "You don't have any points", Toast.LENGTH_SHORT).show();
                     }
                 }
             }, new Response.ErrorListener() {
@@ -296,3 +256,4 @@ public class ChooseSurvetTypeActivity extends AppCompatActivity {
         }
     }
 }
+

@@ -15,7 +15,6 @@ import android.location.Location;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
-import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomNavigationView;
@@ -37,9 +36,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.akexorcist.googledirection.DirectionCallback;
-import com.akexorcist.googledirection.GoogleDirection;
-import com.akexorcist.googledirection.constant.TransportMode;
 import com.github.pengrad.mapscaleview.MapScaleView;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -63,7 +59,7 @@ import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class DGPSMapViewActivity extends AppCompatActivity implements OnMapReadyCallback,
+public class RevisitDGPSMapViewActivity extends AppCompatActivity implements OnMapReadyCallback,
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
         LocationListener, GoogleMap.OnMarkerClickListener, GoogleMap.OnCameraIdleListener, GoogleMap.OnCameraMoveListener, GoogleMap.OnCameraChangeListener, BottomNavigationView.OnNavigationItemSelectedListener {
@@ -99,18 +95,16 @@ public class DGPSMapViewActivity extends AppCompatActivity implements OnMapReady
     CheckBox c1, c2, c3, c4, c5, c6;
     int i, j, k, l, m, n = 0;
     boolean cmvsta;
-    String gps_lat,gps_long;
-    int counter,updated_pill_no,pndjv_pill_no;
+    String gps_lat, gps_long;
+    int counter, updated_pill_no, pndjv_pill_no;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_dgpsmap_view);
+        setContentView(R.layout.activity_revisit_dgpsmap_view);
 
         BottomNavigationView bottomView = findViewById(R.id.dgpsnavigationView);
-
-        //switchCompat = findViewById(R.id.chk);
         scaleView = (MapScaleView) findViewById(R.id.dgpsscaleView);
         bottomView.setOnNavigationItemSelectedListener((BottomNavigationView.OnNavigationItemSelectedListener) this);
 
@@ -221,8 +215,8 @@ public class DGPSMapViewActivity extends AppCompatActivity implements OnMapReady
     @Override
     public void onLocationChanged(Location location) {
         mLastLocation = location;
-        gps_lat=String.valueOf(location.getLatitude());
-        gps_long=String.valueOf(location.getLongitude());
+        gps_lat = String.valueOf(location.getLatitude());
+        gps_long = String.valueOf(location.getLongitude());
         ConnectivityManager cm = (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo nInfo = cm.getActiveNetworkInfo();
         if (nInfo != null && nInfo.isAvailable() && nInfo.isConnected()) {
@@ -236,16 +230,6 @@ public class DGPSMapViewActivity extends AppCompatActivity implements OnMapReady
             }
             //Place current location marker
             latLng = new LatLng(location.getLatitude(), location.getLongitude());
-           /* markerOptions = new MarkerOptions();
-            markerOptions.position(latLng);
-            mCurrLocationMarker = googleMap.addMarker(markerOptions);*/
-
-           /*else{
-               gps_lat="";
-               gps_long="";
-           }*/
-
-
             if (destination != null) {
                 //requestDirection();
             }
@@ -285,11 +269,10 @@ public class DGPSMapViewActivity extends AppCompatActivity implements OnMapReady
     public void onCameraMove() {
         CameraPosition cameraPosition = googleMap.getCameraPosition();
         scaleView.update(cameraPosition.zoom, cameraPosition.target.latitude);
-
     }
 
     @Override
-    public boolean onMarkerClick(final Marker marker) {
+    public boolean onMarkerClick(Marker marker) {
         if (marker.isInfoWindowShown()) {
             marker.hideInfoWindow();
         } else {
@@ -316,11 +299,6 @@ public class DGPSMapViewActivity extends AppCompatActivity implements OnMapReady
         googleMap.setOnCameraChangeListener(this);
         CameraPosition cameraPosition = googleMap.getCameraPosition();
         scaleView.update(cameraPosition.zoom, cameraPosition.target.latitude);
-        // googleMap.setOnCameraMoveListener(this);
-        //googleMap.setOnCameraIdleListener(this);
-        //googleMap.setOnCameraChangeListener(this);
-        //=googleMap1;
-        //Initialize Google Play Services
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (ContextCompat.checkSelfPermission(this,
                     Manifest.permission.ACCESS_FINE_LOCATION)
@@ -339,26 +317,10 @@ public class DGPSMapViewActivity extends AppCompatActivity implements OnMapReady
                     } else {
 
                     }
-                  /* googleMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
-                        @Override
-                        public void onMapClick(LatLng dest) {
-                            MarkerOptions marker = new MarkerOptions().position(
-                                    dest)
-                                    .title("Destination ");
-                            marker.icon(BitmapDescriptorFactory
-                                    .defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
-                            destination = dest;
-                            finalGoogleMap.addMarker(marker);
-                            if (destination != null) {
-                                requestDirection();
-
-                            }
-                        }
-                    });*/
                 } else {
                     buildGoogleApiClient();
                     googleMap.setMyLocationEnabled(true);
-                    TileProvider coordTileProvider = new DGPSMapViewActivity.CoordTileProvider(this.getApplicationContext());
+                    TileProvider coordTileProvider = new RevisitDGPSMapViewActivity.CoordTileProvider(this.getApplicationContext());
                     googleMap1.addTileOverlay(new TileOverlayOptions().tileProvider(coordTileProvider));
                     if (checkSurveyData(sharefb)) {
                         googleMap.clear();
@@ -384,17 +346,15 @@ public class DGPSMapViewActivity extends AppCompatActivity implements OnMapReady
                 String[] array_status = a[2].split(":");
                 String[] array_file = a[3].split(":");
                 String[] array_o_id = a[4].split(":");
-                String[] array_pnjvd = a[5].split(":");
                 String pillar_no = p[1];
                 String lat = array_lat[1];
                 String lon = array_long[1];
                 int status = Integer.parseInt(array_status[1]);
                 int file = Integer.parseInt(array_file[1]);
                 String o_id = array_o_id[1];
-                String pnjdv_id = array_pnjvd[1];
 
                 if (status == 0 && file == 0) {
-                    Intent intent1 = new Intent(getApplicationContext(), DGPSDataCollectActivity.class);
+                    Intent intent1 = new Intent(getApplicationContext(), RevisitDGPSDataCollectActivity.class);
                     intent1.putExtra("lat", lat);
                     intent1.putExtra("lon", lon);
                     intent1.putExtra("checksts", k);
@@ -404,7 +364,7 @@ public class DGPSMapViewActivity extends AppCompatActivity implements OnMapReady
                     intent1.putExtra("old_id", o_id);
                     startActivity(intent1);
                 } else if (status == 1 && file == 0) {
-                    Intent intent1 = new Intent(getApplicationContext(), DGPSViewPillarDetailActivity.class);
+                    Intent intent1 = new Intent(getApplicationContext(), RevisitDGPSViewPillarDetailActivity.class);
                     intent1.putExtra("lat", lat);
                     intent1.putExtra("lon", lon);
                     intent1.putExtra("checksts", k);
@@ -412,16 +372,13 @@ public class DGPSMapViewActivity extends AppCompatActivity implements OnMapReady
                     intent1.putExtra("id", "DGPSMap");
                     intent1.putExtra("kml_status", kmlstatus);
                     intent1.putExtra("old_id", o_id);
-                    intent1.putExtra("pnjdv_id", pnjdv_id);
                     startActivity(intent1);
                 }
             }
         });
 
-
     }
 
-    /* Map part for offline to call tileprovider*/
     private static class CoordTileProvider implements TileProvider {
 
         private static final int TILE_SIZE_DP = 256;
@@ -468,7 +425,7 @@ public class DGPSMapViewActivity extends AppCompatActivity implements OnMapReady
     public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
         int id = menuItem.getItemId();
         if (id == R.id.dgpsnavigation_basemap) {
-            PopupMenu popupMenu = new PopupMenu(DGPSMapViewActivity.this, this.findViewById(R.id.dgpsnavigation_basemap));
+            PopupMenu popupMenu = new PopupMenu(RevisitDGPSMapViewActivity.this, this.findViewById(R.id.dgpsnavigation_basemap));
             popupMenu.getMenuInflater().inflate(R.menu.basemap_menu, popupMenu.getMenu());
             if (baseMapMenuPos == 0) {
                 popupMenu.getMenu().getItem(0).setChecked(true);
@@ -490,7 +447,7 @@ public class DGPSMapViewActivity extends AppCompatActivity implements OnMapReady
                             baseMapMenuPos = 1;
                             return true;
                         default:
-                            return DGPSMapViewActivity.super.onOptionsItemSelected(item);
+                            return RevisitDGPSMapViewActivity.super.onOptionsItemSelected(item);
                     }
                 }
             });
@@ -526,28 +483,6 @@ public class DGPSMapViewActivity extends AppCompatActivity implements OnMapReady
                 }
             });
             dialog.show();
-        }else if(id == R.id.newPoint)
-        {
-
-            String p_no=getDGPSPillData()+"-"+getDGPSPNDJVData();
-            Intent intent1 = new Intent(getApplicationContext(), DGPSDataCollectActivity.class);
-            intent1.putExtra("lat", gps_lat);
-            intent1.putExtra("lon", gps_long);
-            intent1.putExtra("checksts", k);
-            intent1.putExtra("pill_no", p_no);
-            intent1.putExtra("id", "DGPSMap");
-            intent1.putExtra("kml_status", kmlstatus);
-            // intent1.putExtra("counter", p_no);
-            intent1.putExtra("old_id", 0);
-            startActivity(intent1);
-        }
-        else {
-            Intent i = new Intent(getApplicationContext(), DGPSDataCollectActivity.class);
-            i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            i.putExtra("id", "ListMap");
-            i.putExtra("kml_status", kmlstatus);
-            finishAffinity();
-            startActivity(i);
         }
         return false;
     }
@@ -583,11 +518,10 @@ public class DGPSMapViewActivity extends AppCompatActivity implements OnMapReady
             ArrayList<String> file = new ArrayList<String>();
             ArrayList<String> o_id = new ArrayList<String>();
             ArrayList<String> survey_status = new ArrayList<String>();
-            ArrayList<String> pnjdv_no = new ArrayList<String>();
 
             rangeKey = new HashMap<>();
             db = openOrCreateDatabase("sltp.db", MODE_PRIVATE, null);
-            Cursor cursor = db.rawQuery("select * from m_dgps_Survey_pill_data where m_fb_id='" + fbid + "' and (m_pillar_avl_sts='0' or m_pillar_avl_sts='2')order by m_fb_pillar_no", null);
+            Cursor cursor = db.rawQuery("select * from m_revisit_dgps_download_data where m_fb_id='" + fbid + "' and (m_pillar_avl_sts='0' or m_pillar_avl_sts='2')order by m_fb_pillar_no", null);
             if (cursor.getCount() > 0) {
                 if (cursor.moveToFirst()) {
                     do {
@@ -599,14 +533,13 @@ public class DGPSMapViewActivity extends AppCompatActivity implements OnMapReady
                         file.add(cursor.getString(cursor.getColumnIndex("m_dgps_file_sts")));
                         o_id.add(cursor.getString(cursor.getColumnIndex("o_Id")));
                         survey_status.add(cursor.getString(cursor.getColumnIndex("m_survey_status")));
-                        pnjdv_no.add(cursor.getString(cursor.getColumnIndex("m_pndjv_pill_no")));
                     } while (cursor.moveToNext());
                 }
                 cmvsta = true;
                 cursor.close();
                 db.close();
                 for (int j = 0; j < pillarno.size(); j++) {
-                    addSurveyPointtoMap(Double.parseDouble(lat.get(j)), Double.parseDouble(lon.get(j)), pillarno.get(j), Integer.parseInt(status.get(j)), Integer.parseInt(file.get(j)), Integer.parseInt(o_id.get(j)),Integer.parseInt(survey_status.get(j)),Integer.parseInt(pnjdv_no.get(j)));
+                    addSurveyPointtoMap(Double.parseDouble(lat.get(j)), Double.parseDouble(lon.get(j)), pillarno.get(j), Integer.parseInt(status.get(j)), Integer.parseInt(file.get(j)), Integer.parseInt(o_id.get(j)),Integer.parseInt(survey_status.get(j)));
                 }
             } else {
                 cmvsta = false;
@@ -617,7 +550,7 @@ public class DGPSMapViewActivity extends AppCompatActivity implements OnMapReady
         }
     }
 
-    private void addSurveyPointtoMap(double key, double value, String pillno, int Status, int file_sts, int o_id,int survey_status,int pndjv_pill_no) {
+    private void addSurveyPointtoMap(double key, double value, String pillno, int Status, int file_sts, int o_id,int survey_status) {
         if (Status == 0 && file_sts == 0 && survey_status==0) {
             BitmapDrawable bitmapdraw = (BitmapDrawable) getResources().getDrawable(R.drawable.yellow);
             Bitmap b = bitmapdraw.getBitmap();
@@ -670,29 +603,4 @@ public class DGPSMapViewActivity extends AppCompatActivity implements OnMapReady
         }
         return updated_pill_no;
     }
-    private int getDGPSPNDJVData() {
-        try {
-            db = openOrCreateDatabase("sltp.db", MODE_PRIVATE, null);
-            Cursor c = db.rawQuery("SELECT * from m_fb_dgps_survey_pill_data where delete_status='0' and fb_id='" + sharefb + "' order by survey_time desc limit 1", null);
-            int count= c==null?1:c.getCount();
-            if (count >= 1) {
-                if (c.moveToFirst()) {
-                    do {
-                        pndjv_pill_no = Integer.parseInt(c.getString(c.getColumnIndex("pndjv_pill_no")))+1;
-                    }
-                    while (c.moveToNext());
-                }else{
-                    pndjv_pill_no=1;
-                }
-            }else{
-                pndjv_pill_no=1;
-            }
-            c.close();
-            db.close();
-        } catch (Exception ee) {
-            ee.printStackTrace();
-        }
-        return pndjv_pill_no;
-    }
-
 }

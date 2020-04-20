@@ -1,26 +1,13 @@
 package com.sparc.frjvcapp.pojo;
 
-public class M_dgps_pill_pic {
-
-
-    public M_dgps_pill_pic(int pic_pill_no, String u_id, String pic_status, String pic_name,String pic_view,String pndjv_pill_no) {
+public class M_revisit_dgps_pill_pic {
+    public M_revisit_dgps_pill_pic(int pic_pill_no, String u_id, String pic_status, String pic_name,String pic_view) {
+        this.pic_view = pic_view;
         this.pic_pill_no = pic_pill_no;
         this.u_id = u_id;
         this.pic_status = pic_status;
         this.pic_name = pic_name;
-        this.pic_view=pic_view;
-        this.pndjv_pill_no=pndjv_pill_no;
     }
-
-    public String getPndjv_pill_no() {
-        return pndjv_pill_no;
-    }
-
-    public void setPndjv_pill_no(String pndjv_pill_no) {
-        this.pndjv_pill_no = pndjv_pill_no;
-    }
-
-    private String pndjv_pill_no;
 
     public String getPic_view() {
         return pic_view;
@@ -68,10 +55,5 @@ public class M_dgps_pill_pic {
 
     private String pic_status;
     private String pic_name;
-
-
-
-
-
 
 }

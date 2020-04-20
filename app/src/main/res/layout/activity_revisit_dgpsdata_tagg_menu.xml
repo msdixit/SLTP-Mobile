@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/bg"
-    tools:context=".DGPSDataTaggMenuActivity">
+    tools:context=".RevisitDGPSDataTaggMenuActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -50,7 +50,7 @@
             android:weightSum="1">
 
             <ImageView
-                android:id="@+id/data_point_dwld"
+                android:id="@+id/tagRtx"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_marginRight="5dp"
@@ -61,7 +61,7 @@
                 android:clickable="true" />
 
             <ImageView
-                android:id="@+id/dataview"
+                android:id="@+id/tagStatic"
                 android:layout_width="0dp"
                 android:layout_marginLeft="5dp"
                 android:layout_marginRight="5dp"
@@ -99,5 +99,6 @@
 
         </LinearLayout>
     </LinearLayout>
+
 
 </RelativeLayout>

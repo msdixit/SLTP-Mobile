@@ -61,7 +61,7 @@ public class DGPSDataExportActivity extends AppCompatActivity {
     RecyclerView recyclerView;
     LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
     public DGPSPillarViewAdapter adapter;
-    String sharediv, sharerange, sharefb, sharefbtype, sharefbname, userid, jobid, div_name, range_name, fb_name,frjvc_lat,frjvc_long;
+    String sharediv, sharerange, sharefb, sharefbtype, sharefbname, userid, jobid, div_name, range_name, fb_name, frjvc_lat, frjvc_long;
     SharedPreferences shared;
 
     @Override
@@ -158,11 +158,11 @@ public class DGPSDataExportActivity extends AppCompatActivity {
 
                             @Override
                             public void onClick(DialogInterface arg0, int arg1) {
-                                if(!spill_no.equals("Select Pillar No")) {
+                                if (!spill_no.equals("Select Pillar No")) {
                                     String d_f_name[] = txtStsFileName.getText().toString().split("\\.");//.split(".")
                                     String f_file_name = d_f_name[0] + "_" + spill_no + "." + d_f_name[1];
                                     new DGPSDataExportActivity.ExportPointStaticData().execute(sfinalpath + "/" + txtStsFileName.getText().toString(), spill_no, dfinalpath + "/" + f_file_name);
-                                }else{
+                                } else {
                                     Toast.makeText(getApplicationContext(), "Please select the pillar number", Toast.LENGTH_LONG);
                                 }
                             }
@@ -239,7 +239,12 @@ public class DGPSDataExportActivity extends AppCompatActivity {
             if (count >= 1) {
                 if (c.moveToFirst()) {
                     do {
-                        arrayList.add(c.getString(c.getColumnIndex("pill_no")));
+                        if (c.getString(c.getColumnIndex("pndjv_pill_no")) != "0" || c.getString(c.getColumnIndex("pndjv_pill_no")) != "") {
+                            arrayList.add(c.getString(c.getColumnIndex("pill_no")));
+                        } else {
+                            arrayList.add(c.getString(c.getColumnIndex("pill_no")) + "-" + c.getString(c.getColumnIndex("pndjv_pill_no")));
+                        }
+
                     }
                     while (c.moveToNext());
                 }
@@ -320,11 +325,15 @@ public class DGPSDataExportActivity extends AppCompatActivity {
         protected void onPostExecute(String message) {
             String arr[];
             arr = message.split("&");
-            // dismiss the dialog after the file was downloaded
-            //this.progressDialog.dismiss();
             try {
                 db = openOrCreateDatabase("sltp.db", MODE_PRIVATE, null);
-                c = db.rawQuery("update m_fb_dgps_survey_pill_data set pillar_sfile_status='1',pillar_sfile_path='" + arr[1] + "' where pill_no='" + arr[0] + "' and fb_id='" + sharefb + "'", null);
+                if (arr[0].contains("-")) {
+                    String pillar_data[] = arr[0].split("-");
+                    c = db.rawQuery("update m_fb_dgps_survey_pill_data set pillar_sfile_status='1',pillar_sfile_path='" + arr[1] + "' where pill_no='" + pillar_data[0] + "' and pndjv_pill_no='" + pillar_data[1] + "' and fb_id='" + sharefb + "'", null);
+                } else {
+                    c = db.rawQuery("update m_fb_dgps_survey_pill_data set pillar_sfile_status='1',pillar_sfile_path='" + arr[1] + "' where pill_no='" + arr[0] + "' and fb_id='" + sharefb + "'", null);
+                }
+
                 if (c.getCount() >= 0) {
                     try {
                         File file = new File(arr[2]);
@@ -333,7 +342,6 @@ public class DGPSDataExportActivity extends AppCompatActivity {
                                 UpdateTaggingPillarTable(arr[0]);
                                 Toast.makeText(getApplicationContext(), "Your data taging is successfully Completed", Toast.LENGTH_LONG);
                             }
-
                         } else {
                             Toast.makeText(getApplicationContext(), "Your data tagging is unsuccessfully", Toast.LENGTH_LONG);
                         }
@@ -352,12 +360,13 @@ public class DGPSDataExportActivity extends AppCompatActivity {
 
 
     }
+
     private void UpdateTaggingPillarTable(String s) {
         try {
             db = openOrCreateDatabase("sltp.db", MODE_PRIVATE, null);
-            Cursor c = db.rawQuery("update m_dgps_Survey_pill_data set m_dgps_file_sts='1' where m_p_lat='"+frjvc_lat+"' and m_p_long='"+frjvc_long+"' and m_fb_pillar_no='"+s+"'", null);
-            if (c.getCount() >=0) {
-                Toast.makeText(this,"dd",Toast.LENGTH_LONG);
+            Cursor c = db.rawQuery("update m_dgps_Survey_pill_data set m_dgps_file_sts='1' where m_p_lat='" + frjvc_lat + "' and m_p_long='" + frjvc_long + "' and m_fb_pillar_no='" + s + "'", null);
+            if (c.getCount() >= 0) {
+                Toast.makeText(this, "dd", Toast.LENGTH_LONG);
             }
             c.close();
             db.close();
@@ -366,17 +375,18 @@ public class DGPSDataExportActivity extends AppCompatActivity {
         }
 
     }
+
     private boolean GetTaggingTableforDGPS(String s) {
-        boolean status=false;
+        boolean status = false;
         try {
             db = openOrCreateDatabase("sltp.db", MODE_PRIVATE, null);
             c = db.rawQuery("SELECT * from m_fb_dgps_survey_pill_data where pillar_sfile_status='1' and delete_status='0' and fb_id='" + sharefb + "' and pill_no='" + s + "'", null);
             int count = c.getCount();
             if (count >= 1) {
                 if (c.moveToFirst()) {
-                    frjvc_lat=c.getString(c.getColumnIndex("frjvc_lat"));
-                    frjvc_long=c.getString(c.getColumnIndex("frjvc_long"));
-                    status =true;
+                    frjvc_lat = c.getString(c.getColumnIndex("frjvc_lat"));
+                    frjvc_long = c.getString(c.getColumnIndex("frjvc_long"));
+                    status = true;
                 }
             }
             c.close();

@@ -11,7 +11,17 @@
         android:supportsRtl="true"
         android:theme="@style/MyMaterialTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".DGPSJXLDataExportActivity"></activity>
+        <activity android:name=".RevisitDGPSJXLDataExportActivity"></activity>
+        <activity android:name=".RevisitDGPSRTXDataExportActivity" />
+        <activity android:name=".RevisitDGPSStaticDataExportActivity" />
+        <activity android:name=".RevisitDGPSDataTaggMenuActivity" />
+        <activity android:name=".RevisitDGPSViewPillarDetailActivity" />
+        <activity android:name=".RevisitDGPSDataCollectActivity" />
+        <activity android:name=".RevisitDGPSSyncMenuActivity" />
+        <activity android:name=".RevisitDGPSMapViewActivity" />
+        <activity android:name=".RevisitDGPSDataViewActivity" />
+        <activity android:name=".RevisitDGPSSurveyMenuActivity" />
+        <activity android:name=".DGPSJXLDataExportActivity" />
         <activity android:name=".DGPSDataTaggMenuActivity" />
         <activity android:name=".DFPSRTXDataExportActivity" />
         <activity android:name=".DGPSSyncMenuActivity" />
@@ -41,9 +51,9 @@
         <activity android:name=".UserProfileActivity" />
         <activity android:name=".SearchMapFile" />
 
-   <meta-data
+        <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="@string/ApiKey"/>
+            android:value="@string/ApiKey" />
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />

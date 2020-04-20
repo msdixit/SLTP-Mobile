@@ -1,7 +1,9 @@
 package com.sparc.frjvcapp.pojo;
 
-public class M_dgpssurvey_pillar_data {
-    public M_dgpssurvey_pillar_data(String p_lat, String p_long, String pillar_no, String fb_name, String fb_id, String p_syrvey_sts, String m_dgps_surv_sts, String m_dgps_file_sts, String o_Id, String m_survey_status,String m_pndjv_pill_no) {
+public class M_dgps_revisit_pillar_data_dwnld {
+    public M_dgps_revisit_pillar_data_dwnld(String p_lat, String p_long, String pillar_no, String fb_name, String fb_id, String p_syrvey_sts, String m_dgps_surv_sts, String m_dgps_file_sts, String o_Id, String m_survey_status) {
+        this.m_survey_status = m_survey_status;
+        this.o_Id = o_Id;
         this.p_lat = p_lat;
         this.p_long = p_long;
         this.pillar_no = pillar_no;
@@ -10,9 +12,6 @@ public class M_dgpssurvey_pillar_data {
         this.p_syrvey_sts = p_syrvey_sts;
         this.m_dgps_surv_sts = m_dgps_surv_sts;
         this.m_dgps_file_sts = m_dgps_file_sts;
-        this.o_Id = o_Id;
-        this.m_survey_status = m_survey_status;
-        this.m_pndjv_pill_no=m_pndjv_pill_no;
     }
 
     public String getM_pndjv_pill_no() {

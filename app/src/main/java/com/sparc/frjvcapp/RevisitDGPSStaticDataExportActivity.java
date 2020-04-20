@@ -10,6 +10,7 @@ import android.os.Environment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -30,18 +31,12 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
 
 import fr.ganfra.materialspinner.MaterialSpinner;
 
-public class DGPSJXLDataExportActivity extends AppCompatActivity {
+public class RevisitDGPSStaticDataExportActivity extends AppCompatActivity {
     public static final String data = "data";
-    public HashMap<String, String> fbKey;
-    ArrayAdapter<String> dataAdapter = null;
     ImageView img_download;
     TextView txtStsFileName;
     private SQLiteDatabase db;
@@ -55,13 +50,19 @@ public class DGPSJXLDataExportActivity extends AppCompatActivity {
     RecyclerView recyclerView;
     LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
     public DGPSPillarViewAdapter adapter;
-    String sharediv, sharerange, sharefb, sharefbtype, sharefbname, userid, jobid, div_name, range_name, fb_name, fbid, frjvc_long;
+    String sharediv, sharerange, sharefb, sharefbtype, sharefbname, userid, jobid, div_name, range_name, fb_name, frjvc_lat, frjvc_long;
     SharedPreferences shared;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_dgpsjxldata_export);
+        setContentView(R.layout.activity_revisit_dgpsstatic_data_export);
+
+        recyclerView = findViewById(R.id.dgpsrecyclerView);
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setLayoutManager(linearLayoutManager);
+        recyclerView.addItemDecoration(new DividerItemDecoration(this, LinearLayoutManager.VERTICAL));
 
         img_download = findViewById(R.id.img_download);
         txtStsFileName = findViewById(R.id.txtStsFileName);
@@ -81,11 +82,11 @@ public class DGPSJXLDataExportActivity extends AppCompatActivity {
         fb_name = shared.getString("fb_name", "0");
 
         String sfile = Environment.getExternalStorageDirectory().toString();
-        String path = "/SurveyMobile.Droid/Export";
+        String path = "/SurveyMobile.Droid/Download";
         sfinalpath = sfile + path;
 
         String dfile = Environment.getExternalStorageDirectory().toString();
-        String dpath = "/JXLFile";
+        String dpath = "/RevisitStaticData";
         dfinalpath = dfile + dpath;
 
         File s = new File(sfinalpath);
@@ -93,28 +94,15 @@ public class DGPSJXLDataExportActivity extends AppCompatActivity {
         if (!d.exists()) {
             d.mkdirs();
         }
+
         File[] listOfFiles = s.listFiles();
         if (listOfFiles.length > 0) {
-            for (int i = 0; i < listOfFiles.length; ) {
-                if (getFileExtension(listOfFiles[i]).equals(".jxl")) {
-                    if (listOfFiles[i].isFile()) {
-                        txtStsFileName.setText(listOfFiles[i].getName());
-                        break;
-                    } else {
-                        txtStsFileName.setText("No file available for download");
-                        img_download.setVisibility(View.GONE);
-                        break;
-                    }
+            for (int i = 0; i < 1; i++) {
+                if (listOfFiles[i].isFile()) {
+                    txtStsFileName.setText(listOfFiles[i].getName());
                 } else {
-                    i++;
-                    if (i == 1) {
-                        txtStsFileName.setText("No file available for download");
-                        txtStsFileName.setTextSize(15);
-                        txtStsFileName.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
-                        txtStsFileName.setWidth(ViewGroup.LayoutParams.MATCH_PARENT);
-                        txtStsFileName.setLayoutParams(new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.MATCH_PARENT, 1f));
-                        img_download.setVisibility(View.GONE);
-                    }
+                    txtStsFileName.setText("No file available for download");
+                    img_download.setVisibility(View.GONE);
                 }
             }
         } else {
@@ -125,25 +113,27 @@ public class DGPSJXLDataExportActivity extends AppCompatActivity {
             txtStsFileName.setLayoutParams(new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.MATCH_PARENT, 1f));
             img_download.setVisibility(View.GONE);
         }
+        getDGPSDataFOrView();
+
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
         img_download.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getDGPSForestBlockData();
-                //alertDialogBuilder.setMessage("Are you sure to save this pillar data?");
-                final View customLayout = getLayoutInflater().inflate(R.layout.assign_fb_to_rtx, null);
-                alertDialogBuilder.setView(customLayout);
-                pill_no = customLayout.findViewById(R.id.fb_name);
+                getDGPSPillData();
 
-                //final ArrayAdapter<String> durationadapter = new ArrayAdapter<String>(getApplicationContext(), R.layout.spinner_row, dataAdapter);
-                pill_no.setAdapter(dataAdapter);
+                //alertDialogBuilder.setMessage("Are you sure to save this pillar data?");
+                final View customLayout = getLayoutInflater().inflate(R.layout.assign_pillar_to_static, null);
+                alertDialogBuilder.setView(customLayout);
+                pill_no = customLayout.findViewById(R.id.pillno);
+
+                final ArrayAdapter<String> durationadapter = new ArrayAdapter<String>(getApplicationContext(), R.layout.spinner_row, arrayList);
+                pill_no.setAdapter(durationadapter);
                 pill_no.setPaddingSafe(0, 0, 0, 0);
                 pill_no.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                     @Override
                     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                         spill_no = (String) parent.getItemAtPosition(position);
-                        fbid = fbKey.get(spill_no);
-                        if (!spill_no.equals("Select Forest Block")) {
+                        if (!spill_no.equals("Select Pillar No")) {
                         }
                     }
 
@@ -157,12 +147,12 @@ public class DGPSJXLDataExportActivity extends AppCompatActivity {
 
                             @Override
                             public void onClick(DialogInterface arg0, int arg1) {
-                                if (!spill_no.equals("Select Forest Block")) {
+                                if (!spill_no.equals("Select Pillar No")) {
                                     String d_f_name[] = txtStsFileName.getText().toString().split("\\.");//.split(".")
-                                    String f_file_name = d_f_name[0] + "_" + fbid + "_" + userid + "." + d_f_name[1];
-                                    new DGPSJXLDataExportActivity.ExportPointJXLData().execute(sfinalpath + "/" + txtStsFileName.getText().toString(), fbid, dfinalpath + "/" + f_file_name);
+                                    String f_file_name = d_f_name[0] + "_" + spill_no + "." + d_f_name[1];
+                                    new RevisitDGPSStaticDataExportActivity.ExportPointStaticData().execute(sfinalpath + "/" + txtStsFileName.getText().toString(), spill_no, dfinalpath + "/" + f_file_name);
                                 } else {
-                                    Toast.makeText(getApplicationContext(), "Please choose the forest block", Toast.LENGTH_LONG);
+                                    Toast.makeText(getApplicationContext(), "Please select the pillar number", Toast.LENGTH_LONG);
                                 }
                             }
                         });
@@ -182,25 +172,75 @@ public class DGPSJXLDataExportActivity extends AppCompatActivity {
 
             }
         });
+        adapter = new DGPSPillarViewAdapter(this, arrayList1);
+
     }
 
-    private static String getFileExtension(File _file) {
-        String extension = "";
-
+    private void getDGPSDataFOrView() {
         try {
-            if (_file != null && _file.exists()) {
-                String name = _file.getName();
-                extension = name.substring(name.lastIndexOf("."));
+            db = openOrCreateDatabase("sltp.db", MODE_PRIVATE, null);
+            arrayList1.clear();
+            c = db.rawQuery("SELECT * from m_fb_revisit_dgps_survey_pill_data where pillar_sfile_status='1' and delete_status='0' and fb_id='" + sharefb + "' order by pill_no", null);
+            int count = c.getCount();
+            if (count >= 1) {
+                if (c.moveToFirst()) {
+                    do {
+                        DGPSPillarDataViewModel dataViewDetails = new DGPSPillarDataViewModel();
+                        dataViewDetails.setPill_no(c.getString(c.getColumnIndex("pill_no")));
+                        dataViewDetails.setFilename(c.getString(c.getColumnIndex("pillar_sfile_path")));
+                        dataViewDetails.setSync_status(c.getString(c.getColumnIndex("sync_status")));
+                        arrayList1.add(dataViewDetails);
+                    }
+                    while (c.moveToNext());
+                }
             }
-        } catch (Exception e) {
-            extension = "";
+            c.close();
+            db.close();
+            adapter = new DGPSPillarViewAdapter(this, arrayList1);
+            recyclerView.setAdapter(adapter);
+        } catch (Exception ee) {
+            ee.printStackTrace();
+        }
+    }
+
+    private void updatePillarData(String spill_no) {
+        try {
+            db = openOrCreateDatabase("sltp.db", MODE_PRIVATE, null);
+            arrayList.clear();
+            c = db.rawQuery("update m_fb_dgps_survey_pill_data set pillar_sfile_status='1' and pillar_sfile_path='" + txtStsFileName.getText().toString() + "' where pill_no='" + spill_no + "'", null);
+            if (c.getCount() >= 0) {
+                Toast.makeText(this, "Your data tagged successfully", Toast.LENGTH_LONG);
+            }
+            c.close();
+            db.close();
+        } catch (Exception ee) {
+            ee.printStackTrace();
         }
 
-        return extension;
-
     }
 
-    private class ExportPointJXLData extends AsyncTask<String, String, String> {
+    private void getDGPSPillData() {
+        try {
+            db = openOrCreateDatabase("sltp.db", MODE_PRIVATE, null);
+            arrayList.clear();
+            c = db.rawQuery("SELECT * from m_fb_revisit_dgps_survey_pill_data where pillar_sfile_status='0' and delete_status='0' and survey_status='1' and fb_id='" + sharefb + "' order by survey_time desc limit 1", null);
+            int count = c.getCount();
+            if (count >= 1) {
+                if (c.moveToFirst()) {
+                    do {
+                        arrayList.add(c.getString(c.getColumnIndex("pill_no")));
+                    }
+                    while (c.moveToNext());
+                }
+            }
+            c.close();
+            db.close();
+        } catch (Exception ee) {
+            ee.printStackTrace();
+        }
+    }
+
+    private class ExportPointStaticData extends AsyncTask<String, String, String> {
 
         private ProgressDialog progressDialog;
         private String fileName;
@@ -269,20 +309,17 @@ public class DGPSJXLDataExportActivity extends AppCompatActivity {
         protected void onPostExecute(String message) {
             String arr[];
             arr = message.split("&");
-            // dismiss the dialog after the file was downloaded
-            //this.progressDialog.dismiss();
             try {
                 db = openOrCreateDatabase("sltp.db", MODE_PRIVATE, null);
-                c = db.rawQuery("update m_fb_dgps_survey_pill_data set pillar_jfile_status='1',pillar_jfile_path='" + arr[1] + "' where fb_id='" + arr[0] + "'", null);
+                c = db.rawQuery("update m_fb_revisit_dgps_survey_pill_data set pillar_sfile_status='1',pillar_sfile_path='" + arr[1] + "' where pill_no='" + arr[0] + "' and fb_id='" + sharefb + "'", null);
                 if (c.getCount() >= 0) {
                     try {
                         File file = new File(arr[2]);
-                            if (file.delete()) {
-                            /*if (GetTaggingTableforDGPS(arr[0])) {
-                                UpdateTaggi bngPillarTable(arr[0]);*/
-                            Toast.makeText(getApplicationContext(), "Your data taging is successfully Completed", Toast.LENGTH_LONG);
-                            /*  }*/
-
+                        if (file.delete()) {
+                            if (GetTaggingTableforDGPS(arr[0])) {
+                                UpdateTaggingPillarTable(arr[0]);
+                                Toast.makeText(getApplicationContext(), "Your data taging is successfully Completed", Toast.LENGTH_LONG);
+                            }
                         } else {
                             Toast.makeText(getApplicationContext(), "Your data tagging is unsuccessfully", Toast.LENGTH_LONG);
                         }
@@ -298,23 +335,43 @@ public class DGPSJXLDataExportActivity extends AppCompatActivity {
                 ee.printStackTrace();
             }
         }
+
+
     }
 
-    private void getDGPSForestBlockData() {
-        List<String> fbName = new ArrayList<String>();
-        //rangeName.add("Select Range");
-        fbKey = new HashMap<>();
-        db = openOrCreateDatabase("sltp.db", MODE_PRIVATE, null);
-        Cursor cursor = db.rawQuery("select distinct fb_name,fb_id from m_fb_dgps_survey_pill_data where d_id='" + sharediv + "' and r_id ='" + sharerange + "' order by fb_name", null);
-        cursor.moveToFirst();
-        if (cursor.moveToFirst()) {
-            do {
-                fbName.add(cursor.getString(cursor.getColumnIndex("fb_name")));
-                fbKey.put(cursor.getString(cursor.getColumnIndex("fb_name")), cursor.getString(cursor.getColumnIndex("fb_id")));
-            } while (cursor.moveToNext());
+    private void UpdateTaggingPillarTable(String s) {
+        try {
+            db = openOrCreateDatabase("sltp.db", MODE_PRIVATE, null);
+            Cursor c = db.rawQuery("update m_revisit_dgps_download_data set m_dgps_file_sts='1' where m_p_lat='" + frjvc_lat + "' and m_p_long='" + frjvc_long + "' and m_fb_pillar_no='" + s + "'", null);
+            if (c.getCount() >= 0) {
+                Toast.makeText(this, "dd", Toast.LENGTH_LONG);
+            }
+            c.close();
+            db.close();
+        } catch (Exception ee) {
+            ee.printStackTrace();
         }
-        cursor.close();
-        db.close();
-        dataAdapter = new ArrayAdapter<String>(getApplicationContext(), R.layout.spinner_row, fbName);
+
+    }
+
+    private boolean GetTaggingTableforDGPS(String s) {
+        boolean status = false;
+        try {
+            db = openOrCreateDatabase("sltp.db", MODE_PRIVATE, null);
+            c = db.rawQuery("SELECT * from m_fb_revisit_dgps_survey_pill_data where pillar_sfile_status='1' and delete_status='0' and fb_id='" + sharefb + "' and pill_no='" + s + "'", null);
+            int count = c.getCount();
+            if (count >= 1) {
+                if (c.moveToFirst()) {
+                    frjvc_lat = c.getString(c.getColumnIndex("frjvc_lat"));
+                    frjvc_long = c.getString(c.getColumnIndex("frjvc_long"));
+                    status = true;
+                }
+            }
+            c.close();
+            db.close();
+        } catch (Exception ee) {
+            ee.printStackTrace();
+        }
+        return status;
     }
 }

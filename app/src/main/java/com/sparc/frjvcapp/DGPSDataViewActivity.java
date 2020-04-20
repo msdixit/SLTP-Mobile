@@ -82,9 +82,13 @@ public class DGPSDataViewActivity extends AppCompatActivity {
             if (count >= 1) {
                 if (c.moveToFirst()) {
                     do {
-
                         DGPSDataViewDetails dataViewDetails = new DGPSDataViewDetails();
-                        dataViewDetails.setPillarNo(c.getString(c.getColumnIndex("pill_no")));
+                        if(Integer.parseInt(c.getString(c.getColumnIndex("pndjv_pill_no")))!=0)
+                        {
+                            dataViewDetails.setPillarNo(c.getString(c.getColumnIndex("pill_no"))+"-"+c.getString(c.getColumnIndex("pndjv_pill_no")));
+                        }else {
+                            dataViewDetails.setPillarNo(c.getString(c.getColumnIndex("pill_no")));
+                        }
                         dataViewDetails.setJob_id(c.getString(c.getColumnIndex("job_id")));
                         dataViewDetails.setImage(c.getString(c.getColumnIndex("f_pic_name")));
                         dataViewDetails.setSyncStatus(c.getString(c.getColumnIndex("sync_status")));
@@ -113,13 +117,23 @@ public class DGPSDataViewActivity extends AppCompatActivity {
         adapter.setOnTapListener(new OnTapListener() {
             @Override
             public void OnTapView(int position, String presKey) {
+                String query1 = null,qurey2=null;
                 final DGPSDataViewDetails dataViewDetails = arrayList.get(position);
                 if (presKey.equals("delete")) {
                     db = openOrCreateDatabase("sltp.db", MODE_PRIVATE, null);
-                    Cursor c = db.rawQuery("delete from m_fb_dgps_survey_pill_data where pill_no='" + dataViewDetails.pillarNo + "'", null);
+                    if(dataViewDetails.pillarNo.contains("-"))
+                    {
+                        String values[]=dataViewDetails.pillarNo.split("-");
+                        query1="delete from m_fb_dgps_survey_pill_data where pill_no='" + values[0]+ "' and pndjv_pill_no='"+values[1] +"'";
+                        qurey2="update m_dgps_Survey_pill_data set m_dgps_surv_sts='0',m_survey_status='0',m_dgps_file_sts='0' where m_fb_pillar_no='" + values[0] + "' and m_pndjv_pill_no='"+values[1]+"'";
+                    }else{
+                        query1="delete from m_fb_dgps_survey_pill_data where pill_no='" + dataViewDetails.pillarNo + "'";
+                        qurey2="update m_dgps_Survey_pill_data set m_dgps_surv_sts='0',m_survey_status='0',m_dgps_file_sts='0' where m_fb_pillar_no='" + dataViewDetails.pillarNo + "' ";
+                    }
+                    Cursor c = db.rawQuery(query1, null);
                     if (c.getCount() >= 0) {
                         try {
-                            Cursor c1 = db.rawQuery("update m_dgps_Survey_pill_data set m_dgps_surv_sts='0',m_survey_status='0',m_dgps_file_sts='0' where m_fb_pillar_no='" + dataViewDetails.pillarNo + "'", null);
+                            Cursor c1 = db.rawQuery(qurey2, null);
                             if (c1.getCount() >= 0) {
                                 Toast.makeText(DGPSDataViewActivity.this, "Data successfully deleted", Toast.LENGTH_SHORT).show();
                             }

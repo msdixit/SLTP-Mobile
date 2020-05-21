@@ -67,7 +67,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_weight=".5"
-                    android:fontFamily="@font/abeezee"
+
                     android:gravity="center|bottom"
                     android:textColor="@color/color1"
                     android:textColorHint="@color/color1"
@@ -80,7 +80,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_weight=".5"
-                    android:fontFamily="@font/abeezee"
+
                     android:gravity="center|top"
                     android:text="Total point"
                     android:textColor="@color/color1"
@@ -107,7 +107,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_weight=".5"
-                    android:fontFamily="@font/abeezee"
+
                     android:gravity="center|bottom"
                     android:textColor="@color/color1"
                     android:textColorHint="@color/color1"
@@ -120,7 +120,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_weight=".5"
-                    android:fontFamily="@font/abeezee"
+
                     android:gravity="center|top"
                     android:text="Synced Point"
                     android:textColor="@color/color1"
@@ -159,7 +159,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_weight=".5"
-                    android:fontFamily="@font/abeezee"
+
                     android:gravity="center|bottom"
                     android:textColor="@color/color1"
                     android:textColorHint="@color/color1"
@@ -172,7 +172,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_weight=".5"
-                    android:fontFamily="@font/abeezee"
+
                     android:gravity="center|top"
                     android:text="Total image"
                     android:textColor="@color/color1"
@@ -199,7 +199,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_weight=".5"
-                    android:fontFamily="@font/abeezee"
+
                     android:gravity="center|bottom"
                     android:textColor="@color/color1"
                     android:textColorHint="@color/color1"
@@ -212,7 +212,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_weight=".5"
-                    android:fontFamily="@font/abeezee"
+
                     android:gravity="center|top"
                     android:text="Synced Image"
                     android:textColor="@color/color1"
@@ -254,7 +254,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_weight=".5"
-                    android:fontFamily="@font/abeezee"
+
                     android:gravity="center|bottom"
                     android:textColor="@color/color1"
                     android:textColorHint="@color/color1"
@@ -267,7 +267,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_weight=".5"
-                    android:fontFamily="@font/abeezee"
+
                     android:gravity="center|top"
                     android:text="Static file"
                     android:textColor="@color/color1"
@@ -294,7 +294,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_weight=".5"
-                    android:fontFamily="@font/abeezee"
+
                     android:gravity="center|bottom"
                     android:textColor="@color/color1"
                     android:textColorHint="@color/color1"
@@ -307,7 +307,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_weight=".5"
-                    android:fontFamily="@font/abeezee"
+
                     android:gravity="center|top"
                     android:text="Synced static file"
                     android:textColor="@color/color1"
@@ -346,7 +346,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_weight=".5"
-                    android:fontFamily="@font/abeezee"
+
                     android:gravity="center|bottom"
                     android:textColor="@color/color1"
                     android:textColorHint="@color/color1"
@@ -359,7 +359,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_weight=".5"
-                    android:fontFamily="@font/abeezee"
+
                     android:gravity="center|top"
                     android:text="RTX file"
                     android:textColor="@color/color1"
@@ -386,7 +386,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_weight=".5"
-                    android:fontFamily="@font/abeezee"
+
                     android:gravity="center|bottom"
                     android:textColor="@color/color1"
                     android:textColorHint="@color/color1"
@@ -399,7 +399,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_weight=".5"
-                    android:fontFamily="@font/abeezee"
+
                     android:gravity="center|top"
                     android:text="Synced RTX file"
                     android:textColor="@color/color1"

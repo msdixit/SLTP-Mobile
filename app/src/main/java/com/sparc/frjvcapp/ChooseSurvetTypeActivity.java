@@ -195,7 +195,7 @@ public class ChooseSurvetTypeActivity extends AppCompatActivity {
         revisit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-               /* Intent i = new Intent(getApplicationContext(), RevisitDGPSSurveyMenuActivity.class);
+                Intent i = new Intent(getApplicationContext(), RevisitDGPSSurveyMenuActivity.class);
                 SharedPreferences sharedPreferences = getSharedPreferences(data, 0);
                 SharedPreferences.Editor editor = sharedPreferences.edit();
                 editor.clear();
@@ -210,7 +210,7 @@ public class ChooseSurvetTypeActivity extends AppCompatActivity {
                 editor.putString("range_name", range_name);
                 editor.putString("fb_name", fb_name);
                 editor.apply();
-                startActivity(i);*/
+                startActivity(i);
             }
         });
     }

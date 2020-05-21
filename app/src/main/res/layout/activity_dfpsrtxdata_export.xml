@@ -33,6 +33,7 @@
             android:background="@color/colorBackground"
             android:textColor="@color/offwhite"
             android:gravity="center|left"
+            android:fontFamily="@font/my_custom_font"
             android:paddingLeft="10dp"/>
 
         <ImageView

@@ -52,7 +52,6 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
             android:layout_weight="1"
             android:orientation="horizontal"
             android:weightSum="1">
@@ -62,6 +61,9 @@
             <ImageView
                 android:id="@+id/mapview"
                 android:layout_width="0dp"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:layout_marginTop="5dp"
                 android:layout_height="match_parent"
                 android:layout_below="@+id/data_point_dwld"
                 android:layout_weight=".5"
@@ -71,6 +73,9 @@
             <ImageView
                 android:id="@+id/dataview"
                 android:layout_width="0dp"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:layout_marginTop="5dp"
                 android:layout_height="match_parent"
                 android:layout_below="@+id/mapview"
                 android:layout_weight=".5"
@@ -83,7 +88,6 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
             android:layout_weight="1"
             android:orientation="horizontal"
             android:weightSum="1">
@@ -92,6 +96,9 @@
             <ImageView
                 android:id="@+id/sync"
                 android:layout_width="0dp"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:layout_marginTop="5dp"
                 android:layout_height="match_parent"
                 android:layout_below="@+id/dataview"
                 android:layout_weight=".5"
@@ -101,6 +108,9 @@
             <ImageView
                 android:id="@+id/data_point_dwld"
                 android:layout_width="0dp"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:layout_marginTop="5dp"
                 android:layout_height="match_parent"
                 android:layout_below="@+id/name_textView"
                 android:layout_weight=".5"

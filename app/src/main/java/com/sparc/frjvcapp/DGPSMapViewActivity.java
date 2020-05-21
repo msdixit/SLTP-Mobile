@@ -331,7 +331,8 @@ public class DGPSMapViewActivity extends AppCompatActivity implements OnMapReady
                 if (nInfo != null && nInfo.isAvailable() && nInfo.isConnected()) {
                     buildGoogleApiClient();
                     googleMap.setMyLocationEnabled(true);
-                    googleMap.getUiSettings().setMyLocationButtonEnabled(false);
+                    googleMap.getUiSettings().setMyLocationButtonEnabled(true);
+                    googleMap.getUiSettings().setCompassEnabled(true);
                     GoogleMap finalGoogleMap = googleMap;
                     if (checkSurveyData(sharefb)) {
                         googleMap.clear();

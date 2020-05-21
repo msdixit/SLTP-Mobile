@@ -32,6 +32,7 @@
                 android:gravity="center_vertical"
                 android:textAppearance="@style/Base.TextAppearance.AppCompat.Title"
                 android:textColor="@android:color/white"
+                android:fontFamily="@font/my_custom_font"
                 android:textStyle="normal" />
 
             <Button
@@ -43,6 +44,7 @@
                 android:paddingLeft="2dp"
                 android:paddingRight="2dp"
                 android:text="Save"
+                android:fontFamily="@font/my_custom_font"
                 android:textColor="@android:color/white" />
 
         </LinearLayout>
@@ -88,6 +90,7 @@
                         android:layout_height="match_parent"
                         android:enabled="true"
                         android:singleLine="true"
+                        android:fontFamily="@font/my_custom_font"
                         android:text="Division:"
                         android:textAlignment="gravity"
                         android:textColor="@color/color1"
@@ -111,6 +114,7 @@
                         android:layout_height="match_parent"
                         android:enabled="true"
                         android:singleLine="true"
+                        android:fontFamily="@font/my_custom_font"
                         android:textAlignment="center"
                         android:textColor="@color/color1"
                         android:textSize="15sp"
@@ -146,6 +150,7 @@
                         android:enabled="true"
                         android:singleLine="true"
                         android:text="Range:"
+                        android:fontFamily="@font/my_custom_font"
                         android:textAlignment="gravity"
                         android:textColor="@color/color1"
                         android:textSize="15sp"
@@ -168,6 +173,7 @@
                         android:layout_height="match_parent"
                         android:enabled="true"
                         android:singleLine="true"
+                        android:fontFamily="@font/my_custom_font"
                         android:textAlignment="center"
                         android:textColor="@color/color1"
                         android:textSize="15sp"
@@ -204,6 +210,7 @@
                         android:enabled="true"
                         android:singleLine="true"
                         android:text="Forest Block:"
+                        android:fontFamily="@font/my_custom_font"
                         android:textAlignment="gravity"
                         android:textColor="@color/color1"
                         android:textSize="15sp"
@@ -226,6 +233,7 @@
                         android:layout_height="match_parent"
                         android:enabled="true"
                         android:singleLine="true"
+                        android:fontFamily="@font/my_custom_font"
                         android:textAlignment="center"
                         android:textColor="@color/color1"
                         android:textSize="15sp"
@@ -261,6 +269,7 @@
                         android:layout_height="match_parent"
                         android:enabled="true"
                         android:singleLine="true"
+                        android:fontFamily="@font/my_custom_font"
                         android:text="Patch No:"
                         android:textAlignment="gravity"
                         android:textColor="@color/color1"
@@ -282,6 +291,7 @@
                         android:layout_gravity="right"
                         android:background="@drawable/back"
                         android:enabled="true"
+                        android:fontFamily="@font/my_custom_font"
                         android:inputType="number"
                         android:textAlignment="center"
                         android:textColor="@color/color1"
@@ -316,6 +326,7 @@
                         android:enabled="true"
                         android:singleLine="true"
                         android:text="Ring No:"
+                        android:fontFamily="@font/my_custom_font"
                         android:textAlignment="gravity"
                         android:textColor="@color/color1"
                         android:textSize="15sp"
@@ -337,6 +348,7 @@
                         android:background="@drawable/back"
                         android:enabled="true"
                         android:inputType="number"
+                        android:fontFamily="@font/my_custom_font"
                         android:textAlignment="center"
                         android:textColor="@color/color1"
                         android:textSize="15sp"
@@ -370,6 +382,7 @@
                         android:enabled="true"
                         android:singleLine="true"
                         android:text="Pillar No:"
+                        android:fontFamily="@font/my_custom_font"
                         android:textAlignment="gravity"
                         android:textColor="@color/color1"
                         android:textSize="15sp"
@@ -390,6 +403,7 @@
                         android:layout_gravity="right"
                         android:background="@drawable/back"
                         android:enabled="true"
+                        android:fontFamily="@font/my_custom_font"
                         android:inputType="number"
                         android:textAlignment="center"
                         android:textColor="@color/color1"
@@ -423,6 +437,7 @@
                         android:enabled="true"
                         android:singleLine="true"
                         android:text="Forest Official:"
+                        android:fontFamily="@font/my_custom_font"
                         android:textAlignment="gravity"
                         android:textColor="@color/color1"
                         android:textSize="15sp"
@@ -445,6 +460,7 @@
                         android:enabled="true"
                         android:inputType="text"
                         android:singleLine="true"
+                        android:fontFamily="@font/my_custom_font"
                         android:textAlignment="center"
                         android:textColor="@color/color1"
                         android:textSize="15sp"
@@ -477,6 +493,7 @@
                         android:layout_marginRight="5sp"
                         android:layout_marginBottom="5sp"
                         app:ms_alignLabels="false"
+                        android:fontFamily="@font/my_custom_font"
                         app:ms_arrowColor="@color/color1"
                         app:ms_arrowSize="14dp"
                         app:ms_baseColor="@color/color1"
@@ -576,6 +593,7 @@
                             android:layout_height="match_parent"
                             android:enabled="true"
                             android:singleLine="true"
+                            android:fontFamily="@font/my_custom_font"
                             android:text="Inscribed Pillar No."
                             android:textAlignment="gravity"
                             android:textColor="@color/color1"
@@ -597,6 +615,7 @@
                             android:layout_gravity="right"
                             android:background="@drawable/back"
                             android:enabled="true"
+                            android:fontFamily="@font/my_custom_font"
                             android:inputType="text"
                             android:textAlignment="center"
                             android:textColor="@color/color1"
@@ -717,6 +736,7 @@
                         android:layout_height="match_parent"
                         android:layout_weight="1"
                         android:gravity="center"
+                        android:fontFamily="@font/my_custom_font"
                         android:text="Forward" />
 
                     <TextView
@@ -724,12 +744,14 @@
                         android:layout_height="match_parent"
                         android:layout_weight="1"
                         android:gravity="center"
+                        android:fontFamily="@font/my_custom_font"
                         android:text="Backward" />
 
                     <TextView
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_weight="1"
+                        android:fontFamily="@font/my_custom_font"
                         android:gravity="center"
                         android:text="Inward" />
 
@@ -817,6 +839,7 @@
                         android:layout_height="match_parent"
                         android:layout_weight="1"
                         android:gravity="center"
+                        android:fontFamily="@font/my_custom_font"
                         android:text="Outward" />
 
                     <TextView
@@ -824,6 +847,7 @@
                         android:layout_height="match_parent"
                         android:layout_weight="1"
                         android:gravity="center"
+                        android:fontFamily="@font/my_custom_font"
                         android:text="With Device" />
 
 
@@ -854,6 +878,7 @@
                             android:layout_height="match_parent"
                             android:enabled="true"
                             android:singleLine="true"
+                            android:fontFamily="@font/my_custom_font"
                             android:text="Job ID:"
                             android:textAlignment="gravity"
                             android:textColor="@color/color1"
@@ -874,6 +899,7 @@
                             android:layout_height="match_parent"
                             android:layout_gravity="right"
                             android:background="@drawable/back"
+                            android:fontFamily="@font/my_custom_font"
                             android:enabled="true"
                             android:textAlignment="center"
                             android:textColor="@color/color1"
@@ -919,6 +945,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="5sp"
                             android:layout_marginBottom="5sp"
+                            android:fontFamily="@font/my_custom_font"
                             app:ms_alignLabels="false"
                             app:ms_arrowColor="@color/color1"
                             app:ms_arrowSize="14dp"
@@ -969,7 +996,8 @@
                             android:inputType="textMultiLine"
                             android:maxLength="30"
                             android:padding="3dp"
-                            android:singleLine="false" />
+                            android:singleLine="false"
+                            android:fontFamily="@font/my_custom_font"/>
                     </LinearLayout>
                 </LinearLayout>
 

@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Environment;
 import android.support.v7.app.AlertDialog;
@@ -102,6 +103,9 @@ public class DGPSJXLDataExportActivity extends AppCompatActivity {
                         break;
                     } else {
                         txtStsFileName.setText("No file available for download");
+                        Typeface face = Typeface.createFromAsset(getAssets(),
+                                "open_sans.ttf");
+                        txtStsFileName.setTypeface(face);
                         img_download.setVisibility(View.GONE);
                         break;
                     }
@@ -109,6 +113,9 @@ public class DGPSJXLDataExportActivity extends AppCompatActivity {
                     i++;
                     if (i == 1) {
                         txtStsFileName.setText("No file available for download");
+                        Typeface face = Typeface.createFromAsset(getAssets(),
+                                "open_sans.ttf");
+                        txtStsFileName.setTypeface(face);
                         txtStsFileName.setTextSize(15);
                         txtStsFileName.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
                         txtStsFileName.setWidth(ViewGroup.LayoutParams.MATCH_PARENT);
@@ -120,6 +127,9 @@ public class DGPSJXLDataExportActivity extends AppCompatActivity {
         } else {
             txtStsFileName.setText("No file available for download");
             txtStsFileName.setTextSize(15);
+            Typeface face = Typeface.createFromAsset(getAssets(),
+                    "open_sans.ttf");
+            txtStsFileName.setTypeface(face);
             txtStsFileName.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
             txtStsFileName.setWidth(ViewGroup.LayoutParams.MATCH_PARENT);
             txtStsFileName.setLayoutParams(new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.MATCH_PARENT, 1f));

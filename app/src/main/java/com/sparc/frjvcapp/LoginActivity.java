@@ -44,11 +44,14 @@ import com.sparc.frjvcapp.config.AllApi;
 import com.sparc.frjvcapp.pojo.M_fb;
 import com.sparc.frjvcapp.pojo.M_range;
 
+import org.joda.time.DateTimeUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -95,7 +98,7 @@ public class LoginActivity extends AppCompatActivity {
     ArrayList<String> mmv_list;
     Context context;
     private ImageView bookIconImageView;
-    private TextView bookITextView, skipTextView,macaddress;
+    private TextView bookITextView, skipTextView, macaddress;
     private ProgressBar loadingProgressBar;
     private RelativeLayout rootView;
     LinearLayout afterAnimationView;
@@ -110,6 +113,7 @@ public class LoginActivity extends AppCompatActivity {
     int[] subhead = new int[]{4, 5, 6, 7, 10, 11};
     TelephonyManager telephonyManager;
     String _token, _serviceOTP;
+    SimpleDateFormat _startDateFormat, _endDateFormat;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -124,12 +128,12 @@ public class LoginActivity extends AppCompatActivity {
         mDb = openOrCreateDatabase("sltp.db", MODE_PRIVATE, null);
         mDb.execSQL(CREATE_m_pillar_reg_Table);
 
-        txtemail    = findViewById(R.id.emailEditText);
+        txtemail = findViewById(R.id.emailEditText);
         txtpassword = findViewById(R.id.passwordEditText);
         otpEditText = findViewById(R.id.otpEditText);
 
-        macaddress=findViewById(R.id.macaddress);
-        macaddress.setText("MAC ID:"+getMyMacAddress());
+        macaddress = findViewById(R.id.macaddress);
+        macaddress.setText("MAC ID:" + getMyMacAddress());
 
         login = findViewById(R.id.loginButton);
         getOTPButton = findViewById(R.id.getOTPButton);
@@ -227,7 +231,7 @@ public class LoginActivity extends AppCompatActivity {
                     ConnectivityManager cm = (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
                     NetworkInfo nInfo = cm.getActiveNetworkInfo();
                     if (nInfo != null && nInfo.isAvailable() && nInfo.isConnected()) {
-                        login_auth(txtpassword.getText().toString(), otpEditText.getText().toString(), _serviceOTP,getMyMacAddress());
+                        login_auth(txtpassword.getText().toString(), otpEditText.getText().toString(), _serviceOTP, getMyMacAddress());
                     } else {
                         Toast.makeText(getApplicationContext(), "You don't have Internet Connection.", Toast.LENGTH_SHORT).show();
                     }
@@ -348,16 +352,20 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
-    private boolean login_auth(String pass, String _OTP, String _sOTP,String mac_add) {
+    private boolean login_auth(String pass, String _OTP, String _sOTP, String mac_add) {
         try {
             RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
-            String URL = BuildConfig.LOG_IN_API + txtemail.getText().toString() + "/" + pass + "/" + _OTP + "/" + _sOTP+"/"+mac_add;
+            String URL = BuildConfig.LOG_IN_API + txtemail.getText().toString() + "/" + pass + "/" + _OTP + "/" + _sOTP + "/" + mac_add;
             progressDialog = new ProgressDialog(this, R.style.MyAlertDialogStyle);
             progressDialog.setMessage("Please wait...You are logging in to GFLO");
             progressDialog.show();
             //progressDialog = ProgressDialog.show(LoginActivity.this, "", "Please wait...You are logging in to GFLO", false);
             StringRequest stringRequest = new StringRequest(Request.Method.POST, URL, response -> {
                 try {
+
+                    _startDateFormat = new SimpleDateFormat("dd/M/yyyy hh:mm:ss");
+                    String currentDateandTime = _startDateFormat.format(new Date());
+
                     JSONObject obj = new JSONObject(response);
                     JSONArray arr = obj.getJSONArray("info");
                     _token = obj.getString("token");
@@ -376,6 +384,7 @@ public class LoginActivity extends AppCompatActivity {
                             editor.putString("upass", txtpassword.getText().toString());
                             editor.putString("uname", jsonobject.getString("chrv_name"));
                             editor.putString("upos", jsonobject.getString("chrv_designation_nm"));
+                            editor.putString("logintime", currentDateandTime);
 
                             if (Integer.parseInt(jsonobject.getString("circle_id")) == 0) {
                                 editor.putString("ucir", "");
@@ -449,7 +458,7 @@ public class LoginActivity extends AppCompatActivity {
                 public void onResponse(String response) {
                     try {
                         JSONArray jsonArray = new JSONArray(response);
-                         for (int i = 0; i < jsonArray.length(); i++) {
+                        for (int i = 0; i < jsonArray.length(); i++) {
                             JSONObject object = jsonArray.getJSONObject(i);
                             M_range m_range = new M_range(object.getString("range"),
                                     object.getString("id"),
@@ -587,7 +596,7 @@ public class LoginActivity extends AppCompatActivity {
                         }
                     } catch (Exception ee) {
                         ee.printStackTrace();
-                    }finally{
+                    } finally {
                         progressDialog.dismiss();
                     }
                 }

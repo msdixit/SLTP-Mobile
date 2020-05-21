@@ -750,11 +750,11 @@ public class DGPSSyncMenuActivity extends AppCompatActivity {
                 RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), f);
                 MultipartBody.Part multipartBody = MultipartBody.Part.createFormData("file", f.getName(), requestFile);
                 responseBodyCall = jsonPlaceHolderApi.sendRTXDataWithFile(Integer.parseInt(sharefb), multipartBody);
-            } /*else {
+            } else {
                 RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), f);
                 MultipartBody.Part multipartBody = MultipartBody.Part.createFormData("file", f.getName(), requestFile);
                 responseBodyCall = jsonPlaceHolderApi.sendJXLDataWithFile(Integer.parseInt(sharefb), multipartBody);
-            }*/
+            }
             responseBodyCall.enqueue(new Callback<Object>() {
                 @Override
                 public void onResponse(Call<Object> call, retrofit2.Response<Object> response) {
@@ -793,14 +793,14 @@ public class DGPSSyncMenuActivity extends AppCompatActivity {
                                                     }
                                                 }
                                             }
-                                            /*if (files[1].equals("J")) {
+                                            if (files[1].equals("J")) {
                                                 c = db.rawQuery("update m_fb_dgps_survey_pill_data set pillar_jfile_status='2' where pillar_jfile_path like '" + path + "'", null);
                                                 if (c.getCount() >= 0) {
                                                     if (f.delete()) {
                                                         Toast.makeText(DGPSSyncMenuActivity.this, "JXL Data Synchronization successfully completed", Toast.LENGTH_SHORT).show();
                                                     }
                                                 }
-                                            }*/
+                                            }
                                             c.close();
                                             db.close();
                                         } catch (Exception ee) {

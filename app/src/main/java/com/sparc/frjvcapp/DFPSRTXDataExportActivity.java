@@ -55,7 +55,7 @@ public class DFPSRTXDataExportActivity extends AppCompatActivity {
     RecyclerView recyclerView;
     LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
     public DGPSPillarViewAdapter adapter;
-    String sharediv, sharerange, sharefb, sharefbtype, sharefbname, userid, jobid, div_name, range_name, fb_name,fbid,frjvc_long;
+    String sharediv, sharerange, sharefb, sharefbtype, sharefbname, userid, jobid, div_name, range_name, fb_name, fbid, frjvc_long;
     SharedPreferences shared;
 
     @Override
@@ -97,9 +97,9 @@ public class DFPSRTXDataExportActivity extends AppCompatActivity {
 
         File[] listOfFiles = s.listFiles();
         if (listOfFiles.length > 0) {
-            for (int i = 0; i < listOfFiles.length;) {
-                String a=getFileExtension(listOfFiles[i]);
-                if(getFileExtension(listOfFiles[i]).equals(".csv")) {
+            for (int i = 0; i < listOfFiles.length; ) {
+                String a = getFileExtension(listOfFiles[i]);
+                if (getFileExtension(listOfFiles[i]).equals(".csv")) {
                     if (listOfFiles[i].isFile()) {
                         txtStsFileName.setText(listOfFiles[i].getName());
                         break;
@@ -108,9 +108,9 @@ public class DFPSRTXDataExportActivity extends AppCompatActivity {
                         img_download.setVisibility(View.GONE);
                         break;
                     }
-                }else{
+                } else {
                     i++;
-                    if(1==1)
+                    if (1 == 1)
                         txtStsFileName.setText("No file available for download");
                     txtStsFileName.setTextSize(15);
                     txtStsFileName.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
@@ -161,11 +161,12 @@ public class DFPSRTXDataExportActivity extends AppCompatActivity {
 
                             @Override
                             public void onClick(DialogInterface arg0, int arg1) {
-                                if(!spill_no.equals("Select Forest Block")){
+                                if (!spill_no.equals("Select Forest Block")) {
                                     String d_f_name[] = txtStsFileName.getText().toString().split("\\.");//.split(".")
-                                    String f_file_name = d_f_name[0] + "_" + fbid + "_" + userid + "." + d_f_name[1];
+                                    String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+                                    String f_file_name = d_f_name[0] + "_" + fbid + "_" + userid + "_" + timeStamp + "." + d_f_name[1];
                                     new DFPSRTXDataExportActivity.ExportPointRTXData().execute(sfinalpath + "/" + txtStsFileName.getText().toString(), fbid, dfinalpath + "/" + f_file_name);
-                                }else{
+                                } else {
                                     Toast.makeText(getApplicationContext(), "Please choose the forest block", Toast.LENGTH_LONG);
                                 }
 
@@ -220,9 +221,6 @@ public class DFPSRTXDataExportActivity extends AppCompatActivity {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            /*this.progressDialog = ProgressDialog.show(DGPSDataExportActivity.this, "", "Please wait...Your Point KML data is downloading", false);
-            this.progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-            this.progressDialog.setCancelable(false);*/
         }
 
         /**
@@ -286,8 +284,8 @@ public class DFPSRTXDataExportActivity extends AppCompatActivity {
                         if (file.delete()) {
                             /*if (GetTaggingTableforDGPS(arr[0])) {
                                 UpdateTaggingPillarTable(arr[0]);*/
-                                Toast.makeText(getApplicationContext(), "Your data taging is successfully Completed", Toast.LENGTH_LONG);
-                          /*  }*/
+                            Toast.makeText(getApplicationContext(), "Your data taging is successfully Completed", Toast.LENGTH_LONG);
+                            /*  }*/
 
                         } else {
                             Toast.makeText(getApplicationContext(), "Your data tagging is unsuccessfully", Toast.LENGTH_LONG);
@@ -316,9 +314,7 @@ public class DFPSRTXDataExportActivity extends AppCompatActivity {
         if (cursor.moveToFirst()) {
             do {
                 fbName.add(cursor.getString(cursor.getColumnIndex("fb_name")));
-                fbKey.put(cursor.getString(cursor.getColumnIndex("fb_name")),cursor.getString(cursor.getColumnIndex("fb_id")));
-
-
+                fbKey.put(cursor.getString(cursor.getColumnIndex("fb_name")), cursor.getString(cursor.getColumnIndex("fb_id")));
             } while (cursor.moveToNext());
         }
         cursor.close();

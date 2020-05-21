@@ -10,6 +10,7 @@
         android:id="@+id/dgpsnavigation_legend"
         android:icon="@drawable/ic_view_list_black_24dp"
         android:title="Legend"
+        android:fontFamily="@font/my_custom_font"
         android:itemTextAppearance="?android:attr/textAppearance"
         />
 
@@ -17,12 +18,14 @@
         android:id="@+id/dgpsnavigation_basemap"
         android:icon="@drawable/ic_dashboard_black_24dp"
         android:title="Base Map"
+        android:fontFamily="@font/my_custom_font"
         android:itemTextAppearance="?android:attr/textAppearance"
         />
     <item
         android:id="@+id/newPoint"
         android:icon="@drawable/add_point"
         android:title="New Pillar"
+        android:fontFamily="@font/my_custom_font"
         android:itemTextAppearance="?android:attr/textAppearance"
         />
 

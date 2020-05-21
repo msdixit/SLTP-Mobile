@@ -12,7 +12,13 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+
+import jxl.write.DateTime;
 
 public class MainContainerActivity extends AppCompatActivity {
     public static final String userlogin = "userlogin";
@@ -23,10 +29,11 @@ public class MainContainerActivity extends AppCompatActivity {
     ArrayList<Integer> subheadlist = new ArrayList<>();
     int[] head = new int[]{1, 2, 3, 12, 4};
     int[] subhead = new int[]{5, 6, 7, 10, 11};
+    SimpleDateFormat _startDateFormat, _endDateFormat;
 
     SQLiteDatabase db, db1, db2, db3;
     TextView logout;
-
+    SharedPreferences shared;
     //final String pos;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,7 +59,55 @@ public class MainContainerActivity extends AppCompatActivity {
         //runService();
         logout = findViewById(R.id.name_textView);
 
-        final SharedPreferences shared = getSharedPreferences(userlogin, MODE_PRIVATE);
+        shared = getSharedPreferences(userlogin, MODE_PRIVATE);
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/M/yyyy hh:mm:ss");
+        String _startTime=shared.getString("logintime", "0");
+        _endDateFormat = new SimpleDateFormat("dd/M/yyyy hh:mm:ss");
+        String _endTime = _endDateFormat.format(new Date());
+        Date _sDate=null,_eDate=null;
+        try {
+            _sDate= sdf.parse(_startTime);
+            _eDate = sdf.parse(_endTime);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        long different = _eDate.getTime() - _sDate.getTime();
+
+        long secondsInMilli = 1000;
+        long minutesInMilli = secondsInMilli * 60;
+        long hoursInMilli = minutesInMilli * 60;
+        long daysInMilli = hoursInMilli * 24;
+
+        long elapsedDays = different / daysInMilli;
+        different = different % daysInMilli;
+
+        long elapsedHours = different / hoursInMilli;
+        different = different % hoursInMilli;
+
+        long elapsedMinutes = different / minutesInMilli;
+        different = different % minutesInMilli;
+
+        long elapsedSeconds = different / secondsInMilli;
+
+
+
+       /* Calendar calendar = Calendar.getInstance();
+        calendar.setTime(_sDate);
+        calendar.add(Calendar.MINUTE, 60);
+        System.out.println("Time here "+calendar.getTime());
+        String calculated_time =sdf.format(calendar.getTime());*/
+
+       /* SimpleDateFormat df = new SimpleDateFormat("dd/M/yyyy HH:mm:ss");
+        Calendar calendar1 = Calendar.getInstance();
+        String formattedDate = df.format(calendar1.getTime());
+
+        if(calendar1.compareTo(calendar)>0)
+        {
+            Logout();
+        }else{
+            //Logout();
+        }
+*/
         DataCollector.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 if (subheadlist.contains(Integer.parseInt(shared.getString("userdivid", "0")))) {
@@ -130,33 +185,7 @@ public class MainContainerActivity extends AppCompatActivity {
         logout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (subheadlist.contains(Integer.parseInt(shared.getString("userdivid", "0")))) {
-                    SQLiteDatabase db = openOrCreateDatabase("sltp.db", MODE_PRIVATE, null);
-                    db.execSQL("DELETE from m_fb");
-                    db.delete("m_range", null, null);
-                    db.close();
-
-                    SharedPreferences sharedPreferences = getSharedPreferences(userlogin, 0);
-                    SharedPreferences.Editor editor = sharedPreferences.edit();
-                    editor.clear();
-                    editor.apply();
-
-                    Intent i = new Intent(getApplicationContext(), LoginActivity.class);
-                    i.setFlags(i.FLAG_ACTIVITY_NEW_TASK | i.FLAG_ACTIVITY_CLEAR_TASK);
-                    startActivity(i);
-                    finish();
-
-                } else {
-                    SharedPreferences sharedPreferences = getSharedPreferences(userlogin, 0);
-                    SharedPreferences.Editor editor = sharedPreferences.edit();
-                    editor.clear();
-                    editor.apply();
-
-                    Intent i = new Intent(getApplicationContext(), LoginActivity.class);
-                    i.setFlags(i.FLAG_ACTIVITY_NEW_TASK | i.FLAG_ACTIVITY_CLEAR_TASK);
-                    startActivity(i);
-                    finish();
-                }
+                Logout();
             }
         });
     }
@@ -214,6 +243,36 @@ public class MainContainerActivity extends AppCompatActivity {
             db2.close();
         } else {
 
+        }
+    }
+    private void Logout()
+    {
+        if (subheadlist.contains(Integer.parseInt(shared.getString("userdivid", "0")))) {
+            SQLiteDatabase db = openOrCreateDatabase("sltp.db", MODE_PRIVATE, null);
+            db.execSQL("DELETE from m_fb");
+            db.delete("m_range", null, null);
+            db.close();
+
+            SharedPreferences sharedPreferences = getSharedPreferences(userlogin, 0);
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.clear();
+            editor.apply();
+
+            Intent i = new Intent(getApplicationContext(), LoginActivity.class);
+            i.setFlags(i.FLAG_ACTIVITY_NEW_TASK | i.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(i);
+            finish();
+
+        } else {
+            SharedPreferences sharedPreferences = getSharedPreferences(userlogin, 0);
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.clear();
+            editor.apply();
+
+            Intent i = new Intent(getApplicationContext(), LoginActivity.class);
+            i.setFlags(i.FLAG_ACTIVITY_NEW_TASK | i.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(i);
+            finish();
         }
     }
 

@@ -19,6 +19,7 @@
             android:text="Choose Forest Block Name"
             android:textColor="@color/offwhite"
             android:textSize="25dp"
+            android:fontFamily="@font/my_custom_font"
             />
 
     </RelativeLayout>
@@ -36,6 +37,7 @@
             android:layout_marginLeft="5sp"
             android:layout_marginRight="5sp"
             android:layout_marginBottom="5sp"
+            android:fontFamily="@font/my_custom_font"
             app:ms_alignLabels="false"
             app:ms_arrowColor="@color/color1"
             app:ms_arrowSize="14dp"

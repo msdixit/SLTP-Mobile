@@ -36,6 +36,7 @@
             app:ms_hintColor="@color/color1"
             app:ms_hintView="@layout/hint_item_layout"
             app:ms_multiline="false"
+            android:fontFamily="@font/my_custom_font"
             app:ms_thickness="0.5dp" />
 
 
@@ -62,6 +63,7 @@
             app:ms_hintColor="@color/color1"
             app:ms_hintView="@layout/hint_item_layout"
             app:ms_multiline="false"
+            android:fontFamily="@font/my_custom_font"
             app:ms_thickness="0.5dp" />
 
         <fr.ganfra.materialspinner.MaterialSpinner
@@ -87,6 +89,7 @@
             app:ms_hintColor="@color/color1"
             app:ms_hintView="@layout/hint_item_layout"
             app:ms_multiline="false"
+            android:fontFamily="@font/my_custom_font"
             app:ms_thickness="0.5dp" />
     </LinearLayout>
 
@@ -114,6 +117,7 @@
                 android:background="@drawable/button_drawable"
                 android:text="Next"
                 android:textColor="@color/white"
+                android:fontFamily="@font/my_custom_font"
                 android:textSize="14dp" />
 
             <Button
@@ -128,6 +132,7 @@
                 android:background="@drawable/button_drawable"
                 android:text="Reset"
                 android:textColor="@color/white"
+                android:fontFamily="@font/my_custom_font"
                 android:textSize="14dp" />
 
 

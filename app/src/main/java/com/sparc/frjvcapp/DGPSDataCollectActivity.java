@@ -559,8 +559,6 @@ public class DGPSDataCollectActivity extends AppCompatActivity {
                                                     Toast.makeText(getApplicationContext(), "NoT Pillar registered Successfully", Toast.LENGTH_LONG).show();
                                                 }
                                             }
-
-
                                         } catch (Exception ee) {
                                             ee.printStackTrace();
                                         } finally {
@@ -595,12 +593,10 @@ public class DGPSDataCollectActivity extends AppCompatActivity {
                         } else if (Integer.parseInt(c.getString(c.getColumnIndex("pillar_sfile_status"))) == 1) {
                             Toast.makeText(this, "This pillar is already registered and Tagged.", Toast.LENGTH_LONG).show();
                         } else {
-
                         }
                     }
                 } else {
                     AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
-                    //alertDialogBuilder.setMessage("Are you sure to save this pillar data?");
                     final View customLayout = getLayoutInflater().inflate(R.layout.save_custome_dialod_register_pillar, null);
                     alertDialogBuilder.setView(customLayout);
                     alertDialogBuilder.setPositiveButton("Ok",
@@ -635,8 +631,6 @@ public class DGPSDataCollectActivity extends AppCompatActivity {
                                                 startActivity(i);
                                             }
                                         }
-
-
                                     } catch (Exception ee) {
                                         ee.printStackTrace();
                                     } finally {
@@ -673,9 +667,7 @@ public class DGPSDataCollectActivity extends AppCompatActivity {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_PHONE_STATE}, 101);
             macAddress = "";
         } else {
-            macAddress =
-                    android.provider.Settings.Secure.getString(this.getApplicationContext().getContentResolver(), "android_id");
-
+            macAddress = android.provider.Settings.Secure.getString(this.getApplicationContext().getContentResolver(), "android_id");
         }
         return macAddress;
     }

@@ -120,7 +120,7 @@
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:fontFamily="@font/abeezee"
+
                     android:gravity="center"
                     android:textStyle="bold"
                     android:text="Division :"
@@ -132,7 +132,7 @@
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="3"
-                    android:fontFamily="@font/abeezee"
+
                     android:gravity="center|left"
                     android:textColor="@color/color1"
                     android:textSize="15sp" />
@@ -171,7 +171,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_weight="1"
-                        android:fontFamily="@font/abeezee"
+
                         android:gravity="center|bottom"
                         android:textColor="@color/white"
                         android:textColorHint="@color/white"
@@ -184,7 +184,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_weight="1"
-                        android:fontFamily="@font/abeezee"
+
                         android:gravity="center|top"
                         android:text="Range"
                         android:textColor="@color/white"
@@ -210,7 +210,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="0dp"
                         android:layout_weight="1"
-                        android:fontFamily="@font/abeezee"
+
                         android:gravity="center|bottom"
                         android:textColor="@color/white"
                         android:textSize="26dp"
@@ -222,7 +222,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="0dp"
                         android:layout_weight="1"
-                        android:fontFamily="@font/abeezee"
+
                         android:gravity="center|top"
                         android:text="Forest Block"
                         android:textColor="@color/white"
@@ -256,7 +256,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="0dp"
                         android:layout_weight="1"
-                        android:fontFamily="@font/abeezee"
+
                         android:gravity="center|bottom"
                         android:textColor="@color/white"
                         android:textSize="26dp"
@@ -268,7 +268,6 @@
                         android:layout_width="match_parent"
                         android:layout_height="0dp"
                         android:layout_weight="1"
-                        android:fontFamily="@font/abeezee"
                         android:gravity="center|top"
                         android:text="Total Point"
                         android:textColor="@color/white"
@@ -294,7 +293,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="0dp"
                         android:layout_weight="1"
-                        android:fontFamily="@font/abeezee"
+
                         android:gravity="center|bottom"
                         android:textColor="@color/white"
                         android:textColorHint="@color/colorbutton"
@@ -307,7 +306,6 @@
                         android:layout_width="match_parent"
                         android:layout_height="0dp"
                         android:layout_weight="1"
-                        android:fontFamily="@font/abeezee"
                         android:gravity="center|top"
                         android:text="Sync Point"
                         android:textColor="@color/white"

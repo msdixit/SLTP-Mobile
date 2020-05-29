@@ -369,6 +369,7 @@ public class SearchMapFile extends AppCompatActivity {
                     getKMLPointData(mfb.get(i));
                 }
             }
+            dbHelper.close();
            /* if (state == true && circle == true && ran == true && div == true) {
 
             } else {
@@ -393,6 +394,7 @@ public class SearchMapFile extends AppCompatActivity {
                     getCMVData(mfb.get(i));
                 }
             }
+            dbHelper.close();
            /* if (state == true && circle == true && ran == true && div == true) {
 
             } else {
@@ -417,6 +419,7 @@ public class SearchMapFile extends AppCompatActivity {
                     getCMVData(mfb.get(i));
                 }
             }
+            dbHelper.close();
            /* if (state == true && circle == true && ran == true && div == true) {
 
             } else {

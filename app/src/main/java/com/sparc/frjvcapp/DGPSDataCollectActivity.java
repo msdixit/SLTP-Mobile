@@ -228,7 +228,7 @@ public class DGPSDataCollectActivity extends AppCompatActivity {
         takepicforward.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (getApplicationContext().getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA)) {
+                if (getApplicationContext().getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_ANY)) {
                     if (setpicforward.getDrawable() == null) {
                         SelectImage();
                     } else {
@@ -245,7 +245,7 @@ public class DGPSDataCollectActivity extends AppCompatActivity {
         takepicbackward.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (getApplicationContext().getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA)) {
+                if (getApplicationContext().getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_ANY)) {
                     if (setpicbackward.getDrawable() == null) {
                         SelectImageBackward();
                     } else {
@@ -262,7 +262,7 @@ public class DGPSDataCollectActivity extends AppCompatActivity {
         takepicinward.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (getApplicationContext().getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA)) {
+                if (getApplicationContext().getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_ANY)) {
                     if (setpicinward.getDrawable() == null) {
                         SelectImageInward();
                     } else {
@@ -279,7 +279,7 @@ public class DGPSDataCollectActivity extends AppCompatActivity {
         takepicoutward.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (getApplicationContext().getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA)) {
+                if (getApplicationContext().getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_ANY)) {
                     if (setpicoutward.getDrawable() == null) {
                         SelectImageOutward();
                     } else {
@@ -296,7 +296,7 @@ public class DGPSDataCollectActivity extends AppCompatActivity {
         takepictop.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (getApplicationContext().getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA)) {
+                if (getApplicationContext().getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_ANY)) {
                     if (setpictop.getDrawable() == null) {
                         SelectImageTop();
                     } else {

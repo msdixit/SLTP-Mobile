@@ -228,8 +228,6 @@
 
         </LinearLayout>
 
-
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
@@ -322,6 +320,7 @@
             </LinearLayout>
 
         </LinearLayout>
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
@@ -419,10 +418,10 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_gravity="center"
-            android:layout_marginLeft="5dp"
+            android:layout_marginLeft="15dp"
             android:layout_marginTop="3dp"
-            android:layout_marginRight="5dp"
-            android:layout_weight="0.12"
+            android:layout_marginRight="15dp"
+            android:layout_weight="0.1"
             android:orientation="horizontal"
             >
 
@@ -430,40 +429,45 @@
             <Button
                 android:id="@+id/sync"
                 android:layout_width="0dp"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="3dp"
                 android:layout_height="match_parent"
-                android:layout_marginRight="10dp"
                 android:layout_weight="1.5"
                 android:background="@drawable/button_drawable"
                 android:text="Sync"
                 android:fontFamily="@font/my_custom_font"
                 android:textColor="@color/white"
                 android:textSize="18dp"/>
-            <!--<Button
-                android:id="@+id/syncfile"
-                android:layout_width="0dp"
-                android:layout_marginTop="10dp"
-                android:layout_height="match_parent"
-                android:layout_marginRight="10dp"
-                android:layout_weight=".5"
-                android:background="@drawable/button_drawable"
-                android:text="Sync Static"
-                android:textColor="@color/white"
-                android:textSize="18dp" />
-
-            <Button
-                android:id="@+id/rtxfile"
-                android:layout_width="0dp"
-                android:layout_marginTop="10dp"
-                android:layout_height="match_parent"
-                android:layout_marginRight="10dp"
-                android:layout_weight=".5"
-                android:background="@drawable/button_drawable"
-                android:text="Sync RTX"
-                android:textColor="@color/white"
-                android:textSize="18dp" />-->
 
 
         </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_gravity="center"
+            android:layout_marginLeft="15dp"
+            android:layout_marginTop="3dp"
+            android:layout_marginRight="15dp"
+            android:layout_marginBottom="3dp"
+            android:layout_weight="0.1"
+            android:orientation="horizontal"
+            >
+
+
+            <Button
+                android:id="@+id/backup"
+                android:visibility="gone"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1.5"
+                android:background="@drawable/button_drawable"
+                android:text="Backup"
+                android:fontFamily="@font/my_custom_font"
+                android:textColor="@color/white"
+                android:textSize="18dp"/>
+
+
+        </LinearLayout>
+
     </LinearLayout>
 </RelativeLayout>

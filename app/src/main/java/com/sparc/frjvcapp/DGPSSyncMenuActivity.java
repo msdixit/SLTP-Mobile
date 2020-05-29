@@ -2,6 +2,8 @@ package com.sparc.frjvcapp;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -9,6 +11,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Environment;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -44,6 +47,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.nio.channels.FileChannel;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -67,12 +71,12 @@ public class DGPSSyncMenuActivity extends AppCompatActivity {
     private SQLiteDatabase db;
     String sharediv, sharerange, sharefb, sharefbtype, sharefbname, userid, jobid, div_name, range_name, fb_name, _token, frjvc_lat, frjvc_long;
     SharedPreferences shared, _shareToken;
-    Button sync;
+    Button sync,backup;
     DbHelper dbHelper;
     private ProgressDialog progressDialog;
     JSONArray jsonArray;
     JSONObject fp_data;
-    ProgressDialog progressDialog1;
+    ProgressDialog progressDialog1,progressDialog2;
     TextView totpoint, syncpoint, totpic, syncpic, totsign, syncattendance, totfolder, syncfolder, dgpsfbName;
 
     private RetrofitInterface jsonPlaceHolderApi;
@@ -91,6 +95,7 @@ public class DGPSSyncMenuActivity extends AppCompatActivity {
         totpic = findViewById(R.id.totpic);
         syncpic = findViewById(R.id.syncpic);
         totsign = findViewById(R.id.totsign);
+        backup = findViewById(R.id.backup);
         syncattendance = findViewById(R.id.syncattendance);
         totfolder = findViewById(R.id.totfolder);
         syncfolder = findViewById(R.id.syncfolder);
@@ -134,7 +139,7 @@ public class DGPSSyncMenuActivity extends AppCompatActivity {
 
         jsonPlaceHolderApi = retrofit.create(RetrofitInterface.class);
 
-
+        /*Data Sync*/
         sync.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -143,7 +148,7 @@ public class DGPSSyncMenuActivity extends AppCompatActivity {
                 if (nInfo != null && nInfo.isAvailable() && nInfo.isConnected()) {
                     boolean s_status = checkFileStatus(userid, sharediv);
                     boolean r_status = checkRTXFileStatus(userid, sharediv);
-                    //boolean j_status = checkJXLFileStatus(userid, sharediv);
+                    boolean j_status = checkJXLFileStatus(userid, sharediv);
                     if (checkDataForSynchronization()) {
                         if (CheckDataTagging()) {
                             BindDGPSData(sharediv, userid);
@@ -177,7 +182,7 @@ public class DGPSSyncMenuActivity extends AppCompatActivity {
                     } else {
                         Toast.makeText(getApplicationContext(), "There is no file for Synchronization", Toast.LENGTH_LONG).show();
                     }
-                    /*if (j_status == true) {
+                    if (j_status == true) {
                         String sfile = Environment.getExternalStorageDirectory().toString();
                         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
                         String spath = "/JXLFile";
@@ -188,10 +193,105 @@ public class DGPSSyncMenuActivity extends AppCompatActivity {
                         new DGPSSyncMenuActivity.SyncFiles().execute(dfinalpath + "," + "J");
                     } else {
                         Toast.makeText(getApplicationContext(), "There is no file for Synchronization", Toast.LENGTH_LONG).show();
-                    }*/
+                    }
                 } else {
                     Toast.makeText(getApplicationContext(), "Internet is not available", Toast.LENGTH_LONG).show();
                 }
+            }
+        });
+
+        /*Data Backup*/
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+        backup.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final View customLayout = getLayoutInflater().inflate(R.layout.pupup_backup_confirm, null);
+                alertDialogBuilder.setView(customLayout);
+
+                alertDialogBuilder.setPositiveButton("Yes",
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface arg0, int arg1) {
+                                try {
+                                    progressDialog2 = new ProgressDialog(DGPSSyncMenuActivity.this, R.style.MyAlertDialogStyle);
+                                    progressDialog2.setMessage("Wait we are backing up your files...");
+                                    progressDialog2.show();
+                                   for(int i=0;i<3;i++)
+                                    {
+                                       if(i==0)
+                                       {
+                                           String sfile = Environment.getExternalStorageDirectory().toString();
+                                           String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+                                           String spath = "/StaticData";
+                                           String zipPath = "/Backup/"+userid+"_"+timeStamp;
+                                           String sfinalpath = sfile + spath;
+                                           String dfinalpath = sfile + zipPath;
+                                           File src = new File(sfinalpath);
+                                           File[] Files = src.listFiles();
+                                           if(Files.length>0)
+                                           {
+                                               backUpFile(sfinalpath, dfinalpath);
+                                           }else{
+                                               Toast.makeText(getApplicationContext(),"You don't have anything for backup",Toast.LENGTH_LONG).show();
+                                           }
+
+                                       }
+                                       else if(i==1)
+                                       {
+                                           String sfile = Environment.getExternalStorageDirectory().toString();
+                                           String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+                                           String spath = "/RTXData";
+                                           String zipPath = "/Backup/"+userid+"_"+timeStamp;
+                                           String sfinalpath = sfile + spath;
+                                           String dfinalpath = sfile + zipPath;
+                                           File src = new File(sfinalpath);
+                                           File[] Files = src.listFiles();
+                                           if(Files.length>0)
+                                           {
+                                               backUpFile(sfinalpath, dfinalpath);
+                                           }else{
+                                               Toast.makeText(getApplicationContext(),"You don't have anything for backup",Toast.LENGTH_LONG).show();
+                                           }
+
+                                       }else if(i==2){
+                                           String sfile = Environment.getExternalStorageDirectory().toString();
+                                           String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+                                           String spath = "/JXLFile";
+                                           String zipPath = "/Backup/"+userid+"_"+timeStamp;
+                                           String sfinalpath = sfile + spath;
+                                           String dfinalpath = sfile + zipPath;
+                                           File src = new File(sfinalpath);
+                                           File[] Files = src.listFiles();
+                                           if(Files.length>0)
+                                           {
+                                               backUpFile(sfinalpath, dfinalpath);
+                                           }else{
+                                               Toast.makeText(getApplicationContext(),"You don't have anything for backup",Toast.LENGTH_LONG).show();
+                                           }
+                                       }else{
+
+                                       }
+                                    }
+                                    }
+                                 catch (Exception ee) {
+                                    ee.printStackTrace();
+                                }finally {
+                                    progressDialog2.dismiss();
+                                }
+                            }
+                        });
+
+                alertDialogBuilder.setNegativeButton("No",
+                        new DialogInterface.OnClickListener() {
+
+                            @Override
+                            public void onClick(DialogInterface arg0, int arg1) {
+                                // Toast.makeText(getApplicationContext(), "You canceled the request...please try again", Toast.LENGTH_LONG).show();
+                            }
+                        });
+
+                AlertDialog alertDialog = alertDialogBuilder.create();
+                alertDialog.show();
             }
         });
 //        syncfile.setOnClickListener(new View.OnClickListener() {
@@ -212,7 +312,7 @@ public class DGPSSyncMenuActivity extends AppCompatActivity {
     private boolean checkFileStatus(String userid, String sharefb) {
         db = openOrCreateDatabase("sltp.db", MODE_PRIVATE, null);
         boolean b = false;
-        Cursor cursor = db.rawQuery("select * from m_fb_dgps_survey_pill_data where u_id='" + userid + "' and d_id='" + sharediv + "' and pillar_sfile_path is not null and pillar_sfile_status='1' order by pill_no", null);
+        Cursor cursor = db.rawQuery("select * from m_fb_dgps_survey_pill_data where u_id='" + userid + "' and d_id='" + sharediv + "' and pillar_sfile_path is not null and (pillar_sfile_status='1') order by pill_no", null);
         try {
             if (cursor.getCount() > 0) {
                 b = true;
@@ -231,7 +331,7 @@ public class DGPSSyncMenuActivity extends AppCompatActivity {
     private boolean checkRTXFileStatus(String userid, String sharefb) {
         db = openOrCreateDatabase("sltp.db", MODE_PRIVATE, null);
         boolean b = false;
-        Cursor cursor = db.rawQuery("select distinct fb_name from m_fb_dgps_survey_pill_data where u_id='" + userid + "' and d_id='" + sharediv + "' and pillar_rfile_path is not null and pillar_rfile_status='1'", null);
+        Cursor cursor = db.rawQuery("select distinct fb_name from m_fb_dgps_survey_pill_data where u_id='" + userid + "' and d_id='" + sharediv + "' and pillar_rfile_path is not null and (pillar_rfile_status='1')", null);
         try {
             if (cursor.getCount() > 0) {
                 b = true;
@@ -250,7 +350,7 @@ public class DGPSSyncMenuActivity extends AppCompatActivity {
     private boolean checkJXLFileStatus(String userid, String sharefb) {
         db = openOrCreateDatabase("sltp.db", MODE_PRIVATE, null);
         boolean b = false;
-        Cursor cursor = db.rawQuery("select distinct fb_name from m_fb_dgps_survey_pill_data where u_id='" + userid + "' and d_id='" + sharediv + "' and pillar_jfile_path is not null and pillar_jfile_status='1'", null);
+        Cursor cursor = db.rawQuery("select distinct fb_name from m_fb_dgps_survey_pill_data where u_id='" + userid + "' and d_id='" + sharediv + "' and pillar_jfile_path is not null and (pillar_jfile_status='1' )", null);
         try {
             if (cursor.getCount() > 0) {
                 b = true;
@@ -419,7 +519,7 @@ public class DGPSSyncMenuActivity extends AppCompatActivity {
     private boolean CheckDataTagging() {
         db = openOrCreateDatabase("sltp.db", MODE_PRIVATE, null);
         boolean b = false;
-        Cursor cursor = db.rawQuery("select * from m_fb_dgps_survey_pill_data where u_id='" + userid + "' and d_id='" + sharediv + "' and (pillar_sfile_status='1') and (pillar_rfile_status='1' or pillar_rfile_status='2') order by pill_no", null);//and (pillar_jfile_status='1' or pillar_jfile_status='2')
+        Cursor cursor = db.rawQuery("select * from m_fb_dgps_survey_pill_data where u_id='" + userid + "' and d_id='" + sharediv + "' and (pillar_sfile_status='1' or pillar_sfile_status='2') and (pillar_rfile_status='1' or pillar_rfile_status='2') order by pill_no", null);//and (pillar_jfile_status='1' or pillar_jfile_status='2')
         try {
             if (cursor.getCount() > 0) {
                 b = true;
@@ -512,7 +612,7 @@ public class DGPSSyncMenuActivity extends AppCompatActivity {
         } catch (Exception ee) {
             ee.printStackTrace();
         } finally {
-
+            db.close();
         }
     }
 
@@ -591,6 +691,8 @@ public class DGPSSyncMenuActivity extends AppCompatActivity {
             db.close();
         } catch (Exception ee) {
             ee.printStackTrace();
+        }finally {
+            db.close();
         }
     }
 
@@ -704,6 +806,57 @@ public class DGPSSyncMenuActivity extends AppCompatActivity {
         return b;
     }
 
+    public void backUpFile(String sourcePath, String toLocation) {
+        try {
+            File src = new File(sourcePath);
+            File dst = new File(toLocation, src.getName());
+
+            if (src.isDirectory()) {
+
+                String files[] = src.list();
+                int filesLength = files.length;
+                for (int i = 0; i < filesLength; i++) {
+                    String src1 = (new File(src, files[i]).getPath());
+                    String dst1 = dst.getPath();
+                    backUpFile(src1, dst1);
+
+                }
+            } else {
+                copyFile(src, dst);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    public static void copyFile(File sourceFile, File destFile) throws IOException {
+        if (!destFile.getParentFile().exists())
+            destFile.getParentFile().mkdirs();
+
+        if (!destFile.exists()) {
+            destFile.createNewFile();
+        }
+
+        FileChannel source = null;
+        FileChannel destination = null;
+
+        try {
+            source = new FileInputStream(sourceFile).getChannel();
+            destination = new FileOutputStream(destFile).getChannel();
+            destination.transferFrom(source, 0, source.size());
+        } finally {
+            if (source != null) {
+                source.close();
+            }
+            if (destination != null) {
+                destination.close();
+            }
+            if(sourceFile.exists()){
+                sourceFile.delete();
+            }
+        }
+    }
+
+
     /*private void SyncStatic() {
         ConnectivityManager cm = (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo nInfo = cm.getActiveNetworkInfo();
@@ -774,6 +927,7 @@ public class DGPSSyncMenuActivity extends AppCompatActivity {
                                     for (int i = 0; i < arr.size(); i++) {
                                         JsonObject obj = (JsonObject) arr.get(i);
                                         try {
+                                            int count=0;
                                             db = openOrCreateDatabase("sltp.db", MODE_PRIVATE, null);
                                             String path = "%" + obj.get("chrv_statusName").getAsString();
                                             Cursor c = null;
@@ -781,6 +935,7 @@ public class DGPSSyncMenuActivity extends AppCompatActivity {
                                                 c = db.rawQuery("update m_fb_dgps_survey_pill_data set pillar_sfile_status='2' where pillar_sfile_path like '" + path + "'", null);
                                                 if (c.getCount() >= 0) {
                                                     if (f.delete()) {
+                                                        count+=1;
                                                         Toast.makeText(DGPSSyncMenuActivity.this, "Static Data Synchronization successfully completed", Toast.LENGTH_SHORT).show();
                                                     }
                                                 }
@@ -789,6 +944,7 @@ public class DGPSSyncMenuActivity extends AppCompatActivity {
                                                 c = db.rawQuery("update m_fb_dgps_survey_pill_data set pillar_rfile_status='2' where pillar_rfile_path like '" + path + "'", null);
                                                 if (c.getCount() >= 0) {
                                                     if (f.delete()) {
+                                                        count+=1;
                                                         Toast.makeText(DGPSSyncMenuActivity.this, "RTX Data Synchronization successfully completed", Toast.LENGTH_SHORT).show();
                                                     }
                                                 }
@@ -797,9 +953,15 @@ public class DGPSSyncMenuActivity extends AppCompatActivity {
                                                 c = db.rawQuery("update m_fb_dgps_survey_pill_data set pillar_jfile_status='2' where pillar_jfile_path like '" + path + "'", null);
                                                 if (c.getCount() >= 0) {
                                                     if (f.delete()) {
+                                                        count+=1;
                                                         Toast.makeText(DGPSSyncMenuActivity.this, "JXL Data Synchronization successfully completed", Toast.LENGTH_SHORT).show();
                                                     }
                                                 }
+                                            }
+                                            if(count==3)
+                                            {
+                                                count=0;
+                                                backup.setVisibility(View.VISIBLE);
                                             }
                                             c.close();
                                             db.close();
@@ -849,4 +1011,5 @@ public class DGPSSyncMenuActivity extends AppCompatActivity {
             this.progressDialog.dismiss();
         }
     }
+
 }

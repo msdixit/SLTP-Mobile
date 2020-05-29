@@ -127,9 +127,9 @@ public class DGPSJXLDataExportActivity extends AppCompatActivity {
         } else {
             txtStsFileName.setText("No file available for download");
             txtStsFileName.setTextSize(15);
-            Typeface face = Typeface.createFromAsset(getAssets(),
-                    "open_sans.ttf");
-            txtStsFileName.setTypeface(face);
+/*            Typeface face = Typeface.createFromAsset(getAssets(),
+                    "open_sans.ttf");*/
+            //txtStsFileName.setTypeface(face);
             txtStsFileName.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
             txtStsFileName.setWidth(ViewGroup.LayoutParams.MATCH_PARENT);
             txtStsFileName.setLayoutParams(new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.MATCH_PARENT, 1f));

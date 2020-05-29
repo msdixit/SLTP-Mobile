@@ -585,6 +585,7 @@ public class DGPSMapViewActivity extends AppCompatActivity implements OnMapReady
             ArrayList<String> o_id = new ArrayList<String>();
             ArrayList<String> survey_status = new ArrayList<String>();
             ArrayList<String> pnjdv_no = new ArrayList<String>();
+            ArrayList<String> pillar_avial_sts = new ArrayList<String>();
 
             rangeKey = new HashMap<>();
             db = openOrCreateDatabase("sltp.db", MODE_PRIVATE, null);
@@ -601,13 +602,14 @@ public class DGPSMapViewActivity extends AppCompatActivity implements OnMapReady
                         o_id.add(cursor.getString(cursor.getColumnIndex("o_Id")));
                         survey_status.add(cursor.getString(cursor.getColumnIndex("m_survey_status")));
                         pnjdv_no.add(cursor.getString(cursor.getColumnIndex("m_pndjv_pill_no")));
+                        pillar_avial_sts.add(cursor.getString(cursor.getColumnIndex("m_pillar_avl_sts")));
                     } while (cursor.moveToNext());
                 }
                 cmvsta = true;
                 cursor.close();
                 db.close();
                 for (int j = 0; j < pillarno.size(); j++) {
-                    addSurveyPointtoMap(Double.parseDouble(lat.get(j)), Double.parseDouble(lon.get(j)), pillarno.get(j), Integer.parseInt(status.get(j)), Integer.parseInt(file.get(j)), Integer.parseInt(o_id.get(j)),Integer.parseInt(survey_status.get(j)),Integer.parseInt(pnjdv_no.get(j)));
+                    addSurveyPointtoMap(Double.parseDouble(lat.get(j)), Double.parseDouble(lon.get(j)), pillarno.get(j), Integer.parseInt(status.get(j)), Integer.parseInt(file.get(j)), Integer.parseInt(o_id.get(j)),Integer.parseInt(survey_status.get(j)),Integer.parseInt(pnjdv_no.get(j)),Integer.parseInt(pillar_avial_sts.get(j)));
                 }
             } else {
                 cmvsta = false;
@@ -618,32 +620,57 @@ public class DGPSMapViewActivity extends AppCompatActivity implements OnMapReady
         }
     }
 
-    private void addSurveyPointtoMap(double key, double value, String pillno, int Status, int file_sts, int o_id,int survey_status,int pndjv_pill_no) {
+    private void addSurveyPointtoMap(double key, double value, String pillno, int Status, int file_sts, int o_id,int survey_status,int pndjv_pill_no,int pill_avail_sts) {
         if (Status == 0 && file_sts == 0 && survey_status==0) {
-            BitmapDrawable bitmapdraw = (BitmapDrawable) getResources().getDrawable(R.drawable.yellow);
-            Bitmap b = bitmapdraw.getBitmap();
-            Bitmap smallMarker = Bitmap.createScaledBitmap(b, 80, 80, false);
-            googleMap.addMarker(new MarkerOptions().position(
-                    new LatLng(key, value)).title("Pillar No:" + pillno).snippet("Lat:" + key + ",Long:" + value + ",Status:" + Status + ",File:" + file_sts + ",OldID:" + o_id+",Pnjdv_no:"+ pndjv_pill_no).icon(BitmapDescriptorFactory.fromBitmap(smallMarker)));
+
+            if(pill_avail_sts==0)
+            {
+                BitmapDrawable bitmapdraw = (BitmapDrawable) getResources().getDrawable(R.drawable.yellow);
+                Bitmap b = bitmapdraw.getBitmap();
+                Bitmap smallMarker = Bitmap.createScaledBitmap(b, 80, 80, false);
+                googleMap.addMarker(new MarkerOptions().position(
+                        new LatLng(key, value)).title("Existing Pillar:" + pillno).snippet("Lat:" + key + ",Long:" + value + ",Status:" + Status + ",File:" + file_sts + ",OldID:" + o_id+",Pnjdv_no:"+ pndjv_pill_no).icon(BitmapDescriptorFactory.fromBitmap(smallMarker)));
+            }else{
+                BitmapDrawable bitmapdraw = (BitmapDrawable) getResources().getDrawable(R.drawable.blue);
+                Bitmap b = bitmapdraw.getBitmap();
+                Bitmap smallMarker = Bitmap.createScaledBitmap(b, 80, 80, false);
+                googleMap.addMarker(new MarkerOptions().position(
+                        new LatLng(key, value)).title("Propose Pillar:" + pillno).snippet("Lat:" + key + ",Long:" + value + ",Status:" + Status + ",File:" + file_sts + ",OldID:" + o_id+",Pnjdv_no:"+ pndjv_pill_no).icon(BitmapDescriptorFactory.fromBitmap(smallMarker)));
+            }
         } else if (Status == 1 && file_sts == 0 && survey_status==1) {
             BitmapDrawable bitmapdraw = (BitmapDrawable) getResources().getDrawable(R.drawable.red);
             Bitmap b = bitmapdraw.getBitmap();
             Bitmap smallMarker = Bitmap.createScaledBitmap(b, 80, 80, false);
-            googleMap.addMarker(new MarkerOptions().position(
-                    new LatLng(key, value)).title("Pillar No:" + pillno).snippet("Lat:" + key + ",Long:" + value + ",Status:" + Status + ",File:" + file_sts + ",OldID:" + o_id+",Pnjdv_no:"+ pndjv_pill_no).icon(BitmapDescriptorFactory.fromBitmap(smallMarker)));
+            if(pill_avail_sts==0) {
+                googleMap.addMarker(new MarkerOptions().position(
+                        new LatLng(key, value)).title("Exisiting Pillar:" + pillno).snippet("Lat:" + key + ",Long:" + value + ",Status:" + Status + ",File:" + file_sts + ",OldID:" + o_id + ",Pnjdv_no:" + pndjv_pill_no).icon(BitmapDescriptorFactory.fromBitmap(smallMarker)));
+            }else{
+                googleMap.addMarker(new MarkerOptions().position(
+                        new LatLng(key, value)).title("Propose Pillar:" + pillno).snippet("Lat:" + key + ",Long:" + value + ",Status:" + Status + ",File:" + file_sts + ",OldID:" + o_id + ",Pnjdv_no:" + pndjv_pill_no).icon(BitmapDescriptorFactory.fromBitmap(smallMarker)));
+            }
         } else if (Status == 1 && file_sts == 1 && survey_status==1) {
             BitmapDrawable bitmapdraw = (BitmapDrawable) getResources().getDrawable(R.drawable.green);
             Bitmap b = bitmapdraw.getBitmap();
             Bitmap smallMarker = Bitmap.createScaledBitmap(b, 80, 80, false);
-            googleMap.addMarker(new MarkerOptions().position(
-                    new LatLng(key, value)).title("Pillar No:" + pillno).snippet("Lat:" + key + ",Long:" + value + ",Status:" + Status + ",File:" + file_sts + ",OldID:" + o_id+",Pnjdv_no:"+ pndjv_pill_no).icon(BitmapDescriptorFactory.fromBitmap(smallMarker)));
+            if(pill_avail_sts==0) {
+                googleMap.addMarker(new MarkerOptions().position(
+                        new LatLng(key, value)).title("Existing Pillar:" + pillno).snippet("Lat:" + key + ",Long:" + value + ",Status:" + Status + ",File:" + file_sts + ",OldID:" + o_id+",Pnjdv_no:"+ pndjv_pill_no).icon(BitmapDescriptorFactory.fromBitmap(smallMarker)));
+            }else{
+                googleMap.addMarker(new MarkerOptions().position(
+                        new LatLng(key, value)).title("Propose Pillar:" + pillno).snippet("Lat:" + key + ",Long:" + value + ",Status:" + Status + ",File:" + file_sts + ",OldID:" + o_id+",Pnjdv_no:"+ pndjv_pill_no).icon(BitmapDescriptorFactory.fromBitmap(smallMarker)));
+            }
         }
         else if (Status == 1 && file_sts == 0 && survey_status==2) {
             BitmapDrawable bitmapdraw = (BitmapDrawable) getResources().getDrawable(R.drawable.map_grey);
             Bitmap b = bitmapdraw.getBitmap();
             Bitmap smallMarker = Bitmap.createScaledBitmap(b, 80, 80, false);
-            googleMap.addMarker(new MarkerOptions().position(
-                    new LatLng(key, value)).title("Pillar No:" + pillno).snippet("Lat:" + key + ",Long:" + value + ",Status:" + Status + ",File:" + file_sts + ",OldID:" + o_id+",Pnjdv_no:"+ pndjv_pill_no).icon(BitmapDescriptorFactory.fromBitmap(smallMarker)));
+            if(pill_avail_sts==0) {
+                googleMap.addMarker(new MarkerOptions().position(
+                        new LatLng(key, value)).title("Existing Pillar" + pillno).snippet("Lat:" + key + ",Long:" + value + ",Status:" + Status + ",File:" + file_sts + ",OldID:" + o_id+",Pnjdv_no:"+ pndjv_pill_no).icon(BitmapDescriptorFactory.fromBitmap(smallMarker)));
+            }else{
+                googleMap.addMarker(new MarkerOptions().position(
+                        new LatLng(key, value)).title("Propose Pillar:" + pillno).snippet("Lat:" + key + ",Long:" + value + ",Status:" + Status + ",File:" + file_sts + ",OldID:" + o_id+",Pnjdv_no:"+ pndjv_pill_no).icon(BitmapDescriptorFactory.fromBitmap(smallMarker)));
+            }
         }
 
     }

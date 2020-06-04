@@ -140,6 +140,7 @@ public class DGPSSyncMenuActivity extends AppCompatActivity {
         jsonPlaceHolderApi = retrofit.create(RetrofitInterface.class);
 
         /*Data Sync*/
+        AlertDialog.Builder alertDialogBuilder1 = new AlertDialog.Builder(this);
         sync.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -207,7 +208,6 @@ public class DGPSSyncMenuActivity extends AppCompatActivity {
             public void onClick(View v) {
                 final View customLayout = getLayoutInflater().inflate(R.layout.pupup_backup_confirm, null);
                 alertDialogBuilder.setView(customLayout);
-
                 alertDialogBuilder.setPositiveButton("Yes",
                         new DialogInterface.OnClickListener() {
                             @Override
@@ -280,7 +280,6 @@ public class DGPSSyncMenuActivity extends AppCompatActivity {
                                 }
                             }
                         });
-
                 alertDialogBuilder.setNegativeButton("No",
                         new DialogInterface.OnClickListener() {
 
@@ -957,11 +956,6 @@ public class DGPSSyncMenuActivity extends AppCompatActivity {
                                                         Toast.makeText(DGPSSyncMenuActivity.this, "JXL Data Synchronization successfully completed", Toast.LENGTH_SHORT).show();
                                                     }
                                                 }
-                                            }
-                                            if(count==3)
-                                            {
-                                                count=0;
-                                                backup.setVisibility(View.VISIBLE);
                                             }
                                             c.close();
                                             db.close();

@@ -30,7 +30,9 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -159,7 +161,8 @@ public class RevisitDGPSJXLDataExportActivity extends AppCompatActivity {
                             public void onClick(DialogInterface arg0, int arg1) {
                                 if (!spill_no.equals("Select Forest Block")) {
                                     String d_f_name[] = txtStsFileName.getText().toString().split("\\.");//.split(".")
-                                    String f_file_name = d_f_name[0] + "_" + fbid + "_" + userid + "." + d_f_name[1];
+                                    String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+                                    String f_file_name = sharediv+"_"+ sharerange +"_"+fbid + "_" + userid + "_" + timeStamp + "." + d_f_name[1];
                                     new RevisitDGPSJXLDataExportActivity.ExportPointJXLData().execute(sfinalpath + "/" + txtStsFileName.getText().toString(), fbid, dfinalpath + "/" + f_file_name);
                                 } else {
                                     Toast.makeText(getApplicationContext(), "Please choose the forest block", Toast.LENGTH_LONG);
@@ -280,7 +283,7 @@ public class RevisitDGPSJXLDataExportActivity extends AppCompatActivity {
                             if (file.delete()) {
                             /*if (GetTaggingTableforDGPS(arr[0])) {
                                 UpdateTaggi bngPillarTable(arr[0]);*/
-                                Toast.makeText(getApplicationContext(), "Your data taging is successfully Completed", Toast.LENGTH_LONG);
+                                Toast.makeText(getApplicationContext(), "Your data tagging is successfully Completed", Toast.LENGTH_LONG);
                                 /*  }*/
 
                             } else {

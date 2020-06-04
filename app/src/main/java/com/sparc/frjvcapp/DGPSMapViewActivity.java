@@ -14,6 +14,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.location.Location;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
@@ -26,6 +27,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.SwitchCompat;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -58,8 +60,18 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Tile;
 import com.google.android.gms.maps.model.TileOverlayOptions;
 import com.google.android.gms.maps.model.TileProvider;
+import com.google.maps.android.data.Feature;
+import com.google.maps.android.data.kml.KmlContainer;
+import com.google.maps.android.data.kml.KmlLayer;
 
+import org.xmlpull.v1.XmlPullParserException;
+
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -133,6 +145,7 @@ public class DGPSMapViewActivity extends AppCompatActivity implements OnMapReady
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             checkLocationPermission();
         }
+        getCMVData();
     }
 
     public boolean checkLocationPermission() {
@@ -722,5 +735,95 @@ public class DGPSMapViewActivity extends AppCompatActivity implements OnMapReady
         }
         return pndjv_pill_no;
     }
+    private void getCMVData() {
+
+        try {
+            dbHelper.open();
+            ArrayList<String> mfb = dbHelper.getCMVFiles(sharediv, sharerange, sharefb);
+            String path = GetFilePath();
+            File f=new File(path + "/" + mfb.get(i));
+            if(f.exists()) {
+                for (int i = 0; i < mfb.size(); i++) {
+                    new DownloadKmlFile(path + "/" + mfb.get(i)).execute();
+                }
+            }else{
+                Toast.makeText(this,"Please download the CMV",Toast.LENGTH_LONG).show();
+            }
+            dbHelper.close();
+        } catch (Exception ee) {
+            ee.printStackTrace();
+        }
+    }
+    private String GetFilePath() {
+        File directory = getExternalFilesDir(null);
+        String folder = directory.getAbsolutePath();
+        return folder;
+    }
+    private class DownloadKmlFile extends AsyncTask<String, Void, byte[]> {
+        private final String mUrl;
+        //testing
+        public String title=null;
+
+        public DownloadKmlFile(String url) {
+            mUrl = url;
+        }
+
+        protected byte[] doInBackground(String... params) {
+            try {
+                InputStream is = new FileInputStream(mUrl);
+                ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+                int nRead;
+                byte[] data = new byte[16384];
+                while ((nRead = is.read(data, 0, data.length)) != -1) {
+                    buffer.write(data, 0, nRead);
+                }
+                buffer.flush();
+                return buffer.toByteArray();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        protected void onPostExecute(byte[] byteArr) {
+            try {
+                final KmlLayer kmlLayer = new KmlLayer(googleMap, new ByteArrayInputStream(byteArr),
+                        getApplicationContext());
+                kmlLayer.addLayerToMap();
+                //testing
+
+                for (KmlContainer container : kmlLayer.getContainers()) {
+                    if (container.hasProperty("name")) {
+                        title=container.getProperty("name");
+                    }
+                }
+                // Set a listener for geometry clicked events.
+                kmlLayer.setOnFeatureClickListener(new KmlLayer.OnFeatureClickListener() {
+                    @Override
+                    public void onFeatureClick(Feature feature) {
+                        /*Log.i("KmlClick", "Feature clicked: " + title);
+                        Toast.makeText(ListMapActivity.this,
+                                "Feature clicked: " + title,
+                                Toast.LENGTH_SHORT).show();*/
+                    }
+                });
+                //testing
+               /* kmlLayer.setOnFeatureClickListener(new KmlLayer.OnFeatureClickListener() {
+                    @Override
+                    public void onFeatureClick(Feature feature) {
+                        Toast.makeText(ListMapActivity.this,
+                                "Feature clicked: " + feature.getId(),
+                                Toast.LENGTH_SHORT).show();
+                    }
+                });*/
+            } catch (XmlPullParserException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+
 
 }

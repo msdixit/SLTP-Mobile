@@ -1,10 +1,12 @@
 package com.sparc.frjvcapp;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.provider.ContactsContract;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -157,28 +159,51 @@ public class MainContainerActivity extends AppCompatActivity {
                 Toast.makeText(MainContainerActivity.this, "Module is Under Development", Toast.LENGTH_SHORT).show();
             }
         });
-
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
         DGPSSurvey.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), SelectFBForDGPSActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                final View customLayout = getLayoutInflater().inflate(R.layout.pupup_check_file_availability, null);
+                alertDialogBuilder.setView(customLayout);
 
-                SharedPreferences sharedPreferences = getSharedPreferences(coltlogin, 0);
-                SharedPreferences.Editor editor = sharedPreferences.edit();
-                editor.clear();
-                editor.putString("uemail", shared.getString("uemail", "0"));
-                editor.putString("upass", shared.getString("upass", "0"));
-                editor.putString("uname", shared.getString("uname", "0"));
-                editor.putString("upos", shared.getString("upos", "0"));
-                editor.putString("ucir", shared.getString("ucir", "0"));
-                editor.putString("uid", shared.getString("uid", "0"));
-                editor.putString("udivid", shared.getString("udivid", "0"));
-                editor.putString("udivname", shared.getString("udivname", "0"));
-                //editor.putString("userid", jsonobject.getString("div_id"));
-                editor.commit();
-                startActivity(intent);
-                //Toast.makeText(MainContainerActivity.this, "Module is Under Development", Toast.LENGTH_SHORT).show();
+                alertDialogBuilder.setPositiveButton("Yes",
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface arg0, int arg1) {
+                                Intent intent = new Intent(getApplicationContext(), SelectFBForDGPSActivity.class);
+                                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+
+                                SharedPreferences sharedPreferences = getSharedPreferences(coltlogin, 0);
+                                SharedPreferences.Editor editor = sharedPreferences.edit();
+                                editor.clear();
+                                editor.putString("uemail", shared.getString("uemail", "0"));
+                                editor.putString("upass", shared.getString("upass", "0"));
+                                editor.putString("uname", shared.getString("uname", "0"));
+                                editor.putString("upos", shared.getString("upos", "0"));
+                                editor.putString("ucir", shared.getString("ucir", "0"));
+                                editor.putString("uid", shared.getString("uid", "0"));
+                                editor.putString("udivid", shared.getString("udivid", "0"));
+                                editor.putString("udivname", shared.getString("udivname", "0"));
+                                //editor.putString("userid", jsonobject.getString("div_id"));
+                                editor.commit();
+                                startActivity(intent);
+                            }
+            });
+                            alertDialogBuilder.setNegativeButton("No",
+                                    new DialogInterface.OnClickListener()
+
+                            {
+
+                                @Override
+                                public void onClick (DialogInterface arg0,int arg1){
+                                // Toast.makeText(getApplicationContext(), "You canceled the request...please try again", Toast.LENGTH_LONG).show();
+                            }
+                            });
+
+                            AlertDialog alertDialog = alertDialogBuilder.create();
+                            alertDialog.show();
+                            //Toast.makeText(MainContainerActivity.this, "Module is Under Development", Toast.LENGTH_SHORT).show();
+
             }
         });
 

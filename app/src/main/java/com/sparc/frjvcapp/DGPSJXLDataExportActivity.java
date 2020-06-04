@@ -169,7 +169,8 @@ public class DGPSJXLDataExportActivity extends AppCompatActivity {
                             public void onClick(DialogInterface arg0, int arg1) {
                                 if (!spill_no.equals("Select Forest Block")) {
                                     String d_f_name[] = txtStsFileName.getText().toString().split("\\.");//.split(".")
-                                    String f_file_name = d_f_name[0] + "_" + fbid + "_" + userid + "." + d_f_name[1];
+                                    String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+                                    String f_file_name = sharediv+"_"+ sharerange +"_"+fbid + "_" + userid + "_" + timeStamp + "." + d_f_name[1];
                                     new DGPSJXLDataExportActivity.ExportPointJXLData().execute(sfinalpath + "/" + txtStsFileName.getText().toString(), fbid, dfinalpath + "/" + f_file_name);
                                 } else {
                                     Toast.makeText(getApplicationContext(), "Please choose the forest block", Toast.LENGTH_LONG);

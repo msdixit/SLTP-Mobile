@@ -140,7 +140,7 @@ public class RevisitDGPSSyncMenuActivity extends AppCompatActivity {
                 if (nInfo != null && nInfo.isAvailable() && nInfo.isConnected()) {
                     boolean s_status = checkFileStatus(userid, sharediv);
                     boolean r_status = checkRTXFileStatus(userid, sharediv);
-                    //boolean j_status = checkJXLFileStatus(userid, sharediv);
+                    boolean j_status = checkJXLFileStatus(userid, sharediv);
                     if (checkDataForSynchronization()) {
                         if (CheckDataTagging()) {
                             BindDGPSData(sharediv, userid);
@@ -174,7 +174,7 @@ public class RevisitDGPSSyncMenuActivity extends AppCompatActivity {
                     } else {
                         Toast.makeText(getApplicationContext(), "There is no file for Synchronization", Toast.LENGTH_LONG).show();
                     }
-                    /*if (j_status == true) {
+                    if (j_status == true) {
                         String sfile = Environment.getExternalStorageDirectory().toString();
                         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
                         String spath = "/RevisitJXLFile";
@@ -182,10 +182,10 @@ public class RevisitDGPSSyncMenuActivity extends AppCompatActivity {
                         String sfinalpath = sfile + spath;
                         String dfinalpath = sfile + zipPath;
                         zipFileAtPath(sfinalpath, dfinalpath);
-                        new DGPSSyncMenuActivity.SyncFiles().execute(dfinalpath + "," + "J");
+                        new RevisitDGPSSyncMenuActivity.SyncFiles().execute(dfinalpath + "," + "J");
                     } else {
                         Toast.makeText(getApplicationContext(), "There is no file for Synchronization", Toast.LENGTH_LONG).show();
-                    }*/
+                    }
                 } else {
                     Toast.makeText(getApplicationContext(), "Internet is not available", Toast.LENGTH_LONG).show();
                 }
@@ -641,11 +641,11 @@ public class RevisitDGPSSyncMenuActivity extends AppCompatActivity {
                 RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), f);
                 MultipartBody.Part multipartBody = MultipartBody.Part.createFormData("file", f.getName(), requestFile);
                 responseBodyCall = jsonPlaceHolderApi.sendRevisitRTXDataWithFile(Integer.parseInt(sharefb), multipartBody);
-            } /*else {
+            } else {
                 RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), f);
                 MultipartBody.Part multipartBody = MultipartBody.Part.createFormData("file", f.getName(), requestFile);
                 responseBodyCall = jsonPlaceHolderApi.sendRevisitJXLDataWithFile(Integer.parseInt(sharefb), multipartBody);
-            }*/
+            }
             responseBodyCall.enqueue(new Callback<Object>() {
                 @Override
                 public void onResponse(Call<Object> call, retrofit2.Response<Object> response) {
@@ -685,14 +685,14 @@ public class RevisitDGPSSyncMenuActivity extends AppCompatActivity {
                                                     }
                                                 }
                                             }
-                                            /*if (files[1].equals("J")) {
+                                            if (files[1].equals("J")) {
                                                 c = db.rawQuery("update m_fb_revisit_dgps_survey_pill_data set pillar_jfile_status='2' where pillar_jfile_path like '" + path + "'", null);
                                                 if (c.getCount() >= 0) {
                                                     if (f.delete()) {
-                                                        Toast.makeText(DGPSSyncMenuActivity.this, "JXL Data Synchronization successfully completed", Toast.LENGTH_SHORT).show();
+                                                        Toast.makeText(RevisitDGPSSyncMenuActivity.this, "JXL Data Synchronization successfully completed", Toast.LENGTH_SHORT).show();
                                                     }
                                                 }
-                                            }*/
+                                            }
                                             c.close();
                                             db.close();
                                         } catch (Exception ee) {

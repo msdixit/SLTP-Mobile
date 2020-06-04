@@ -87,11 +87,11 @@ public class DGPSDataCollectActivity extends AppCompatActivity {
     String imei;
     int clickedStatus, timecheck = 0;
     DbHelper dbHelper;
-    SharedPreferences shared;
+    SharedPreferences shared,sh,sharedForestPersonName;
     SQLiteDatabase db;
     TextView etName;
     int point_no, pndjv_no;
-    String kmlstatus;
+    String kmlstatus,personName;
     private String mCurrentPhotoPath_F, mCurrentPhotoPath_B, mCurrentPhotoPath_I, mCurrentPhotoPath_O, mCurrentPhotoPath_T;
     private Character pic_status;
     private AlbumStorageDirFactory mAlbumStorageDirFactory = null;
@@ -174,6 +174,16 @@ public class DGPSDataCollectActivity extends AppCompatActivity {
         edttxtpatchno.setText("1");
         edttxtringno.setText("0");
         edtJobID.setText(jobid);
+
+        sh = getApplicationContext().getSharedPreferences("key", MODE_PRIVATE);
+        personName = sh.getString("personName", "");
+//edtForestoffnm.setText(personName);
+
+        if(personName!=""){
+            edtForestoffnm.setText(personName);
+        }else{
+            edtForestoffnm.setText(" ");
+        }
 
         //point_no = getSLNO(sharefb);
 
@@ -406,9 +416,9 @@ public class DGPSDataCollectActivity extends AppCompatActivity {
         if (timecheck != 0) {
             try {
                 Calendar c = Calendar.getInstance();
-                _endDateFormat = new SimpleDateFormat("hh:mm:ss");
+                _endDateFormat = new SimpleDateFormat("kk:mm:ss");
                 _endTime = _endDateFormat.format(c.getTime());
-                java.text.DateFormat df = new java.text.SimpleDateFormat("hh:mm:ss");
+                java.text.DateFormat df = new java.text.SimpleDateFormat("kk:mm:ss");
                 java.util.Date date1 = df.parse(_startTime);
                 java.util.Date date2 = df.parse(_endTime);
                 long diff = date2.getTime() - date1.getTime();
@@ -453,6 +463,12 @@ public class DGPSDataCollectActivity extends AppCompatActivity {
     }
 
     private void SaveData() {
+        sharedForestPersonName = getSharedPreferences("key", MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedForestPersonName.edit();
+        String forest_person = edtForestoffnm.getText().toString();
+        editor.putString("personName", forest_person);
+        editor.apply();
+
         if (d_frjvc_pill_no.contains("-")) {
             String arr[] = d_frjvc_pill_no.split("-");
             point_no = Integer.parseInt(arr[0]);

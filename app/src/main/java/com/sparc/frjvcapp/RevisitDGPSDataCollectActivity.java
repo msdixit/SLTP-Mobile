@@ -56,6 +56,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import fr.ganfra.materialspinner.MaterialSpinner;
+import jxl.write.DateTime;
 
 public class RevisitDGPSDataCollectActivity extends AppCompatActivity {
     public static final String data = "data";
@@ -199,7 +200,7 @@ public class RevisitDGPSDataCollectActivity extends AppCompatActivity {
         takepicforward.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (getApplicationContext().getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA)) {
+                if (getApplicationContext().getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_ANY)) {
                     if (setpicforward.getDrawable() == null) {
                         SelectImage();
                     } else {
@@ -216,7 +217,7 @@ public class RevisitDGPSDataCollectActivity extends AppCompatActivity {
         takepicbackward.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (getApplicationContext().getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA)) {
+                if (getApplicationContext().getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_ANY)) {
                     if (setpicbackward.getDrawable() == null) {
                         SelectImageBackward();
                     } else {
@@ -233,7 +234,7 @@ public class RevisitDGPSDataCollectActivity extends AppCompatActivity {
         takepicinward.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (getApplicationContext().getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA)) {
+                if (getApplicationContext().getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_ANY)) {
                     if (setpicinward.getDrawable() == null) {
                         SelectImageInward();
                     } else {
@@ -250,7 +251,7 @@ public class RevisitDGPSDataCollectActivity extends AppCompatActivity {
         takepicoutward.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (getApplicationContext().getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA)) {
+                if (getApplicationContext().getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_ANY)) {
                     if (setpicoutward.getDrawable() == null) {
                         SelectImageOutward();
                     } else {
@@ -267,7 +268,7 @@ public class RevisitDGPSDataCollectActivity extends AppCompatActivity {
         takepictop.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (getApplicationContext().getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA)) {
+                if (getApplicationContext().getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_ANY)) {
                     if (setpictop.getDrawable() == null) {
                         SelectImageTop();
                     } else {

@@ -146,6 +146,32 @@
             </LinearLayout>
 
         </LinearLayout>
+        <LinearLayout
+            android:id="@+id/l3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/l2"
+            android:layout_marginLeft="5sp"
+            android:layout_marginTop="10sp"
+            android:layout_marginRight="5sp"
+            android:orientation="horizontal"
+            android:weightSum="5">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:enabled="true"
+                android:singleLine="false"
+                android:fontFamily="@font/my_custom_font"
+                android:textAlignment="gravity"
+                android:textColor="@color/color1"
+                android:textSize="25sp"
+                android:textStyle="normal"
+                android:text="Please make sure to switch to Survey data job file from steckout before data tagging."
+
+                />
+
+        </LinearLayout>
 
     </LinearLayout>
 

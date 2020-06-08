@@ -348,14 +348,12 @@ public class ListMapActivity extends AppCompatActivity implements OnMapReadyCall
                     googleMap.animateCamera(CameraUpdateFactory.zoomTo(12));
                     zoom_status += 1;
                 }
-
-
                 //stop location updates
                 if (mGoogleApiClient != null) {
                 }
             }
         }
-        // Map part for both offline
+        // Map part for offline
         else {
             //fbtn.setVisibility(View.GONE);
             LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
@@ -926,7 +924,8 @@ public class ListMapActivity extends AppCompatActivity implements OnMapReadyCall
                 }
             });
             dialog.show();
-        } else if (id == R.id.navigation_layer) {
+        }
+        else if (id == R.id.navigation_layer) {
 
 
             inflater2 = getLayoutInflater();

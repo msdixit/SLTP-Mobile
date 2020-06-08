@@ -934,7 +934,6 @@ public class DGPSSyncMenuActivity extends AppCompatActivity {
                                                 c = db.rawQuery("update m_fb_dgps_survey_pill_data set pillar_sfile_status='2' where pillar_sfile_path like '" + path + "'", null);
                                                 if (c.getCount() >= 0) {
                                                     if (f.delete()) {
-                                                        count+=1;
                                                         Toast.makeText(DGPSSyncMenuActivity.this, "Static Data Synchronization successfully completed", Toast.LENGTH_SHORT).show();
                                                     }
                                                 }
@@ -943,7 +942,6 @@ public class DGPSSyncMenuActivity extends AppCompatActivity {
                                                 c = db.rawQuery("update m_fb_dgps_survey_pill_data set pillar_rfile_status='2' where pillar_rfile_path like '" + path + "'", null);
                                                 if (c.getCount() >= 0) {
                                                     if (f.delete()) {
-                                                        count+=1;
                                                         Toast.makeText(DGPSSyncMenuActivity.this, "RTX Data Synchronization successfully completed", Toast.LENGTH_SHORT).show();
                                                     }
                                                 }
@@ -952,7 +950,6 @@ public class DGPSSyncMenuActivity extends AppCompatActivity {
                                                 c = db.rawQuery("update m_fb_dgps_survey_pill_data set pillar_jfile_status='2' where pillar_jfile_path like '" + path + "'", null);
                                                 if (c.getCount() >= 0) {
                                                     if (f.delete()) {
-                                                        count+=1;
                                                         Toast.makeText(DGPSSyncMenuActivity.this, "JXL Data Synchronization successfully completed", Toast.LENGTH_SHORT).show();
                                                     }
                                                 }

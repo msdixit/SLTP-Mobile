@@ -62,8 +62,6 @@ public class SearchMapFile extends AppCompatActivity {
     ProgressDialog progressDialog1;
     ArrayAdapter<String> divadapter;
 
-    String master[] = {"State_Boundary.kml", "Circle_Boundary.kml", "Range_Boundary.kml", "Division_Boundary.kml"};
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -185,7 +183,7 @@ public class SearchMapFile extends AppCompatActivity {
                             DownloadCMVMMVFiles();
                         }
                     }else{
-                        Toast.makeText(SearchMapFile.this,"Invalid User access,You cannot use this module",Toast.LENGTH_LONG).show();
+                        Toast.makeText(SearchMapFile.this,"Session timeout.Please Logout and login again..",Toast.LENGTH_LONG).show();
                     }
                 }
             }
@@ -339,7 +337,6 @@ public class SearchMapFile extends AppCompatActivity {
         if (nInfo != null && nInfo.isAvailable() && nInfo.isConnected()) {
             dbHelper.open();
             ArrayList<String> mfb = dbHelper.getCMVMMVFiles(divid, rangeCode, fbid);
-            String path = GetFilePath();
             for (int i = 0; i < mfb.size(); i++) {
                 if (!mfb.get(i).equals("null")) {
                     getCMVData(mfb.get(i));

@@ -45,7 +45,7 @@ public class MiddleMapListActivity extends AppCompatActivity {
 
     public static final String data = "data";
     public static final String userlogin = "userlogin";
-    ImageView data_view, map_view, sync, download;
+    ImageView data_view, map_view, export, download;
     TextView fbName;
     SQLiteDatabase db;
     DbHelper dbHelper;
@@ -74,7 +74,7 @@ public class MiddleMapListActivity extends AppCompatActivity {
 
         data_view = findViewById(R.id.dataview);
         map_view = findViewById(R.id.mapview);
-        sync = findViewById(R.id.sync);
+        export = findViewById(R.id.export);
         download = findViewById(R.id.data_point_dwld);
         fbName=findViewById(R.id.dgpsfbName);
         Intent i = getIntent();
@@ -98,7 +98,7 @@ public class MiddleMapListActivity extends AppCompatActivity {
                 startActivity(i);
             }
         });
-        sync.setOnClickListener(new View.OnClickListener() {
+        export.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 //getDataforSync(divid,rangeid,fbid,userid);

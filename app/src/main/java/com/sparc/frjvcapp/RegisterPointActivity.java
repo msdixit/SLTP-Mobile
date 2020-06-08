@@ -181,7 +181,7 @@ public class RegisterPointActivity extends AppCompatActivity implements GoogleAp
         takepic.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (getApplicationContext().getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA)) {
+                if (getApplicationContext().getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_ANY)) {
                     if (setpic.getDrawable() == null) {
                         SelectImage();
                     } else {
@@ -321,10 +321,10 @@ public class RegisterPointActivity extends AppCompatActivity implements GoogleAp
     private void CheckPillarStatus(String statusValue) {
         if (statusValue.equals("Existing")) {
             ll.setVisibility(View.VISIBLE);
-            ll.setVisibility(View.VISIBLE);
+           // ll.setVisibility(View.VISIBLE);
         } else {
             ll.setVisibility(View.GONE);
-            ll.setVisibility(View.GONE);
+            //ll.setVisibility(View.GONE);
             pillartype = "NA";
             pillacond = "NA";
             pillarpaintstatus = "NA";

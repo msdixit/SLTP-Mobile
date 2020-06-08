@@ -226,7 +226,7 @@ public class LoginActivity extends AppCompatActivity {
                 } else if (txtpassword.getText().toString().matches("")) {
                     txtpassword.setError("Please Enter Password");
                 } else if (otpEditText.getText().toString().matches("")) {
-                    txtpassword.setError("Please Enter OTP");
+                    otpEditText.setError("Please Enter OTP");
                 } else {
                     ConnectivityManager cm = (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
                     NetworkInfo nInfo = cm.getActiveNetworkInfo();

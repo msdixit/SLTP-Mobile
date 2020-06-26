@@ -543,7 +543,7 @@ public class DGPSMapViewActivity extends AppCompatActivity implements OnMapReady
         }else if(id == R.id.newPoint)
         {
 
-            String p_no=getDGPSPillData()+"-"+getDGPSPNDJVData();
+            String p_no=getDGPSPillData()+"-"+getDGPSPNDJVData();//PNDJV-Pillar not Identified During FRJVC Survey
             Intent intent1 = new Intent(getApplicationContext(), DGPSDataCollectActivity.class);
             intent1.putExtra("lat", gps_lat);
             intent1.putExtra("lon", gps_long);
@@ -650,7 +650,8 @@ public class DGPSMapViewActivity extends AppCompatActivity implements OnMapReady
                 googleMap.addMarker(new MarkerOptions().position(
                         new LatLng(key, value)).title("Propose Pillar:" + pillno).snippet("Lat:" + key + ",Long:" + value + ",Status:" + Status + ",File:" + file_sts + ",OldID:" + o_id+",Pnjdv_no:"+ pndjv_pill_no).icon(BitmapDescriptorFactory.fromBitmap(smallMarker)));
             }
-        } else if (Status == 1 && file_sts == 0 && survey_status==1) {
+        }
+        else if (Status == 1 && file_sts == 0 && survey_status==1) {
             BitmapDrawable bitmapdraw = (BitmapDrawable) getResources().getDrawable(R.drawable.red);
             Bitmap b = bitmapdraw.getBitmap();
             Bitmap smallMarker = Bitmap.createScaledBitmap(b, 80, 80, false);
@@ -661,7 +662,8 @@ public class DGPSMapViewActivity extends AppCompatActivity implements OnMapReady
                 googleMap.addMarker(new MarkerOptions().position(
                         new LatLng(key, value)).title("Propose Pillar:" + pillno).snippet("Lat:" + key + ",Long:" + value + ",Status:" + Status + ",File:" + file_sts + ",OldID:" + o_id + ",Pnjdv_no:" + pndjv_pill_no).icon(BitmapDescriptorFactory.fromBitmap(smallMarker)));
             }
-        } else if (Status == 1 && file_sts == 1 && survey_status==1) {
+        }
+        else if (Status == 1 && file_sts == 1 && survey_status==1) {
             BitmapDrawable bitmapdraw = (BitmapDrawable) getResources().getDrawable(R.drawable.green);
             Bitmap b = bitmapdraw.getBitmap();
             Bitmap smallMarker = Bitmap.createScaledBitmap(b, 80, 80, false);
@@ -685,7 +687,6 @@ public class DGPSMapViewActivity extends AppCompatActivity implements OnMapReady
                         new LatLng(key, value)).title("Propose Pillar:" + pillno).snippet("Lat:" + key + ",Long:" + value + ",Status:" + Status + ",File:" + file_sts + ",OldID:" + o_id+",Pnjdv_no:"+ pndjv_pill_no).icon(BitmapDescriptorFactory.fromBitmap(smallMarker)));
             }
         }
-
     }
     private int getDGPSPillData() {
         try {

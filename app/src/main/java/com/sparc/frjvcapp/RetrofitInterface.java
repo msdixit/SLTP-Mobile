@@ -26,26 +26,26 @@ public interface RetrofitInterface {
     Call<Response1> uploadDGPSImage(@Part MultipartBody.Part image);
 
     @Multipart
-    @POST("/sltp/api/values/savezipfiles")
+    @POST("/api/values/savezipfiles")
     Call<Object> sendDataWithFile(@Query("fid") Integer fid,@Part MultipartBody.Part file);
 
     @Multipart
-    @POST("/sltp/api/values/savezipfilesrtx")
+    @POST("/api/values/savezipfilesrtx")
     Call<Object> sendRTXDataWithFile(@Query("fid") Integer fid,@Part MultipartBody.Part file);
 
     @Multipart
-    @POST("/sltp/api/values/savezipfilesjxl")
+    @POST("/api/values/savezipfilesjxl")
     Call<Object> sendJXLDataWithFile(@Query("fid") Integer fid,@Part MultipartBody.Part file);
 
     @Multipart
-    @POST("/sltp/api/values/saverevisitzipfiles")
+    @POST("/api/values/saverevisitzipfiles")
     Call<Object> sendRevisitDataWithFile(@Query("fid") Integer fid,@Part MultipartBody.Part file);
 
     @Multipart
-    @POST("/sltp/api/values/saverevisitzipfilesrtx")
+    @POST("/api/values/saverevisitzipfilesrtx")
     Call<Object> sendRevisitRTXDataWithFile(@Query("fid") Integer fid,@Part MultipartBody.Part file);
 
     @Multipart
-    @POST("/sltp/api/values/saverevisitzipfilesjxl")
+    @POST("/api/values/saverevisitzipfilesjxl")
     Call<Object> sendRevisitJXLDataWithFile(@Query("fid") Integer fid,@Part MultipartBody.Part file);
 }

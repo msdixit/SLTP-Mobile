@@ -560,7 +560,7 @@ public class DGPSDataCollectActivity extends AppCompatActivity {
                                                             timecheck = 1;
                                                             Calendar c = Calendar.getInstance();
                                                             System.out.println("Current time =&gt; " + c.getTime());
-                                                            _startDateFormat = new SimpleDateFormat("hh:mm:ss");
+                                                            _startDateFormat = new SimpleDateFormat("kk:mm:ss");
                                                             _startTime = _startDateFormat.format(c.getTime());
                                                             // finishAffinity();
                                                             reset();
@@ -599,7 +599,8 @@ public class DGPSDataCollectActivity extends AppCompatActivity {
                     }
 
                 }
-            } else {
+            }
+            else {
                 db = openOrCreateDatabase("sltp.db", MODE_PRIVATE, null);
                 Cursor c = db.rawQuery("select * from m_fb_dgps_survey_pill_data where u_id='" + userid + "' and d_id='" + sharediv + "' and r_id='" + sharerange + "' and fb_id='" + sharefb + "' and frjvc_lat='" + d_frjvc_lat + "' and frjvc_long='" + d_frjvc_long + "'", null);
                 if (c.getCount() > 0) {

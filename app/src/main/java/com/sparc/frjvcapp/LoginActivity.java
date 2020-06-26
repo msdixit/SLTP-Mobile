@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.LinearGradient;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
@@ -102,6 +103,7 @@ public class LoginActivity extends AppCompatActivity {
     private ProgressBar loadingProgressBar;
     private RelativeLayout rootView;
     LinearLayout afterAnimationView;
+    LinearLayout otplinear;
     private TextInputEditText txtemail, txtpassword, otpEditText;
     private Button login, getOTPButton;
     private String password;
@@ -137,7 +139,9 @@ public class LoginActivity extends AppCompatActivity {
 
         login = findViewById(R.id.loginButton);
         getOTPButton = findViewById(R.id.getOTPButton);
-        login.setVisibility(GONE);
+        //login.setVisibility(GONE);
+        login.setVisibility(VISIBLE);
+
 
         for (int id : head) {
             headlist.add(id);
@@ -225,13 +229,16 @@ public class LoginActivity extends AppCompatActivity {
                     txtemail.setError("Please Enter the User Id");
                 } else if (txtpassword.getText().toString().matches("")) {
                     txtpassword.setError("Please Enter Password");
-                } else if (otpEditText.getText().toString().matches("")) {
+                }
+                /*else if (otpEditText.getText().toString().matches("")) {
                     otpEditText.setError("Please Enter OTP");
-                } else {
+                } */
+                else {
                     ConnectivityManager cm = (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
                     NetworkInfo nInfo = cm.getActiveNetworkInfo();
                     if (nInfo != null && nInfo.isAvailable() && nInfo.isConnected()) {
-                        login_auth(txtpassword.getText().toString(), otpEditText.getText().toString(), _serviceOTP, getMyMacAddress());
+                        //login_auth(txtpassword.getText().toString(), otpEditText.getText().toString(), _serviceOTP, getMyMacAddress());
+                        login_auth(txtpassword.getText().toString(), "12345", "12345", getMyMacAddress());
                     } else {
                         Toast.makeText(getApplicationContext(), "You don't have Internet Connection.", Toast.LENGTH_SHORT).show();
                     }
@@ -322,6 +329,8 @@ public class LoginActivity extends AppCompatActivity {
         loadingProgressBar = findViewById(R.id.loadingProgressBar);
         rootView = findViewById(R.id.rootView);
         afterAnimationView = findViewById(R.id.afterAnimationView);
+        otplinear=findViewById(R.id.otplinear);
+        otplinear.setVisibility(GONE);
     }
 
     private void startAnimation() {

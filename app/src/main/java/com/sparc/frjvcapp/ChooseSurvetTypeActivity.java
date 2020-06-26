@@ -41,7 +41,7 @@ import java.util.Map;
 public class ChooseSurvetTypeActivity extends AppCompatActivity {
     SharedPreferences shared,_shareToken;
     String  sharediv, sharerange, sharefb, sharefbtype, sharefbname, userid,jobid,div_name,range_name,fb_name,_token,spinner_duration,spinner_segment;
-    public static final String data = "data";
+    public static final String  data = "data";
     public static final String userlogin = "userlogin";
     ImageView data_collect,data_view,data_export,data_sync,data_point_dwld,mapview,revisit;
     TextView dgpsfbName;

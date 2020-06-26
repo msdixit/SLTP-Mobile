@@ -50,7 +50,7 @@ public class DGPSDataExportActivity extends AppCompatActivity {
     public static final String data = "data";
     ImageView img_download;
     TextView txtStsFileName;
-    private SQLiteDatabase db;
+    private SQLiteDatabase db,db1;
     private ArrayList<String> arrayList;
     private ArrayList<DGPSPillarDataViewModel> arrayList1;
     MaterialSpinner pill_no;
@@ -327,8 +327,11 @@ public class DGPSDataExportActivity extends AppCompatActivity {
             arr = message.split("&");
             try {
                 db = openOrCreateDatabase("sltp.db", MODE_PRIVATE, null);
+                //db1 = openOrCreateDatabase("sltp.db", MODE_PRIVATE, null);
+
                 if (arr[0].contains("-")) {
                     String pillar_data[] = arr[0].split("-");
+
                     c = db.rawQuery("update m_fb_dgps_survey_pill_data set pillar_sfile_status='1',pillar_sfile_path='" + arr[1] + "' where pill_no='" + pillar_data[0] + "' and pndjv_pill_no='" + pillar_data[1] + "' and fb_id='" + sharefb + "'", null);
                 } else {
                     c = db.rawQuery("update m_fb_dgps_survey_pill_data set pillar_sfile_status='1',pillar_sfile_path='" + arr[1] + "' where pill_no='" + arr[0] + "' and fb_id='" + sharefb + "'", null);

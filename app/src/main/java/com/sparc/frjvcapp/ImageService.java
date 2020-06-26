@@ -58,7 +58,6 @@ public class ImageService extends JobService {
             db2 = openOrCreateDatabase("sltp.db", MODE_PRIVATE, null);
             //Cursor c1 = db.rawQuery("update m_pillar_reg set img_status='0' where uid='" + userid + "' and d_id='" + divid + "'", null);
 
-
             Cursor c = db.rawQuery("select * from m_pillar_reg where d_id='" + divid + "' and uid='" + userid + "' and img_status='0' and p_pic is not null", null);
             int count = c.getCount();
             if (c.getCount() >= 1) {
@@ -73,6 +72,7 @@ public class ImageService extends JobService {
                 c.close();
                 db.close();
             }
+
             Cursor c1 = db1.rawQuery("select * from m_shifting_pillar_reg where uid='" + userid + "' and simg_status='0' and s_pic is not null", null);
             int count1 = c.getCount();
             if (c1.getCount() >= 1) {
@@ -87,6 +87,7 @@ public class ImageService extends JobService {
                 c1.close();
                 db1.close();
             }
+
             Cursor c2 = db1.rawQuery("select * from m_fb_dgps_survey_pill_pic where u_id='" + userid + "' and pic_status='0' and pic_name is not null", null);
             int count2 = c.getCount();
             if (c2.getCount() >= 1) {
@@ -100,7 +101,8 @@ public class ImageService extends JobService {
                 c2.close();
                 db2.close();
             }
-        } catch (Exception ee) {
+        }
+        catch (Exception ee) {
             ee.printStackTrace();
         }
     }
@@ -211,7 +213,7 @@ public class ImageService extends JobService {
                                         ctemp.close();
                                         dbtemp.close();
                                     } catch (Exception ee) {
-
+                                    ee.printStackTrace();
                                     } finally {
                                         Response1 responseBody = response.body();
                                         Toast.makeText(ImageService.this, responseBody.getPath(), Toast.LENGTH_SHORT).show();
@@ -234,7 +236,6 @@ public class ImageService extends JobService {
                         }
                     }
                 }
-
                 @Override
                 public void onFailure(Call<Response1> call, Throwable t) {
                 }

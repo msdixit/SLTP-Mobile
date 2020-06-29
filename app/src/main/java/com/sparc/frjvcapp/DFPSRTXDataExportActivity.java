@@ -277,7 +277,7 @@ public class DFPSRTXDataExportActivity extends AppCompatActivity {
             //this.progressDialog.dismiss();
             try {
                 db = openOrCreateDatabase("sltp.db", MODE_PRIVATE, null);
-                c = db.rawQuery("update m_fb_dgps_survey_pill_data set pillar_rfile_status='1',pillar_rfile_path='" + arr[1] + "' where fb_id='" + arr[0] + "'", null);
+                c = db.rawQuery("update m_fb_dgps_survey_pill_data set pillar_rfile_status='1',pillar_rfile_path='" + arr[1] + "' where fb_id='" + arr[0] + "' and (pillar_rfile_path is null or pillar_rfile_status='0') ", null);
                 if (c.getCount() >= 0) {
                     try {
                         File file = new File(arr[2]);

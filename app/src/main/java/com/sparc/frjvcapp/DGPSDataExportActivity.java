@@ -125,7 +125,6 @@ public class DGPSDataExportActivity extends AppCompatActivity {
             img_download.setVisibility(View.GONE);
         }
         getDGPSDataFOrView();
-
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
         img_download.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -179,8 +178,6 @@ public class DGPSDataExportActivity extends AppCompatActivity {
 
                 AlertDialog alertDialog = alertDialogBuilder.create();
                 alertDialog.show();
-
-
             }
         });
         adapter = new DGPSPillarViewAdapter(this, arrayList1);
@@ -205,12 +202,13 @@ public class DGPSDataExportActivity extends AppCompatActivity {
                     while (c.moveToNext());
                 }
             }
-            c.close();
-            db.close();
             adapter = new DGPSPillarViewAdapter(this, arrayList1);
             recyclerView.setAdapter(adapter);
         } catch (Exception ee) {
             ee.printStackTrace();
+        }finally {
+            c.close();
+            db.close();
         }
     }
 
@@ -222,10 +220,12 @@ public class DGPSDataExportActivity extends AppCompatActivity {
             if (c.getCount() >= 0) {
                 Toast.makeText(this, "Your data tagged successfully", Toast.LENGTH_LONG);
             }
-            c.close();
-            db.close();
+
         } catch (Exception ee) {
             ee.printStackTrace();
+        }finally {
+            c.close();
+            db.close();
         }
 
     }
@@ -239,20 +239,23 @@ public class DGPSDataExportActivity extends AppCompatActivity {
             if (count >= 1) {
                 if (c.moveToFirst()) {
                     do {
+                        String s=c.getString(c.getColumnIndex("pndjv_pill_no"));
                         if (c.getString(c.getColumnIndex("pndjv_pill_no")) != "0" || c.getString(c.getColumnIndex("pndjv_pill_no")) != "") {
-                            arrayList.add(c.getString(c.getColumnIndex("pill_no")));
-                        } else {
                             arrayList.add(c.getString(c.getColumnIndex("pill_no")) + "-" + c.getString(c.getColumnIndex("pndjv_pill_no")));
+                        } else {
+                            arrayList.add(c.getString(c.getColumnIndex("pill_no")));
                         }
 
                     }
                     while (c.moveToNext());
                 }
             }
-            c.close();
-            db.close();
+
         } catch (Exception ee) {
             ee.printStackTrace();
+        }finally {
+            c.close();
+            db.close();
         }
     }
 
@@ -331,7 +334,6 @@ public class DGPSDataExportActivity extends AppCompatActivity {
 
                 if (arr[0].contains("-")) {
                     String pillar_data[] = arr[0].split("-");
-
                     c = db.rawQuery("update m_fb_dgps_survey_pill_data set pillar_sfile_status='1',pillar_sfile_path='" + arr[1] + "' where pill_no='" + pillar_data[0] + "' and pndjv_pill_no='" + pillar_data[1] + "' and fb_id='" + sharefb + "'", null);
                 } else {
                     c = db.rawQuery("update m_fb_dgps_survey_pill_data set pillar_sfile_status='1',pillar_sfile_path='" + arr[1] + "' where pill_no='" + arr[0] + "' and fb_id='" + sharefb + "'", null);
@@ -354,10 +356,12 @@ public class DGPSDataExportActivity extends AppCompatActivity {
 
                     }
                 }
-                c.close();
-                db.close();
+
             } catch (Exception ee) {
                 ee.printStackTrace();
+            }finally {
+                c.close();
+                db.close();
             }
         }
 
@@ -365,25 +369,36 @@ public class DGPSDataExportActivity extends AppCompatActivity {
     }
 
     private void UpdateTaggingPillarTable(String s) {
+        Cursor c = null;
         try {
             db = openOrCreateDatabase("sltp.db", MODE_PRIVATE, null);
-            Cursor c = db.rawQuery("update m_dgps_Survey_pill_data set m_dgps_file_sts='1' where m_p_lat='" + frjvc_lat + "' and m_p_long='" + frjvc_long + "' and m_fb_pillar_no='" + s + "'", null);
+            if (s.contains("-")) {
+                String pillar_data[] = s.split("-");
+                c = db.rawQuery("update m_dgps_Survey_pill_data set m_dgps_file_sts='1' where m_p_lat='" + frjvc_lat + "' and m_p_long='" + frjvc_long + "' and m_fb_pillar_no='" + pillar_data[0] + "' and m_pndjv_pill_no='"+pillar_data[1]+"'", null);
+            }else{
+                c = db.rawQuery("update m_dgps_Survey_pill_data set m_dgps_file_sts='1' where m_p_lat='" + frjvc_lat + "' and m_p_long='" + frjvc_long + "' and m_fb_pillar_no='" + s + "'", null);
+            }
             if (c.getCount() >= 0) {
                 Toast.makeText(this, "dd", Toast.LENGTH_LONG);
             }
-            c.close();
-            db.close();
         } catch (Exception ee) {
             ee.printStackTrace();
+        }finally {
+            c.close();
+            db.close();
         }
-
     }
 
     private boolean GetTaggingTableforDGPS(String s) {
         boolean status = false;
         try {
             db = openOrCreateDatabase("sltp.db", MODE_PRIVATE, null);
-            c = db.rawQuery("SELECT * from m_fb_dgps_survey_pill_data where pillar_sfile_status='1' and delete_status='0' and fb_id='" + sharefb + "' and pill_no='" + s + "'", null);
+            if (s.contains("-")) {
+                String pillar_data[] = s.split("-");
+                c = db.rawQuery("select * from m_fb_dgps_survey_pill_data where pillar_sfile_status='1' and delete_status='0' and fb_id='" + sharefb + "' and pill_no='" + pillar_data[0] + "' and pndjv_pill_no='"+pillar_data[1]+"'", null);
+            }else{
+                c = db.rawQuery("update m_dgps_Survey_pill_data set m_dgps_file_sts='1' where m_p_lat='" + frjvc_lat + "' and m_p_long='" + frjvc_long + "' and m_fb_pillar_no='" + s + "'", null);
+            }
             int count = c.getCount();
             if (count >= 1) {
                 if (c.moveToFirst()) {
@@ -392,10 +407,13 @@ public class DGPSDataExportActivity extends AppCompatActivity {
                     status = true;
                 }
             }
-            c.close();
-            db.close();
+
         } catch (Exception ee) {
             ee.printStackTrace();
+        }
+        finally {
+            c.close();
+            db.close();
         }
         return status;
     }

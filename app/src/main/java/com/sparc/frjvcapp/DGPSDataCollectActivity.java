@@ -487,7 +487,7 @@ public class DGPSDataCollectActivity extends AppCompatActivity {
                 if (edttxtpillarno.getText().toString() == "") {
                     Toast.makeText(this, "Serial Number can not ne blank or Zero", Toast.LENGTH_LONG).show();
                 } /*else if (spinner_duration.equals("Select Duration")) {
-                    Toast.makeText(this, "Please Select Duration", Toast.LENGTH_LONG).show();
+                    Toast.makeText(this, "Please Selec t Duration", Toast.LENGTH_LONG).show();
                 }*/ else if (edtForestoffnm.getText().toString() == "") {
                     Toast.makeText(this, "Please Provide the Forest official name", Toast.LENGTH_LONG).show();
                 } else if (imagepath1_F == "" || imagepath1_F == null) {

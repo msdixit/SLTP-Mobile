@@ -635,7 +635,6 @@ public class DGPSMapViewActivity extends AppCompatActivity implements OnMapReady
 
     private void addSurveyPointtoMap(double key, double value, String pillno, int Status, int file_sts, int o_id,int survey_status,int pndjv_pill_no,int pill_avail_sts) {
         if (Status == 0 && file_sts == 0 && survey_status==0) {
-
             if(pill_avail_sts==0)
             {
                 BitmapDrawable bitmapdraw = (BitmapDrawable) getResources().getDrawable(R.drawable.yellow);

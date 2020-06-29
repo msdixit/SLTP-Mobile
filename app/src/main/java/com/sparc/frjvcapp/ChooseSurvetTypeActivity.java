@@ -2,12 +2,14 @@ package com.sparc.frjvcapp;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -127,20 +129,44 @@ public class ChooseSurvetTypeActivity extends AppCompatActivity {
                 startActivity(i);
             }
         });
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+
         data_point_dwld.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 ConnectivityManager cm = (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
                 NetworkInfo nInfo = cm.getActiveNetworkInfo();
-                if (nInfo != null && nInfo.isAvailable() && nInfo.isConnected()) {
-                    if (CheckDataAvalability(sharefb)) {
-                        getDataForSurveyPoints(sharefb);
-                    } else {
+                final View customLayout = getLayoutInflater().inflate(R.layout.pupup_check_point_download, null);
+                alertDialogBuilder.setView(customLayout);
+                alertDialogBuilder.setPositiveButton("Yes",
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface arg0, int arg1) {
+                                if (nInfo != null && nInfo.isAvailable() && nInfo.isConnected()) {
+                                    if (CheckDataAvalability(sharefb)) {
+                                        getDataForSurveyPoints(sharefb);
+                                    } else {
 
-                    }
-                } else {
-                    Toast.makeText(getApplicationContext(), "Check your internet connection.", Toast.LENGTH_SHORT).show();
-                }
+                                    }
+                                } else {
+                                    Toast.makeText(getApplicationContext(), "Check your internet connection.", Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        });
+                alertDialogBuilder.setNegativeButton("No",
+                        new DialogInterface.OnClickListener()
+                        {
+                            @Override
+                            public void onClick (DialogInterface arg0,int arg1){
+                                // Toast.makeText(getApplicationContext(), "You canceled the request...please try again", Toast.LENGTH_LONG).show();
+                            }
+                        });
+
+                AlertDialog alertDialog = alertDialogBuilder.create();
+                alertDialog.show();
+
+
+
             }
         });
         mapview.setOnClickListener(new View.OnClickListener() {

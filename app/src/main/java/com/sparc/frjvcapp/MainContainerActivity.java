@@ -191,9 +191,7 @@ public class MainContainerActivity extends AppCompatActivity {
             });
                             alertDialogBuilder.setNegativeButton("No",
                                     new DialogInterface.OnClickListener()
-
                             {
-
                                 @Override
                                 public void onClick (DialogInterface arg0,int arg1){
                                 // Toast.makeText(getApplicationContext(), "You canceled the request...please try again", Toast.LENGTH_LONG).show();
